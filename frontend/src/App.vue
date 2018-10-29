@@ -1,8 +1,7 @@
 <template>
-    <div id="app">
-        <img src="./assets/logo.png">
-        <router-view />
-    </div>
+  <div id="app">
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
@@ -19,5 +18,16 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+h1 {
+  font-weight: normal;
+}
+a {
+  text-decoration: none;
+  color: #000;
+}
+.el-col {
+  border: true;
+  min-height: 1px;
 }
 </style>
