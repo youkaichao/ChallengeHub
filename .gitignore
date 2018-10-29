@@ -1,6 +1,6 @@
 .DS_Store
 node_modules
-/dist
+dist
 
 # local env files
 .env.local
@@ -22,3 +22,6 @@ yarn-error.log*
 
 # Django
 __pycache__/
+
+# Config file
+config.json

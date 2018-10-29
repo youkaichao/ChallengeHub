@@ -11,9 +11,13 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import json
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+CONFIGS = json.loads(open(os.path.join(BASE_DIR, "config.json")).read())
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/static"),
@@ -86,7 +90,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'challengehub',
         'USER': 'root',
-        'PASSWORD': '********',
+        'PASSWORD': CONFIGS['password'],
         'HOST': '127.0.0.1',
     }
 }
