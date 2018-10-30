@@ -17,7 +17,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 h1 {
   font-weight: normal;
@@ -25,6 +24,10 @@ h1 {
 a {
   text-decoration: none;
   color: #000;
+}
+p {
+  text-align: left;
+  line-height: 30px;
 }
 .el-col {
   border: true;
@@ -37,6 +40,13 @@ a {
   padding-bottom: 100px;
   box-sizing: border-box;
 }
+.card-item {
+  text-align: left;
+  margin: 5px;
+}
+.el-row {
+  margin: 10px;
+}
 .el-main {
   height: 750px;
 }
@@ -46,5 +56,15 @@ a {
   left: 0px;
   right: 0px;
   background: #333;
+}
+.el-tag {
+  width: 100px;
+}
+.my-title {
+  font-weight: bolder;
+  text-align: left;
+  border-left: 4px solid #20a0ff;
+  padding: 10px;
+  line-height: 16px;
 }
 </style>

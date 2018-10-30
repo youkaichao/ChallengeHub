@@ -6,6 +6,7 @@ import Login from '@/components/Login'
 import Register from '@/components/Register'
 import ContestList from '@/components/contest/ContestList'
 import ContestCreate from '@/components/contest/ContestCreate'
+import ContestDetail from '@/components/contest/ContestDetail'
 import User from '@/components/User'
 import VueResource from 'vue-resource'
 import VueCookies from 'vue-cookies'
@@ -35,7 +36,7 @@ export default new Router({
         {
           path: 'contest/detail/:id',
           name: '/contest/detail/:id',
-          component: ContestList // TODO: contest detail page
+          component: ContestDetail
         },
         {
           path: 'index',

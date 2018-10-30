@@ -24,10 +24,8 @@
                 <div slot="header" class="clearfix">
                   <span><i class="el-icon-info"></i> 通过注册你可以</span>
                 </div>
-                <ul>
-                  <li>报名竞赛</li>
-                  <li>讨论区留言</li>
-                </ul>
+                <div class="card-item">报名竞赛</div>
+                <div class="card-item">讨论区留言</div>
               </el-card>
             </el-col>
           </el-row>
@@ -53,11 +51,9 @@
                 <div slot="header" class="clearfix">
                   <span><i class="el-icon-info"></i> 通过注册你可以</span>
                 </div>
-                <ul>
-                  <li>发布竞赛/活动</li>
-                  <li>自定义报名系统</li>
-                  <li>竞赛/活动报名管理</li>
-                </ul>
+                <div class="card-item">发布竞赛/活动</div>
+                <div class="card-item">自定义报名系统</div>
+                <div class="card-item">竞赛/活动报名管理</div>
               </el-card>
             </el-col>
           </el-row>
@@ -81,9 +77,7 @@ export default {
     }
   },
   methods: {
-    handleCreateAccount() {
-      console.log(this.user)
-    },
+    handleCreateAccount() {},
     handleClick(tab, event) {
       this.activeTab = tab.name
     }

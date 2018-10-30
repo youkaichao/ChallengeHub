@@ -1,10 +1,10 @@
 <template>
-  <el-table :data="dataList" align="left">
-    <el-table-column prop="name" label="名称"></el-table-column>
-    <el-table-column prop="subject" label="学科"></el-table-column>
-    <el-table-column label="详细信息">
+  <el-table :data="dataList">
+    <el-table-column prop="name" label="名称" align="center"></el-table-column>
+    <el-table-column prop="subject" label="学科" align="center"></el-table-column>
+    <el-table-column label="详细信息" align="center">
       <template slot-scope="scope">
-        <el-button type="text" @click="routeToDetail(scope.row.contestID)">查看详情</el-button>
+        <el-button type="text" @click="routeToDetail(scope.row.id)">查看详情</el-button>
       </template>
     </el-table-column>
   </el-table>

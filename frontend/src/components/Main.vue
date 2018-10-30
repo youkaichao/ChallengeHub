@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header height="100">
-      <el-row type="flex" align="middle" :gutter="1">
+      <el-row type="flex" align="middle" :gutter="10">
         <el-col :span="4">
           <router-link to='/'>
             <h1>
@@ -9,13 +9,13 @@
             </h1>
           </router-link>
         </el-col>
-        <el-col :span="5">
+        <div>
           <el-menu :default-active="$route.path" mode="horizontal" @select="handleSelect" :router="true">
             <el-menu-item index="/index">首页</el-menu-item>
             <el-menu-item index="/contest/list">查看比赛</el-menu-item>
             <el-menu-item index="/contest/create">创建比赛</el-menu-item>
           </el-menu>
-        </el-col>
+        </div>
         <el-col :span="11">
           <el-input v-model="input" placeholder="搜索比赛"></el-input>
         </el-col>
@@ -51,8 +51,35 @@ export default {
   data() {
     return {
       input: '',
-      contestList: []
+      contestList: [
+        {
+          id: null,
+          name: null,
+          subject: null
+        }
+      ]
     }
+  },
+  updated: function() {
+    if (this.$route.path != '/contest/list') return
+    this.$http
+      .post(
+        '/graphql',
+        {
+          query: 'query{allCompetitions{id,name,subject}}',
+          operationName: '',
+          variables: {}
+        },
+        {
+          headers: {
+            'X-CSRFToken': this.$cookies.get('csrftoken')
+          },
+          emulateJSON: true
+        }
+      )
+      .then(function(response) {
+        this.contestList = response.body.data.allCompetitions
+      })
   },
   methods: {
     handleSelect(key, keyPath) {},
