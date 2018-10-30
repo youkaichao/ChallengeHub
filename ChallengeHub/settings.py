@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'graphene_django',
     'basic',
 ]
 
@@ -113,6 +114,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# GraphQL
+GRAPHENE = {
+    'SCHEMA': 'ChallengeHub.schema.schema'
+}
 
 
 # Internationalization
