@@ -30,22 +30,21 @@
         </el-col>
       </el-row>
     </el-header>
-    <el-main height=60px>
+    <el-main>
       <router-view :data-list="contestList"></router-view>
     </el-main>
     <el-footer>
       <el-row type="flex" align="middle">
         <el-col :span="12">
-          关于我们
+          <el-button type="text" @click="handleRoute('/about')">关于我们</el-button>
         </el-col>
         <el-col :span="12">
-          帮助中心
+          <el-button type="text" @click="handleRoute('/help')">帮助中心</el-button>
         </el-col>
       </el-row>
     </el-footer>
   </el-container>
 </template>
-
 <script>
 export default {
   name: 'Main',

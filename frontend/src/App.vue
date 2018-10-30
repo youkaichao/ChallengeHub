@@ -30,4 +30,21 @@ a {
   border: true;
   min-height: 1px;
 }
+.el-container {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  padding-bottom: 100px;
+  box-sizing: border-box;
+}
+.el-main {
+  height: 750px;
+}
+.el-footer {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background: #333;
+}
 </style>
