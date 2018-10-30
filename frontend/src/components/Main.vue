@@ -31,7 +31,7 @@
       </el-row>
     </el-header>
     <el-main height=60px>
-      <router-view></router-view>
+      <router-view :data-list="contestList"></router-view>
     </el-main>
     <el-footer>
       <el-row type="flex" align="middle">
@@ -51,7 +51,8 @@ export default {
   name: 'Main',
   data() {
     return {
-      input: ''
+      input: '',
+      contestList: []
     }
   },
   methods: {

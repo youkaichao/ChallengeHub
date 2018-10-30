@@ -6,6 +6,7 @@ import Login from '@/components/Login'
 import Register from '@/components/Register'
 import ContestList from '@/components/contest/ContestList'
 import ContestCreate from '@/components/contest/ContestCreate'
+import User from '@/components/User'
 import VueResource from 'vue-resource'
 import VueCookies from 'vue-cookies'
 
@@ -22,14 +23,19 @@ export default new Router({
       redirect: '/index',
       children: [
         {
+          path: 'contest/create',
+          name: '/contest/create',
+          component: ContestCreate
+        },
+        {
           path: 'contest/list',
           name: '/contest/list',
           component: ContestList
         },
         {
-          path: 'contest/create',
-          name: '/contest/create',
-          component: ContestCreate
+          path: 'contest/detail/:id',
+          name: '/contest/detail/:id',
+          component: ContestList // TODO: contest detail page
         },
         {
           path: 'index',
@@ -45,6 +51,11 @@ export default new Router({
           path: 'register',
           name: '/register',
           component: Register
+        },
+        {
+          path: 'user',
+          name: '/user',
+          component: User
         }
       ]
     }
