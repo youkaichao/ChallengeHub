@@ -111,21 +111,19 @@ class CreateUser(graphene.Mutation):
         name = graphene.String()
         password_hash = graphene.String()
         email_address = graphene.String()
-        introduction = graphene.String()
-        source_school = graphene.String()
 
     success = graphene.Boolean()
 
     @staticmethod
-    def mutate(root, info, name, password_hash, email_address, introduction, source_school):
+    def mutate(root, info, name, password_hash, email_address):
         if len(ContestantUserModel.objects.filter(name=name)) > 0:
             return CreateUser(success=False)
         user = ContestantUserModel()
         user.name = name
         user.password_hash = password_hash
         user.email_address = email_address
-        user.introduction = introduction
-        user.source_school = source_school
+        user.introduction = ''
+        user.source_school = ''
         user.save()
         return CreateUser(success=True)
 
@@ -146,7 +144,7 @@ class CreateOrganization(graphene.Mutation):
     success = graphene.Boolean()
 
     @staticmethod
-    def mutate(root, info, name, password_hash, email_address, introduction):
+    def mutate(root, info, name, password_hash, email_address):
         if len(OrganizationUserModel.objects.filter(name=name)) > 0:
             return CreateOrganization(success=False)
 
@@ -154,7 +152,7 @@ class CreateOrganization(graphene.Mutation):
         organization.name = name
         organization.password_hash = password_hash
         organization.email_address = email_address
-        organization.introduction = introduction
+        organization.introduction = ''
         organization.save()
         return CreateOrganization(success=True)
 
