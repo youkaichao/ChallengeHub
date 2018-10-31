@@ -31,7 +31,7 @@
       </el-row>
     </el-header>
     <el-main>
-      <router-view :data-list="contestList"></router-view>
+      <router-view :data-list="contestList" v-on:onUpdateList="updateList"></router-view>
     </el-main>
     <el-footer>
       <el-row type="flex" align="middle">
@@ -60,28 +60,27 @@ export default {
       ]
     }
   },
-  updated: function() {
-    if (this.$route.path != '/contest/list') return
-    this.$http
-      .post(
-        '/graphql',
-        {
-          query: 'query{allCompetitions{id,name,subject}}',
-          operationName: '',
-          variables: {}
-        },
-        {
-          headers: {
-            'X-CSRFToken': this.$cookies.get('csrftoken')
-          },
-          emulateJSON: true
-        }
-      )
-      .then(function(response) {
-        this.contestList = response.body.data.allCompetitions
-      })
-  },
   methods: {
+    updateList() {
+      this.$http
+        .post(
+          '/graphql',
+          {
+            query: 'query{allCompetitions{id,name,subject}}',
+            operationName: '',
+            variables: {}
+          },
+          {
+            headers: {
+              'X-CSRFToken': this.$cookies.get('csrftoken')
+            },
+            emulateJSON: true
+          }
+        )
+        .then(function(response) {
+          this.contestList = response.body.data.allCompetitions
+        })
+    },
     handleSelect(key, keyPath) {},
     handleRoute(path) {
       this.$router.push({ name: path })

@@ -12,6 +12,9 @@
 <script>
 export default {
   name: 'ContestList',
+  created: function() {
+    this.$emit('onUpdateList')
+  },
   methods: {
     routeToDetail(id) {
       this.$router.push(`/contest/detail/${id}`)

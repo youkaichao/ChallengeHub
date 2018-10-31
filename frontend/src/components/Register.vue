@@ -14,7 +14,7 @@
                   <el-input v-model="user.password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="handleCreateAccount">创建账号</el-button>
+                  <el-button type="primary" @click="handleCreateAccount('usr')">创建账号</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -41,7 +41,7 @@
                   <el-input v-model="user.password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="handleCreateAccount">创建账号</el-button>
+                  <el-button type="primary" @click="handleCreateAccount('org')">创建账号</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -71,13 +71,27 @@ export default {
     return {
       user: {
         email: null,
-        password: null
+        password: null,
+        isOrganization: null
       },
       activeTab: 'student'
     }
   },
   methods: {
-    handleCreateAccount() {},
+    handleCreateAccount(type) {
+      if (type == 'org') this.user.isOrganization = true
+      else this.user.isOrganization = false
+      this.$http
+        .post('/register', this.user, {
+          headers: {
+            'X-CSRFToken': this.$cookies.get('csrftoken')
+          },
+          emulateJSON: true
+        })
+        .then(function(response) {
+          this.$router.push('/index')
+        })
+    },
     handleClick(tab, event) {
       this.activeTab = tab.name
     }
