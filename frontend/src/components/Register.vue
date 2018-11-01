@@ -7,14 +7,17 @@
           <el-row>
             <el-col :span="14">
               <el-form ref="form" :model="user" label-width="80px">
+                <el-form-item label="用户名">
+                  <el-input v-model="user.username"></el-input>
+                </el-form-item>
                 <el-form-item label="注册邮箱">
                   <el-input v-model="user.email"></el-input>
                 </el-form-item>
                 <el-form-item label="密码">
-                  <el-input v-model="user.password"></el-input>
+                  <el-input v-model="user.password" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="handleCreateAccount('usr')">创建账号</el-button>
+                  <el-button type="primary" @click="handleCreateAccount(1)">创建账号</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -34,14 +37,17 @@
           <el-row>
             <el-col :span="14">
               <el-form ref="form" :model="user" label-width="80px">
+                <el-form-item label="用户名">
+                  <el-input v-model="user.username"></el-input>
+                </el-form-item>
                 <el-form-item label="机构邮箱">
                   <el-input v-model="user.email"></el-input>
                 </el-form-item>
                 <el-form-item label="密码">
-                  <el-input v-model="user.password"></el-input>
+                  <el-input v-model="user.password" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="handleCreateAccount('org')">创建账号</el-button>
+                  <el-button type="primary" @click="handleCreateAccount(0)">创建账号</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -70,26 +76,29 @@ export default {
   data() {
     return {
       user: {
+        username: null,
         email: null,
         password: null,
-        isOrganization: null
+        individual: null
       },
       activeTab: 'student'
     }
   },
   methods: {
     handleCreateAccount(type) {
-      if (type == 'org') this.user.isOrganization = true
-      else this.user.isOrganization = false
+      this.user.individual = type
       this.$http
-        .post('/register', this.user, {
-          headers: {
-            'X-CSRFToken': this.$cookies.get('csrftoken')
-          },
+        .post('/auth/register', this.user, {
           emulateJSON: true
         })
         .then(function(response) {
-          this.$router.push('/index')
+          if (response.data.code > 0) {
+            alert('Register failed with error: ' + response.data.error)
+            return
+          }
+          this.$cookies.set('username', this.account.username)
+          this.$cookies.set('userinfo', JSON.stringify(response.body.data))
+          this.$router.push('/user')
         })
     },
     handleClick(tab, event) {

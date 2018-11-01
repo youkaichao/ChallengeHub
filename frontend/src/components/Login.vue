@@ -7,7 +7,7 @@
           <el-input v-model="account.username"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="account.password"></el-input>
+          <el-input v-model="account.password" type="password"></el-input>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -38,7 +38,21 @@ export default {
     }
   },
   methods: {
-    handleLogin() {},
+    handleLogin() {
+      this.$http
+        .post('/auth/login', this.account, {
+          emulateJSON: true
+        })
+        .then(function(response) {
+          if (response.body.code > 0) {
+            alert('Login failed with error: ' + response.body.error)
+            return
+          }
+          this.$cookies.set('username', this.account.username)
+          this.$cookies.set('userinfo', JSON.stringify(response.body.data))
+          this.$router.push('/user')
+        })
+    },
     handleRegister() {
       this.$router.push('/register')
     }

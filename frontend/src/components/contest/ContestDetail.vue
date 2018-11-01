@@ -16,11 +16,11 @@
           <h2>比赛流程</h2>
         </el-row>
         <hr />
-        <el-steps :active="procedureActiveNum" finish-status="success" :align-center="true">
-          <el-step :title="value.name" v-for="(value, index) in jsonProcedure" :key="index">{{ value.name }}</el-step>
+        <el-steps :active="procedureActive" finish-status="success" :align-center="true">
+          <el-step :title="value.name" v-for="(value, index) in procedureList" :key="index">{{ value.name }}</el-step>
         </el-steps>
         <el-row>
-          <el-button type="primary"><a :href="contest.enrollUrl">立即报名</a></el-button>
+          <el-button type="primary"><a :href="contest.url">立即报名</a></el-button>
         </el-row>
       </el-col>
       <el-col :span="6">
@@ -34,19 +34,19 @@
           <el-col :span="12" class="my-title">
             队伍人数上限
           </el-col>
-          <el-col :span="12">{{ contest.maxContestants }}</el-col>
+          <el-col :span="12">{{ contest.groupSize }}</el-col>
         </el-row>
         <el-row type="flex" align="middle">
           <el-col :span="12" class="my-title">
             报名开始时间
           </el-col>
-          <el-col :span="12">{{ contest.enrollStartTime }}</el-col>
+          <el-col :span="12">{{ contest.enrollStart }}</el-col>
         </el-row>
         <el-row type="flex" align="middle">
           <el-col :span="12" class="my-title">
             报名结束时间
           </el-col>
-          <el-col :span="12">{{ contest.enrollStartTime }}</el-col>
+          <el-col :span="12">{{ contest.enrollStart }}</el-col>
         </el-row>
         <el-row type="flex" align="middle">
           <el-col :span="12" class="my-title">
@@ -65,70 +65,42 @@ export default {
   data() {
     return {
       procedureList: [],
-      jsonProcedure: [],
-      procedureActiveNum: -1,
+      procedureActive: -1,
       contest: {
-        id: 0,
-        name: '',
-        subject: '',
-        maxContestants: 0,
-        enrollStartTime: null,
-        enrollEndTime: null,
+        name: null,
+        subject: null,
+        groupSize: null,
+        enrollStart: null,
+        enrollEnd: null,
         detail: null,
         procedure: null,
-        enrollUrl: null,
+        url: null,
         charge: 0,
-        numUpvote: null,
-        numDownvote: null,
-        judgingStandard: null
+        upvote: null,
+        downvote: null,
+        publisher: null
       }
     }
   },
-  methods: {},
   created: function() {
     let self = this
-    this.$http
-      .post(
-        '/graphql',
-        {
-          query: `query{competitionById(
-            competitionId:${this.$route.params.id})
-            {id,name,subject,maxContestants,enrollStartTime,enrollEndTime,detail,procedure,enrollUrl,charge,numUpvote,numDownvote,judgingStandard}}`
-        },
-        {
-          headers: {
-            'X-CSRFToken': this.$cookies.get('csrftoken')
-          },
-          emulateJSON: true
+    this.$http.get('/api/contest', { params: { id: this.$route.params.id } }, { emulateJSON: true }).then(function(response) {
+      self.contest = response.body.data
+      self.procedureList = JSON.parse(self.contest.procedure)
+      console.log(self.procedureList)
+      for (let i = 0; i < self.procedureList.length; i++) {
+        let prod = self.procedureList[i],
+          endTime = new Date(prod.endTime)
+        console.log(endTime, i)
+        if (new Date() <= endTime) {
+          self.procedureActive = i
+          break
         }
-      )
-      .then(function(response) {
-        self.contest = response.body.data.competitionById
-        let sd = new Date(self.contest.enrollStartTime)
-        let ed = new Date(self.contest.enrollEndTime)
-        self.contest.enrollStartTime = formatDate(sd)
-        self.contest.enrollEndTime = formatDate(ed)
-        self.jsonProcedure = JSON.parse(self.contest.procedure)
-        console.log(self.jsonProcedure)
-        for (let i = 0; i < self.jsonProcedure.length; i++) {
-          let prod = self.jsonProcedure[i]
-          let myProd = {
-            name: prod.name,
-            startTime: new Date(prod.startTime),
-            endTime: new Date(prod.endTime)
-          }
-          self.procedureList.push(myProd)
-        }
-        for (let i = 0; i < self.procedureList.length; i++) {
-          let ed = self.procedureList[i].endTime
-          let cd = new Date()
-          if (cd <= ed) {
-            self.procedureActiveNum = i
-            break
-          }
-        }
-        if (self.procedureActiveNum == -1) self.procedureActiveNum = self.procedureList.length
-      })
+      }
+      console.log(self.procedureActive)
+      if (self.procedureActive == -1) self.procedureActive = self.procedureList.length
+      console.log(self.procedureActive)
+    })
   }
 }
 </script>

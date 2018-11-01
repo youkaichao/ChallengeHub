@@ -1,7 +1,6 @@
-from django.conf.urls import url, include
-from . import views
+from django.conf.urls import url
+from basic import views
 
 urlpatterns = [
-    url(r'add_competition$', views.add_competition),
-    url(r'show_competition$', views.show_competition),
+    url(r'contest$', views.ContestView.as_view()),
 ]

@@ -22,11 +22,17 @@
         <el-col :span="1">
           <el-button icon="el-icon-search" circle></el-button>
         </el-col>
-        <el-col :span="1.5">
+        <el-col :span="1.5" v-if="!login">
           <el-button type="primary" @click="handleRoute('/login')">登录</el-button>
         </el-col>
-        <el-col :span="1.5">
+        <el-col :span="1.5" v-if="!login">
           <el-button type="primary" @click="handleRoute('/register')">注册</el-button>
+        </el-col>
+        <el-col :span="1.5" v-if="login">
+          <el-button type="primary" @click="handleRoute('/user')">用户中心</el-button>
+        </el-col>
+        <el-col :span="1.5" v-if="login">
+          <el-button type="primary" @click="handleLogout">登出</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -51,6 +57,7 @@ export default {
   data() {
     return {
       input: '',
+      login: false,
       contestList: [
         {
           id: null,
@@ -60,26 +67,26 @@ export default {
       ]
     }
   },
+  updated: function() {
+    let username = this.$cookies.get('username')
+    if (username) this.login = true
+  },
   methods: {
+    handleLogout() {
+      this.$http.post('/auth/logout').then(function(response) {
+        if (response.body.code > 0) {
+          alert('Logout faild with error: ' + response.body.error)
+          return
+        }
+        this.$cookies.remove('username')
+        this.$cookies.remove('userinfo')
+        this.login = false
+      })
+    },
     updateList() {
-      this.$http
-        .post(
-          '/graphql',
-          {
-            query: 'query{allCompetitions{id,name,subject}}',
-            operationName: '',
-            variables: {}
-          },
-          {
-            headers: {
-              'X-CSRFToken': this.$cookies.get('csrftoken')
-            },
-            emulateJSON: true
-          }
-        )
-        .then(function(response) {
-          this.contestList = response.body.data.allCompetitions
-        })
+      this.$http.get('/api/contest').then(function(response) {
+        this.contestList = JSON.parse(response.body.data)
+      })
     },
     handleSelect(key, keyPath) {},
     handleRoute(path) {
