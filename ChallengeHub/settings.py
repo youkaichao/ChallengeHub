@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIGS = json.loads(open(os.path.join(BASE_DIR, "config.json")).read())
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "frontend/dist/static"),
+    os.path.join(BASE_DIR, "frontend/dist"),
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True

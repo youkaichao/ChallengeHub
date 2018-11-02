@@ -59,7 +59,7 @@
   </el-row>
 </template>
 <script>
-import { formatDate } from '#/js/util.js'
+import { formatDate } from '@/lib/util'
 export default {
   name: 'ContestDetail',
   data() {
