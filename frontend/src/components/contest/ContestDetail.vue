@@ -59,7 +59,6 @@
   </el-row>
 </template>
 <script>
-import { formatDate } from '@/lib/util'
 export default {
   name: 'ContestDetail',
   data() {
@@ -87,19 +86,15 @@ export default {
     this.$http.get('/api/contest', { params: { id: this.$route.params.id } }, { emulateJSON: true }).then(function(response) {
       self.contest = response.body.data
       self.procedureList = JSON.parse(self.contest.procedure)
-      console.log(self.procedureList)
       for (let i = 0; i < self.procedureList.length; i++) {
         let prod = self.procedureList[i],
           endTime = new Date(prod.endTime)
-        console.log(endTime, i)
         if (new Date() <= endTime) {
           self.procedureActive = i
           break
         }
       }
-      console.log(self.procedureActive)
       if (self.procedureActive == -1) self.procedureActive = self.procedureList.length
-      console.log(self.procedureActive)
     })
   }
 }

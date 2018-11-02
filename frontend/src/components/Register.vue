@@ -101,7 +101,7 @@ export default {
           this.$router.push('/user')
         })
     },
-    handleClick(tab, event) {
+    handleClick(tab) {
       this.activeTab = tab.name
     }
   }

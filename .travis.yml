@@ -1,0 +1,25 @@
+matrix:
+  include:
+    - language: python
+      python: "3.6"
+      services: mysql
+      env: -BUILD_ON_TRAVIS=true
+      install:
+        - pip install -q -r requirements.txt
+      before_script:
+        - mysql -e 'create database databaseCI;'
+        - python manage.py migrate
+      script:
+        - python manage.py test
+
+    - language: node_js
+      node_js: "8"
+      cache:
+        directories:
+          - frontend/node_modules
+      before_install:
+        - cd frontend/
+      install:
+        - npm install
+      script:
+        - npm run build

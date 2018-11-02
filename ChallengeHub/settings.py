@@ -13,11 +13,17 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 import json
 
+travis = os.getenv('BUILD_ON_TRAVIS', None)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-CONFIGS = json.loads(open(os.path.join(BASE_DIR, "config.json")).read())
+if travis:
+    configFileName = 'config.travis.json'
+else:
+    configFileName = 'config.json'
+
+CONFIGS = json.loads(open(os.path.join(BASE_DIR, configFileName)).read())
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist"),
@@ -32,7 +38,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 SECRET_KEY = 'wl7lznjp**r&dsn(8stzhbsb&3&1rq!yly#*2lnk987a)wdqc+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = CONFIGS['DEBUG']
 
 ALLOWED_HOSTS = []
 
@@ -87,10 +93,11 @@ WSGI_APPLICATION = 'ChallengeHub.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'challengehub',
-        'USER': 'root',
-        'PASSWORD': CONFIGS['password'],
-        'HOST': '127.0.0.1',
+        'NAME': CONFIGS['DB_NAME'],
+        'USER': CONFIGS['DB_USER'],
+        'PASSWORD': CONFIGS['DB_PASS'],
+        'HOST': CONFIGS['DB_HOST'],
+        'PORT': CONFIGS['DB_PORT']
     }
 }
 

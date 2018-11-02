@@ -10,7 +10,7 @@
           </router-link>
         </el-col>
         <div>
-          <el-menu :default-active="$route.path" mode="horizontal" @select="handleSelect" :router="true">
+          <el-menu :default-active="$route.path" mode="horizontal" :router="true">
             <el-menu-item index="/index">首页</el-menu-item>
             <el-menu-item index="/contest/list">查看比赛</el-menu-item>
             <el-menu-item index="/contest/create">创建比赛</el-menu-item>
@@ -88,7 +88,6 @@ export default {
         this.contestList = JSON.parse(response.body.data)
       })
     },
-    handleSelect(key, keyPath) {},
     handleRoute(path) {
       this.$router.push({ name: path })
     }

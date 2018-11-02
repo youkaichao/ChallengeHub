@@ -17,12 +17,8 @@ export default {
   },
   methods: {
     routeToDetail(id) {
-      console.log(id)
       this.$router.push(`/contest/detail/${id}`)
     }
-  },
-  updated: function() {
-    console.log(this.dataList)
   },
   props: ['dataList']
 }

@@ -1,0 +1,8 @@
+{
+  "DEBUG": false,
+  "DB_NAME": "databaseCI",
+  "DB_USER": "travis",
+  "DB_PASS": "",
+  "DB_HOST": "127.0.0.1",
+  "DB_PORT": "3306"
+}
