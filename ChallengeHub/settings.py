@@ -26,8 +26,9 @@ else:
 CONFIGS = json.loads(open(os.path.join(BASE_DIR, configFileName)).read())
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "frontend/dist"),
+    os.path.join(BASE_DIR, "frontend", "dist", "static"),
 ]
+
 
 CORS_ORIGIN_ALLOW_ALL = True
 
