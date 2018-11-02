@@ -48,8 +48,7 @@ export default {
             alert('Login failed with error: ' + response.body.error)
             return
           }
-          this.$cookies.set('username', this.account.username)
-          this.$cookies.set('userinfo', JSON.stringify(response.body.data))
+          this.$store.commit('login', response.body.data)
           this.$router.push('/user')
         })
     },

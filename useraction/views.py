@@ -18,6 +18,7 @@ class UserLoginView(View):
         if(user and user.is_active):
             login(request, user)
             return JsonResponse({'code': 0, 'data': {
+                'name':user.username,
                 'email': user.email,
                 'introduction': user.introduction,
                 'school': user.school,
@@ -48,6 +49,7 @@ class UserRegisterView(View):
         user.save()
         login(request, user)
         return JsonResponse({'code': 0, 'data': {
+            'name': user.username,
             'email': user.email,
             'introduction': user.introduction,
             'school': user.school,

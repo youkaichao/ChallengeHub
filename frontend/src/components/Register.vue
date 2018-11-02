@@ -96,8 +96,7 @@ export default {
             alert('Register failed with error: ' + response.data.error)
             return
           }
-          this.$cookies.set('username', this.account.username)
-          this.$cookies.set('userinfo', JSON.stringify(response.body.data))
+          this.$store.commit('login', response.body.data)
           this.$router.push('/user')
         })
     },

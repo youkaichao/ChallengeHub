@@ -57,7 +57,6 @@ export default {
   data() {
     return {
       input: '',
-      login: false,
       contestList: [
         {
           id: null,
@@ -67,9 +66,10 @@ export default {
       ]
     }
   },
-  updated: function() {
-    let username = this.$cookies.get('username')
-    if (username) this.login = true
+  computed: {
+    login: function() {
+      return this.$store.state.login
+    }
   },
   methods: {
     handleLogout() {
@@ -78,9 +78,8 @@ export default {
           alert('Logout faild with error: ' + response.body.error)
           return
         }
-        this.$cookies.remove('username')
-        this.$cookies.remove('userinfo')
-        this.login = false
+        this.$store.commit('logout', response.body.data)
+        this.$router.push('/')
       })
     },
     updateList() {

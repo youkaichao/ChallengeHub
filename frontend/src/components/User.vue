@@ -110,9 +110,10 @@ export default {
     return {
       activeName: 'userInfo',
       user: {
-        email: '',
-        selfDescription: '',
-        sourceSchool: '',
+        username: this.$store.state.usename,
+        email: this.$store.state.email,
+        selfDescription: this.$store.state.selfDescription,
+        sourceSchool: this.$store.state.sourceSchool,
         oldPassword: '',
         newPassword: '',
         myContestList: [
@@ -124,7 +125,7 @@ export default {
         ],
         contestIReviewList: [],
         contestILaunch: [],
-        isOrganizer: false
+        isOrganizer: this.$store.state.isOrganizer
       }
     }
   },
