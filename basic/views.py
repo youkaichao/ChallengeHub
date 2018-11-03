@@ -3,38 +3,24 @@ from django.http import JsonResponse
 from django.core import serializers
 from django.views.generic import View
 from django.core import serializers
-from basic.models import Competition
+from basic.models import Competition, Group
 from useraction.models import User
 from ChallengeHub.utils import *
 
 
-class ContestView(View):
+class ContestCollectionView(View):
     def get(self, request):
-        if(not check_input(request.GET, ['id'])):
-            competitions = Competition.objects.all()
-            return JsonResponse({'code': 0, "data": serializers.serialize('json', competitions)})
         try:
-            c = Competition.objects.get(id=request.GET.get('id'))
-            info = {
-                'name': c.name,
-                'subject': c.subject,
-                'groupSize': c.group_size,
-                'enrollStart': c.enroll_start,
-                'enrollEnd': c.enroll_end,
-                'detail': c.detail,
-                'procedure': c.procedure,
-                'url': c.url,
-                'charge': c.charge,
-                'upvote': c.upvote,
-                'downvote': c.downvote,
-                'publisher': c.publisher.username
-            }
-            return JsonResponse({'code': 0, 'data': info})
+            competitions = Competition.objects.all()
+            return JsonResponse({'code': 0, "data": [competition.to_dict() for competition in competitions.all()]})
         except Exception as e:
             return JsonResponse(make_errors(str(e)))
 
     def post(self, request):
-        if(not check_input(request.POST, ['name', 'subject', 'groupSize', 'enrollStart', 'enrollEnd', 'detail', 'procedure', 'url', 'charge', 'publisher'])):
+        if not check_input(request.POST, [
+            'name', 'subject', 'groupSize', 'enrollStart', 'enrollEnd',
+            'detail', 'procedure', 'url', 'charge', 'publisher'
+        ]):
             return JsonResponse(make_errors('invalid input'))
         c = Competition(
             name=request.POST.get('name'),
@@ -53,4 +39,105 @@ class ContestView(View):
             c.save()
         except Exception as e:
             return JsonResponse(make_errors(str(e)))
-        return JsonResponse({'code': 0, 'data': 'Success'})
+        return JsonResponse({'code': 0, 'data': c.to_dict()})
+
+
+class ContestDetailView(View):
+    def get(self, request, contest_id):
+        try:
+            c = Competition.objects.get(id=contest_id)
+            info = c.to_dict()
+            return JsonResponse({'code': 0, 'data': info})
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+
+    def post(self):
+        return JsonResponse(make_errors('method not allowed.'))
+
+
+class UserCollectionView(View):
+    def get(self, request):
+        if check_input(request.GET, ['type']):
+            user_type = request.GET['type']
+            if user_type == 'organization':
+                users = User.objects.filter(individual=False)
+            elif user_type == 'contestant':
+                # FIXME will select admins too
+                users = User.objects.filter(individual=True)
+            else:
+                return JsonResponse(make_errors('invalid type'))
+            return JsonResponse({'code': 0, 'data': [user.to_dict() for user in users]})
+        else:
+            return JsonResponse(make_errors('method not allowed'))
+
+    def post(self, request):
+        if not check_input(request.POST, [
+            'username', 'firstName', 'lastName', 'email', 'introduction',
+            'school', 'isIndividual'
+        ]):
+            return JsonResponse(make_errors('invalid input'))
+        u = User(
+            username=request.POST.get['username'],
+            first_name=request.POST.get['firstName'],
+            last_name=request.POST.get['lastName'],
+            email=request.POST.get['email'],
+            introduction=request.POST.get['introduction'],
+            school=request.POST.get['school'],
+            individual=request.POST.get['isIndividual']
+        )
+        try:
+            u.save()
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+        return JsonResponse({'code': 0, 'data': 'success'})
+
+
+class UserDetailView(View):
+    def get(self, request, username):
+        try:
+            u = User.objects.get(username=username)
+            info = u.to_dict()
+            return JsonResponse({'code': 0, 'data': info})
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+
+    def post(self, request):
+        return JsonResponse(make_errors('method not allowed'))
+
+
+class GroupCollectionView(View):
+    def get(self, request):
+        return JsonResponse(make_errors('method not allowed'))
+
+    def post(self, request):
+        if not check_input(request.POST, [
+            'name', 'competitionId', 'leaderName', 'membersName'
+        ]):
+            return JsonResponse(make_errors('invalid input'))
+        try:
+            g = Group(
+                name=request.POST['name'],
+                competition=Competition.objects.get(
+                    id=request.POST['competitionId']),
+                leader=User.objects.get(username=request.POST['leaderName'])
+            )
+            g.save()
+            for member_name in request.POST['membersName']:
+                g.members.add(User.objects.get(username=member_name))
+            g.save()
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+        return JsonResponse({'code': 0, 'data': 'success'})
+
+
+class GroupDetailView(View):
+    def get(self, request, group_id):
+        try:
+            g = Group.objects.get(id=group_id)
+            info = g.to_dict()
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+        return JsonResponse({'code': 0, 'data': info})
+
+    def post(self, request):
+        return JsonResponse(make_errors('method not allowed'))

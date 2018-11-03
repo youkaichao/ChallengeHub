@@ -18,7 +18,7 @@ class UserLoginView(View):
         if(user and user.is_active):
             login(request, user)
             return JsonResponse({'code': 0, 'data': {
-                'name':user.username,
+                'name': user.username,
                 'email': user.email,
                 'introduction': user.introduction,
                 'school': user.school,
@@ -44,7 +44,8 @@ class UserRegisterView(View):
             username=request.POST.get('username'),
             password=request.POST.get('password'),
             email=request.POST.get('email'),
-            individual=not not request.POST.get('individual')
+            individual=True if(request.POST.get('individual')
+                               == 'individual') else False
         )
         user.save()
         login(request, user)

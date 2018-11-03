@@ -81,21 +81,21 @@ export default {
       }
     }
   },
-  created: function() {
-    let self = this
-    this.$http.get('/api/contest', { params: { id: this.$route.params.id } }, { emulateJSON: true }).then(function(response) {
-      self.contest = response.body.data
-      self.procedureList = JSON.parse(self.contest.procedure)
-      for (let i = 0; i < self.procedureList.length; i++) {
-        let prod = self.procedureList[i],
-          endTime = new Date(prod.endTime)
-        if (new Date() <= endTime) {
-          self.procedureActive = i
-          break
-        }
+  created: async function() {
+    let response = await this.$http.get(`/api/contests/${this.$route.params.id}`)
+    this.contest = response.body.data
+    this.procedureList = JSON.parse(this.contest.procedure)
+    for (let i = 0; i < this.procedureList.length; i++) {
+      let prod = this.procedureList[i]
+      let endTime = new Date(prod.endTime)
+      if (new Date() <= endTime) {
+        this.procedureActive = i
+        break
       }
-      if (self.procedureActive == -1) self.procedureActive = self.procedureList.length
-    })
+    }
+    if (this.procedureActive == -1) {
+      this.procedureActive = this.procedureList.length
+    }
   }
 }
 </script>

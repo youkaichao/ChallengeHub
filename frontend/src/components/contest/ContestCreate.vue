@@ -121,22 +121,18 @@ export default {
     }
   },
   methods: {
-    handleCreateContest() {
+    async handleCreateContest() {
       if (this.useDefaultEnrollLink) this.contest.url = ''
       this.contest.enrollStart = formatDate(this.contest.enrollStart)
       this.contest.enrollEnd = formatDate(this.contest.enrollEnd)
       this.contest.procedure = JSON.stringify(this.procedureList)
-      this.$http
-        .post('/api/contest', this.contest, {
-          emulateJSON: true
-        })
-        .then(function(response) {
-          if (response.body.code > 0) {
-            alert('Create cotnest failed with error: ' + response.body.error)
-            return
-          }
-          this.$router.push('/contest/list')
-        })
+
+      let response = await this.$http.post('/api/contests', this.contest, {emulateJSON:true});
+      if (response.body.code > 0) {
+        alert('Create cotnest failed with error: ' + response.body.error);
+        return;
+      }
+      this.$router.push(`/contest/detail/${response.body.data.id}`);
     },
     addProcedure() {
       var procedureItem = {

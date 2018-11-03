@@ -17,7 +17,7 @@
                   <el-input v-model="user.password" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="handleCreateAccount(1)">创建账号</el-button>
+                  <el-button type="primary" @click="handleCreateAccount('individual')">创建账号</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -47,7 +47,7 @@
                   <el-input v-model="user.password" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="handleCreateAccount(0)">创建账号</el-button>
+                  <el-button type="primary" @click="handleCreateAccount('organization')">创建账号</el-button>
                 </el-form-item>
               </el-form>
             </el-col>

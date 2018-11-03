@@ -82,10 +82,9 @@ export default {
         this.$router.push('/')
       })
     },
-    updateList() {
-      this.$http.get('/api/contest').then(function(response) {
-        this.contestList = JSON.parse(response.body.data)
-      })
+    async updateList() {
+      let response = await this.$http.get('/api/contests');
+      this.contestList = response.body.data;
     },
     handleRoute(path) {
       this.$router.push({ name: path })
