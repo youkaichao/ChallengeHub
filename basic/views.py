@@ -11,7 +11,13 @@ from ChallengeHub.utils import *
 class ContestCollectionView(View):
     def get(self, request):
         try:
-            competitions = Competition.objects.all()
+            if 'sortBy' in request.GET.keys():
+                if request.GET['sortBy'] == 'numVotes':
+                    competitions = Competition.objects.all().order_by('-upvote')
+                else:
+                    competitions = Competition.objects.all()
+            else:
+                competitions = Competition.objects.all()
             return JsonResponse({'code': 0, "data": [competition.to_dict() for competition in competitions.all()]})
         except Exception as e:
             return JsonResponse(make_errors(str(e)))

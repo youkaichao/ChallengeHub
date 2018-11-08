@@ -1,7 +1,7 @@
 <template>
   <el-tabs v-model="activeName" tab-position="left">
-    <el-tab-pane :label="user.isOrganizer ? '机构基本信息': '个人基本信息'" name="userInfo">
-      <el-row v-if="!user.isOrganizer">
+    <el-tab-pane :label="user.individual ? '个人基本信息':'机构基本信息'" name="userInfo">
+      <el-row v-if="user.individual">
         <el-col :span="6"></el-col>
         <el-col :span="12">
           <el-row type="flex" align="middle">
@@ -13,13 +13,13 @@
           <el-row type="flex" align="middle">
             <el-col :span="4"><label> 简介 </label></el-col>
             <el-col :span="20">
-              <el-input :value="user.selfDescription"> </el-input>
+              <el-input :value="user.introduction"> </el-input>
             </el-col>
           </el-row>
           <el-row type="flex" align="middle">
             <el-col :span="4"><label> 学校 </label></el-col>
             <el-col :span="20">
-              <el-input :value="user.sourceSchool"> </el-input>
+              <el-input :value="user.school"> </el-input>
             </el-col>
           </el-row>
           <el-row>
@@ -32,7 +32,7 @@
         </el-col>
         <el-col :span="6"></el-col>
       </el-row>
-      <el-row v-if="user.isOrganizer">
+      <el-row v-if="!user.individual">
         <el-col :span="6"></el-col>
         <el-col :span="12">
           <el-row type="flex" align="middle">
@@ -44,7 +44,7 @@
           <el-row type="flex" align="middle">
             <el-col :span="4"><label> 简介 </label></el-col>
             <el-col :span="20">
-              <el-input :value="user.selfDescription"> </el-input>
+              <el-input :value="user.introduction"> </el-input>
             </el-col>
           </el-row>
           <el-row>
@@ -58,14 +58,14 @@
         <el-col :span="6"></el-col>
       </el-row>
     </el-tab-pane>
-    <el-tab-pane v-if="!user.isOrganizer" label="我参与的比赛" name="myContest">
-      <ContestList :data-list="user.myContestList" />
+    <el-tab-pane v-if="user.individual" label="我参与的比赛" name="myContest">
+      <ContestView :data-list="user.myContestView" />
     </el-tab-pane>
-    <el-tab-pane v-if="!user.isOrganizer" label="我评审的比赛" name="contestIReview">
-      <ContestList :data-list="user.contestIReviewList" />
+    <el-tab-pane v-if="user.individual" label="我评审的比赛" name="contestIReview">
+      <ContestView :data-list="user.contestIReviewList" />
     </el-tab-pane>
-    <el-tab-pane v-if="user.isOrganizer" label="我发起的比赛" name="contestILaunch">
-      <ContestList :data-list="user.contestIReviewList" />
+    <el-tab-pane v-if="!user.individual" label="我发起的比赛" name="contestILaunch">
+      <ContestView :data-list="user.contestIReviewList" />
     </el-tab-pane>
     <el-tab-pane label="修改密码" name="resetPassword">
       <el-row>
@@ -103,20 +103,21 @@
   </el-tabs>
 </template>
 <script>
-import ContestList from '@/components/contest/ContestList'
+import ContestView from '@/components/contest/ContestView'
 export default {
   name: 'User',
   data() {
     return {
       activeName: 'userInfo',
       user: {
-        username: this.$store.state.usename,
+        username: this.$store.state.username,
         email: this.$store.state.email,
-        selfDescription: this.$store.state.selfDescription,
-        sourceSchool: this.$store.state.sourceSchool,
+        introduction: this.$store.state.introduction,
+        school: this.$store.state.school,
+        individual: this.$store.state.individual,
         oldPassword: '',
         newPassword: '',
-        myContestList: [
+        myContestView: [
           {
             name: '',
             subject: '',
@@ -124,8 +125,7 @@ export default {
           }
         ],
         contestIReviewList: [],
-        contestILaunch: [],
-        isOrganizer: this.$store.state.isOrganizer
+        contestILaunch: []
       }
     }
   },
@@ -134,7 +134,7 @@ export default {
     handleResetPassword() {}
   },
   components: {
-    ContestList
+    ContestView
   }
 }
 </script>

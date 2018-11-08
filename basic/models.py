@@ -11,6 +11,7 @@ class Competition(models.Model):
     enroll_end = models.DateTimeField(default=timezone.now)
     detail = models.TextField(default='')
     procedure = models.TextField(default='')
+    img_url = models.URLField(default='')
     url = models.URLField(default='')
     charge = models.IntegerField(default=0)
     upvote = models.IntegerField(default=0)
@@ -31,6 +32,7 @@ class Competition(models.Model):
             'enrollEnd': self.enroll_end,
             'detail': self.detail,
             'procedure': self.procedure,
+            'imgUrl': self.img_url,
             'url': self.url,
             'charge': self.charge,
             'upvote': self.upvote,

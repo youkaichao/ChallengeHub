@@ -4,7 +4,7 @@ import Main from '@/components/Main'
 import Index from '@/components/Index'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
-import ContestList from '@/components/contest/ContestList'
+import ContestView from '@/components/contest/ContestView'
 import ContestCreate from '@/components/contest/ContestCreate'
 import ContestDetail from '@/components/contest/ContestDetail'
 import User from '@/components/User'
@@ -31,7 +31,7 @@ export default new Router({
         {
           path: 'contest/list',
           name: '/contest/list',
-          component: ContestList
+          component: ContestView
         },
         {
           path: 'contest/detail/:id',

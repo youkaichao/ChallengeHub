@@ -25,6 +25,7 @@ __pycache__/
 
 # Config file
 config.json
+.prettierrc
 
 # virtual env
 env
