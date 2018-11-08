@@ -173,16 +173,14 @@
 {
   name: str,
   leaderName: str,
-  members:
-  [
-    {
-      name: str,
-    }
-  ],
+  members: [str],
+  form: str,
 }
 ```
 
 返回数据: 无
+
+其中 `members` 字段是队伍成员用户名的列表, `form` 字段是队伍填写的报名表单的 json
 
 ***
 

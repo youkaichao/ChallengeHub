@@ -6,6 +6,7 @@ from django.core import serializers
 from basic.models import Competition, Group
 from useraction.models import User
 from ChallengeHub.utils import *
+from ChallengeHub.settings import MONGO_CLIENT
 
 
 class ContestCollectionView(View):
@@ -25,7 +26,7 @@ class ContestCollectionView(View):
     def post(self, request):
         if not check_input(request.POST, [
             'name', 'subject', 'groupSize', 'enrollStart', 'enrollEnd',
-            'detail', 'procedure', 'url', 'charge', 'publisher'
+            'detail', 'procedure', 'url', 'charge', 'publisher', 'enrollForm'
         ]):
             return JsonResponse(make_errors('invalid input'))
         c = Competition(
@@ -43,6 +44,10 @@ class ContestCollectionView(View):
             p = User.objects.get(username=request.POST.get('publisher'))
             c.publisher = p
             c.save()
+            collection = MONGO_CLIENT.competition.enrollForm
+            collection.insert_one(
+                {'id': c.id, 'enrollForm': request.POST.get('enrollForm')})
+
         except Exception as e:
             return JsonResponse(make_errors(str(e)))
         return JsonResponse({'code': 0, 'data': c.to_dict()})
@@ -58,7 +63,38 @@ class ContestDetailView(View):
             return JsonResponse(make_errors(str(e)))
 
     def post(self):
-        return JsonResponse(make_errors('method not allowed.'))
+        return JsonResponse(make_errors('method not allowed'))
+
+
+class ContestEnrollView(View):
+    def get(self, request, contest_id):
+        try:
+            collection = MONGO_CLIENT.contest.enrollForm
+            data = collection.find_one({'id': int(contest_id)})
+            return JsonResponse({'code': 0, 'data': {'enrollForm': data.enrollForm}})
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+
+    def post(self, request, contest_id):
+        if not check_input(request.POST, ['name', 'leaderName', 'members[]', 'enrollForm']):
+            return JsonResponse(make_errors('invalid input'))
+        try:
+            group = Group(
+                name=request.POST.get('name'),
+                competition=Competition.objects.get(id=contest_id),
+                leader=User.objects.get(
+                    username=request.POST.get('leaderName'))
+            )
+            group.save()
+            collection = MONGO_CLIENT.group.enrollForm
+            collection.insert_one(
+                {'id': group.id, 'enrollForm': request.POST.get('enrollForm')})
+            members = request.POST.getlist('members[]')
+            for member in members:
+                group.members.add(User.objects.get(username=member))
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+        return JsonResponse({'code': 0, 'data': 'success'})
 
 
 class UserCollectionView(View):

@@ -130,7 +130,8 @@ export default {
         imgUrl: null,
         url: null,
         charge: null,
-        publisher: 'Aerys'
+        publisher: 'Aerys',
+        enrollForm: 'hehe'
       }
     }
   },

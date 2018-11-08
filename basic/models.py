@@ -16,7 +16,8 @@ class Competition(models.Model):
     charge = models.IntegerField(default=0)
     upvote = models.IntegerField(default=0)
     downvote = models.IntegerField(default=0)
-    publisher = models.ForeignKey(User, on_delete=models.PROTECT, related_name='published_competitions')
+    publisher = models.ForeignKey(
+        User, on_delete=models.PROTECT, related_name='published_competitions')
     judges = models.ManyToManyField(User, related_name='judge_in_competitions')
 
     def __str__(self):
@@ -61,8 +62,10 @@ class Notice(models.Model):
 class Group(models.Model):
     name = models.CharField(max_length=32, blank=False)
     competition = models.ForeignKey(Competition, on_delete=models.PROTECT)
-    leader = models.ForeignKey(User, on_delete=models.PROTECT, related_name='lead_in_competitions')
-    members = models.ManyToManyField(User, related_name='attended_competitions')
+    leader = models.ForeignKey(
+        User, on_delete=models.PROTECT, related_name='lead_in_competitions')
+    members = models.ManyToManyField(
+        User, related_name='attended_competitions')
     commit_path = models.FilePathField(blank=True)
     rank = models.TextField()
 

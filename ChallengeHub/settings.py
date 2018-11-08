@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import json
+import pymongo
 
 travis = os.getenv('BUILD_ON_TRAVIS', None)
 
@@ -24,6 +25,9 @@ else:
     configFileName = 'config.json'
 
 CONFIGS = json.loads(open(os.path.join(BASE_DIR, configFileName)).read())
+
+MONGO_CLIENT = pymongo.MongoClient(
+    CONFIGS['MONGO_HOST'], CONFIGS['MONGO_PORT'])
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend", "dist", "static"),
