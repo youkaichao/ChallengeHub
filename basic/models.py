@@ -18,7 +18,7 @@ class Competition(models.Model):
     downvote = models.IntegerField(default=0)
     publisher = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name='published_competitions')
-    judges = models.ManyToManyField(User, related_name='judge_in_competitions')
+    judges = models.ManyToManyField(User, related_name='judged_competitions')
 
     def __str__(self):
         return self.name
@@ -63,9 +63,9 @@ class Group(models.Model):
     name = models.CharField(max_length=32, blank=False)
     competition = models.ForeignKey(Competition, on_delete=models.PROTECT)
     leader = models.ForeignKey(
-        User, on_delete=models.PROTECT, related_name='lead_in_competitions')
+        User, on_delete=models.PROTECT, related_name='lead_groups')
     members = models.ManyToManyField(
-        User, related_name='attended_competitions')
+        User, related_name='joint_groups')
     commit_path = models.FilePathField(blank=True)
     rank = models.TextField()
 

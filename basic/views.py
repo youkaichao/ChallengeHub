@@ -147,6 +147,54 @@ class UserDetailView(View):
         return JsonResponse(make_errors('method not allowed'))
 
 
+class UserCreatedView(View):
+    def get(self, request):
+        if(not check_input(request.data, ['username'])):
+            return JsonResponse(make_errors('invalid input'))
+        try:
+            user = User.objects.get(username=request.data['username'])
+            competitions = user.published_competitions.all()
+            return JsonResponse({'code': 0, "data": [
+                competition.to_dict() for competition in competitions]})
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+
+    def post(self, request):
+        return JsonResponse(make_errors('method not allowed'))
+
+
+class UserEnrolledView(View):
+    def get(self, request):
+        if(not check_input(request.data, ['username'])):
+            return JsonResponse(make_errors('invalid input'))
+        try:
+            user = User.objects.get(username=request.data['username'])
+            groups = user.joint_groups.all()
+            return JsonResponse({'code': 0, "data": [
+                group.competition.to_dict() for group in groups]})
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+
+    def post(self, request):
+        return JsonResponse(make_errors('method not allowed'))
+
+
+class UserJudgedView(View):
+    def get(self, request):
+        if(not check_input(request.data, ['username'])):
+            return JsonResponse(make_errors('invalid input'))
+        try:
+            user = User.objects.get(username=request.data['username'])
+            competitions = user.judged_competitions.all()
+            return JsonResponse({'code': 0, "data": [
+                competition.to_dict() for competition in competitions]})
+        except Exception as e:
+            return JsonResponse(make_errors(str(e)))
+
+    def post(self, request):
+        return JsonResponse(make_errors('method not allowed'))
+
+
 class GroupCollectionView(View):
     def get(self, request):
         return JsonResponse(make_errors('method not allowed'))

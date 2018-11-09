@@ -11,6 +11,11 @@
     - [POST /auth/login/](#post-authlogin)
     - [POST /auth/register/](#post-authregister)
     - [POST /auth/logout/](#post-authlogout)
+    - [GET /api/users](#get-apiusers)
+    - [GET /api/users/<username\>](#get-apiusersusername)
+    - [GET /api/users/created](#get-apiuserscreated)
+    - [GET /api/users/enrolled](#get-apiusersenrolled)
+    - [GET /users/judged](#get-usersjudged)
   - [未完成](#%E6%9C%AA%E5%AE%8C%E6%88%90)
     - [GET /api/contests/<contest-id>/submissions&status=unfinished](#get-apicontestscontest-idsubmissionsstatusunfinished)
     - [GET /api/contests/<contest-id>/submissions/<submission_id>](#get-apicontestscontest-idsubmissionssubmissionid)
@@ -18,9 +23,6 @@
     - [POST /api/contests/<contest-id>/reviewers](#post-apicontestscontest-idreviewers)
     - [POST /api/contests/<contest-id>/allocate](#post-apicontestscontest-idallocate)
     - [POST /api/contests/<contest-id>/reviewers/adjust?username=username&num=num](#post-apicontestscontest-idreviewersadjustusernameusernamenumnum)
-    - [GET /users?type=[organization | contestant]](#get-userstypeorganization--contestant)
-    - [POST /users](#post-users)
-    - [GET /users/<username\>](#get-usersusername)
     - [GET /groups](#get-groups)
     - [POST /groups](#post-groups)
     - [POST /groups/<group_id>/submission](#post-groupsgroupidsubmission)
@@ -153,7 +155,7 @@
 
 返回数据:
 
-```
+```javascript
 {
   enrollForm: str
 }
@@ -256,6 +258,175 @@
 
 ***
 
+### GET /api/users
+
+权限要求: 已登录
+
+功能描述: 获取所有的个人/机构账号
+
+传入参数:
+
+```javascript
+{
+  type: str,
+}
+```
+
+返回参数:
+
+```javascript
+[
+  {
+    username: str,
+    firstName: str,
+    lastName: str,
+    email: str,
+    introduction: str,
+    school: str,
+    isIndividual: bool
+  }
+]
+```
+
+其中 `type` 为 `individual` 表示获取个人账号, `organization` 表示获取机构账号
+
+***
+
+### GET /api/users/<username\>
+
+权限要求: 已登录
+
+功能描述: 获取用户详细信息
+
+传入参数: 无
+
+返回参数:
+
+```javascript
+{
+  username: str,
+  firstName: str,
+  lastName: str,
+  email: str,
+  introduction: str,
+  school: str,
+  isIndividual: bool,
+}
+```
+
+***
+
+### GET /api/users/created
+
+权限要求: 已登录
+
+功能描述: 获取用户创建的比赛
+
+传入参数:
+```javascript
+{
+  username: str,
+}
+```
+返回参数:
+
+```javascript
+[
+  {
+    id: int,
+    name: str,
+    subject: str,
+    groupSize: int,
+    enrollStart: str,
+    enrollEnd: str,
+    detail: str,
+    procedure: str,
+    url: str,
+    charge: int,
+    upvote: int,
+    downvote: int,
+    publisher: str,
+  }
+]
+```
+
+***
+
+### GET /api/users/enrolled
+
+权限要求: 已登录
+
+功能描述: 获取用户参加的比赛
+
+传入参数:
+```javascript
+{
+  username: str,
+}
+```
+
+返回参数:
+
+```javascript
+[
+  {
+    id: int,
+    name: str,
+    subject: str,
+    groupSize: int,
+    enrollStart: str,
+    enrollEnd: str,
+    detail: str,
+    procedure: str,
+    url: str,
+    charge: int,
+    upvote: int,
+    downvote: int,
+    publisher: str,
+  }
+]
+```
+
+***
+
+### GET /users/judged
+
+权限要求: 已登录
+
+功能描述: 获取用户评审的比赛
+
+传入参数:
+
+```javascript
+{
+  username: str,
+}
+```
+
+返回参数:
+
+```javascript
+[
+  {
+    id: int,
+    name: str,
+    subject: str,
+    groupSize: int,
+    enrollStart: str,
+    enrollEnd: str,
+    detail: str,
+    procedure: str,
+    url: str,
+    charge: int,
+    upvote: int,
+    downvote: int,
+    publisher: str,
+  }
+]
+```
+
+***
+
 ## 未完成
 
 
@@ -298,23 +469,6 @@
 
 ***
 
-### GET /users?type=[organization | contestant]
-
-TBD
-
-***
-
-### POST /users
-
-TBD
-
-***
-
-### GET /users/<username\>
-
-TBD
-
-***
 
 ### GET /groups
 
