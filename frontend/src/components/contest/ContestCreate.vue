@@ -130,7 +130,7 @@ export default {
         imgUrl: null,
         url: null,
         charge: null,
-        publisher: 'Aerys',
+        publisher: this.$store.state.username,
         enrollForm: 'hehe'
       }
     }
@@ -142,7 +142,7 @@ export default {
       this.contest.enrollEnd = formatDate(this.contest.enrollEnd)
       this.contest.procedure = JSON.stringify(this.procedureList)
       this.contest.enrollForm = JSON.stringify(this.extraFields)
-      let response = await this.$http.post('/api/contests', this.contest, { emulateJSON: true })
+      let response = await this.$http.post('/api/contests', this.contest, { emulateJSON: false })
       if (response.body.code > 0) {
         alert('Create cotnest failed with error: ' + response.body.error)
         return

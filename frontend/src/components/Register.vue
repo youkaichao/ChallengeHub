@@ -89,7 +89,7 @@ export default {
       this.user.individual = type
       this.$http
         .post('/auth/register', this.user, {
-          emulateJSON: true
+          emulateJSON: false
         })
         .then(function(response) {
           if (response.data.code > 0) {

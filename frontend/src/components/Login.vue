@@ -41,7 +41,7 @@ export default {
     handleLogin() {
       this.$http
         .post('/auth/login', this.account, {
-          emulateJSON: true
+          emulateJSON: false
         })
         .then(function(response) {
           if (response.body.code > 0) {

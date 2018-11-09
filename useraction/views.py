@@ -1,20 +1,19 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from django.views.generic import View
 from django.contrib.auth import logout, authenticate, login
 from useraction.models import User
 from ChallengeHub.utils import *
-
+from ChallengeHub.utils import BaseView as View
 
 class UserLoginView(View):
     def get(self, request):
         return JsonResponse(make_errors('no such method'))
 
     def post(self, request):
-        if(not check_input(request.POST, ['username', 'password'])):
+        if(not check_input(request.data, ['username', 'password'])):
             return JsonResponse(make_errors('invalid input'))
         user = authenticate(
-            username=request.POST.get('username'), password=request.POST.get('password'))
+            username=request.data.get('username'), password=request.data.get('password'))
         if(user and user.is_active):
             login(request, user)
             return JsonResponse({'code': 0, 'data': {
@@ -34,17 +33,17 @@ class UserRegisterView(View):
 
     def post(self, request):
         available = check_input(
-            request.POST, ['username', 'password', 'email', 'individual'])
+            request.data, ['username', 'password', 'email', 'individual'])
         if(not available):
             return JsonResponse(make_errors('Invalid input'))
-        user = User.objects.filter(username=request.POST.get('username'))
+        user = User.objects.filter(username=request.data.get('username'))
         if(user):
             return JsonResponse(make_errors('username already exists'))
         user = User.objects.create_user(
-            username=request.POST.get('username'),
-            password=request.POST.get('password'),
-            email=request.POST.get('email'),
-            individual=True if(request.POST.get('individual')
+            username=request.data.get('username'),
+            password=request.data.get('password'),
+            email=request.data.get('email'),
+            individual=True if(request.data.get('individual')
                                == 'individual') else False
         )
         user.save()

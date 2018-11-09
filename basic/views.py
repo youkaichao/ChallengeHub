@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core import serializers
-from django.views.generic import View
 from django.core import serializers
 from basic.models import Competition, Group
 from useraction.models import User
 from ChallengeHub.utils import *
+from ChallengeHub.utils import BaseView as View
 from ChallengeHub.settings import MONGO_CLIENT
 
 
@@ -24,29 +24,29 @@ class ContestCollectionView(View):
             return JsonResponse(make_errors(str(e)))
 
     def post(self, request):
-        if not check_input(request.POST, [
+        if not check_input(request.data, [
             'name', 'subject', 'groupSize', 'enrollStart', 'enrollEnd',
             'detail', 'procedure', 'url', 'charge', 'publisher', 'enrollForm'
         ]):
             return JsonResponse(make_errors('invalid input'))
         c = Competition(
-            name=request.POST.get('name'),
-            subject=request.POST.get('subject'),
-            group_size=request.POST.get('groupSize'),
-            enroll_start=request.POST.get('enrollStart'),
-            enroll_end=request.POST.get('enrollEnd'),
-            detail=request.POST.get('detail'),
-            procedure=request.POST.get('procedure'),
-            url=request.POST.get('url'),
-            charge=request.POST.get('charge'),
+            name=request.data.get('name'),
+            subject=request.data.get('subject'),
+            group_size=request.data.get('groupSize'),
+            enroll_start=request.data.get('enrollStart'),
+            enroll_end=request.data.get('enrollEnd'),
+            detail=request.data.get('detail'),
+            procedure=request.data.get('procedure'),
+            url=request.data.get('url'),
+            charge=request.data.get('charge'),
         )
         try:
-            p = User.objects.get(username=request.POST.get('publisher'))
+            p = User.objects.get(username=request.data.get('publisher'))
             c.publisher = p
             c.save()
             collection = MONGO_CLIENT.competition.enrollForm
             collection.insert_one(
-                {'id': c.id, 'enrollForm': request.POST.get('enrollForm')})
+                {'id': c.id, 'enrollForm': request.data.get('enrollForm')})
 
         except Exception as e:
             return JsonResponse(make_errors(str(e)))
@@ -69,27 +69,27 @@ class ContestDetailView(View):
 class ContestEnrollView(View):
     def get(self, request, contest_id):
         try:
-            collection = MONGO_CLIENT.contest.enrollForm
+            collection = MONGO_CLIENT.competition.enrollForm
             data = collection.find_one({'id': int(contest_id)})
-            return JsonResponse({'code': 0, 'data': {'enrollForm': data.enrollForm}})
+            return JsonResponse({'code': 0, 'data': {'enrollForm': data['enrollForm']}})
         except Exception as e:
             return JsonResponse(make_errors(str(e)))
 
     def post(self, request, contest_id):
-        if not check_input(request.POST, ['name', 'leaderName', 'members[]', 'enrollForm']):
+        if not check_input(request.data, ['name', 'leaderName', 'members', 'enrollForm']):
             return JsonResponse(make_errors('invalid input'))
         try:
             group = Group(
-                name=request.POST.get('name'),
+                name=request.data.get('name'),
                 competition=Competition.objects.get(id=contest_id),
                 leader=User.objects.get(
-                    username=request.POST.get('leaderName'))
+                    username=request.data.get('leaderName'))
             )
             group.save()
             collection = MONGO_CLIENT.group.enrollForm
             collection.insert_one(
-                {'id': group.id, 'enrollForm': request.POST.get('enrollForm')})
-            members = request.POST.getlist('members[]')
+                {'id': group.id, 'enrollForm': request.data.get('enrollForm')})
+            members = request.data.get('members')
             for member in members:
                 group.members.add(User.objects.get(username=member))
         except Exception as e:
@@ -113,19 +113,19 @@ class UserCollectionView(View):
             return JsonResponse(make_errors('method not allowed'))
 
     def post(self, request):
-        if not check_input(request.POST, [
+        if not check_input(request.data, [
             'username', 'firstName', 'lastName', 'email', 'introduction',
             'school', 'isIndividual'
         ]):
             return JsonResponse(make_errors('invalid input'))
         u = User(
-            username=request.POST.get['username'],
-            first_name=request.POST.get['firstName'],
-            last_name=request.POST.get['lastName'],
-            email=request.POST.get['email'],
-            introduction=request.POST.get['introduction'],
-            school=request.POST.get['school'],
-            individual=request.POST.get['isIndividual']
+            username=request.data.get['username'],
+            first_name=request.data.get['firstName'],
+            last_name=request.data.get['lastName'],
+            email=request.data.get['email'],
+            introduction=request.data.get['introduction'],
+            school=request.data.get['school'],
+            individual=request.data.get['isIndividual']
         )
         try:
             u.save()
@@ -152,19 +152,19 @@ class GroupCollectionView(View):
         return JsonResponse(make_errors('method not allowed'))
 
     def post(self, request):
-        if not check_input(request.POST, [
+        if not check_input(request.data, [
             'name', 'competitionId', 'leaderName', 'membersName'
         ]):
             return JsonResponse(make_errors('invalid input'))
         try:
             g = Group(
-                name=request.POST['name'],
+                name=request.data['name'],
                 competition=Competition.objects.get(
-                    id=request.POST['competitionId']),
-                leader=User.objects.get(username=request.POST['leaderName'])
+                    id=request.data['competitionId']),
+                leader=User.objects.get(username=request.data['leaderName'])
             )
             g.save()
-            for member_name in request.POST['membersName']:
+            for member_name in request.data['membersName']:
                 g.members.add(User.objects.get(username=member_name))
             g.save()
         except Exception as e:

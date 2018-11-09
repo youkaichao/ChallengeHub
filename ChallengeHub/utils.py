@@ -1,3 +1,5 @@
+import json
+from django.views.generic import View
 from django.http import JsonResponse
 
 
@@ -22,3 +24,17 @@ def require_logged_in(func):
         else:
             return func(self, request)
     return new_func
+
+
+class BaseView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if request.content_type == 'application/json':
+            request.data = json.loads(request.body)
+        return self.do_dispatch(request, *args, **kwargs)
+
+    def do_dispatch(self, *args, **kwargs):
+        handler = getattr(self, self.request.method.lower(), None)
+        if not callable(handler):
+            return self.http_method_not_allowed()
+        else:
+            return handler(*args, **kwargs)
