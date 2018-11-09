@@ -28,7 +28,10 @@ def require_logged_in(func):
 
 class BaseView(View):
     def dispatch(self, request, *args, **kwargs):
-        if request.content_type == 'application/json':
+        request.data = {}
+        if request.method == 'GET':
+            request.data = request.GET.dict()
+        elif request.content_type == 'application/json':
             request.data = json.loads(request.body)
         return self.do_dispatch(request, *args, **kwargs)
 

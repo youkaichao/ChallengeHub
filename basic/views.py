@@ -12,8 +12,8 @@ from ChallengeHub.settings import MONGO_CLIENT
 class ContestCollectionView(View):
     def get(self, request):
         try:
-            if 'sortBy' in request.GET.keys():
-                if request.GET['sortBy'] == 'numVotes':
+            if 'sortBy' in request.data.keys():
+                if request.data['sortBy'] == 'numVotes':
                     competitions = Competition.objects.all().order_by('-upvote')
                 else:
                     competitions = Competition.objects.all()
@@ -99,8 +99,8 @@ class ContestEnrollView(View):
 
 class UserCollectionView(View):
     def get(self, request):
-        if check_input(request.GET, ['type']):
-            user_type = request.GET['type']
+        if check_input(request.data, ['type']):
+            user_type = request.data['type']
             if user_type == 'organization':
                 users = User.objects.filter(individual=False)
             elif user_type == 'contestant':

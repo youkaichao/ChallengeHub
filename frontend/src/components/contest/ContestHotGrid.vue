@@ -54,7 +54,9 @@ export default {
     'contest-card': ContestCard
   },
   async created() {
-    let response = await this.$http.get('/api/contests?sortBy=numVotes')
+    let response = await this.$http.get('/api/contests', {
+      params: { sortBy: 'numVotes' }
+    })
     this.contestsInfo = response.body.data
   },
   data: function() {
