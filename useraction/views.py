@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth import logout, authenticate, login
 from useraction.models import User
-from ChallengeHub.utils import *
+from ChallengeHub.utils import check_input, make_errors
 from ChallengeHub.utils import BaseView as View
+
 
 class UserLoginView(View):
     def get(self, request):

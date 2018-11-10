@@ -39,18 +39,14 @@ export default {
   },
   methods: {
     handleLogin() {
-      this.$http
-        .post('/auth/login', this.account, {
-          emulateJSON: false
-        })
-        .then(function(response) {
-          if (response.body.code > 0) {
-            alert('Login failed with error: ' + response.body.error)
-            return
-          }
-          this.$store.commit('login', response.body.data)
-          this.$router.push('/user')
-        })
+      this.$http.post('/auth/login', this.account).then(function(response) {
+        if (response.body.code > 0) {
+          alert('Login failed with error: ' + response.body.error)
+          return
+        }
+        this.$store.commit('login', response.body.data)
+        this.$router.push('/user')
+      })
     },
     handleRegister() {
       this.$router.push('/register')

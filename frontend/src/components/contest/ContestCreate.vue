@@ -45,7 +45,7 @@
         </el-col>
         <el-col :span="6">若否，请输入报名网站链接</el-col>
         <el-col :span="6">
-          <el-input v-model="contest.url" :disabled="useDefaultEnrollLink" placeholder="请输入内容"></el-input>
+          <el-input v-model="contest.enrollUrl" :disabled="useDefaultEnrollLink" placeholder="请输入内容"></el-input>
         </el-col>
       </el-form-item>
     </el-row>
@@ -128,21 +128,26 @@ export default {
         procedure: null,
         enrollForm: null,
         imgUrl: null,
-        url: null,
+        enrollUrl: null,
         charge: null,
-        publisher: this.$store.state.username,
-        enrollForm: 'hehe'
+        publisher: this.$store.state.username
       }
     }
   },
   methods: {
     async handleCreateContest() {
-      if (this.useDefaultEnrollLink) this.contest.url = ''
+      if (this.useDefaultEnrollLink) this.contest.enrollUrl = ''
       this.contest.enrollStart = formatDate(this.contest.enrollStart)
       this.contest.enrollEnd = formatDate(this.contest.enrollEnd)
       this.contest.procedure = JSON.stringify(this.procedureList)
-      this.contest.enrollForm = JSON.stringify(this.extraFields)
-      let response = await this.$http.post('/api/contests', this.contest, { emulateJSON: false })
+
+      let enrollForm = {}
+      for (let extraField of this.extraFields) {
+        enrollForm[extraField.label] = extraField.description
+      }
+
+      this.contest.enrollForm = JSON.stringify(enrollForm)
+      let response = await this.$http.post('/api/contests', this.contest)
       if (response.body.code > 0) {
         alert('Create cotnest failed with error: ' + response.body.error)
         return

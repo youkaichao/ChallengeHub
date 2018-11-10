@@ -26,7 +26,7 @@ class ContestCollectionView(View):
     def post(self, request):
         if not check_input(request.data, [
             'name', 'subject', 'groupSize', 'enrollStart', 'enrollEnd',
-            'detail', 'procedure', 'url', 'charge', 'publisher', 'enrollForm'
+            'detail', 'procedure', 'enrollUrl', 'charge', 'publisher', 'enrollForm', 'imgUrl',
         ]):
             return JsonResponse(make_errors('invalid input'))
         c = Competition(
@@ -37,8 +37,9 @@ class ContestCollectionView(View):
             enroll_end=request.data.get('enrollEnd'),
             detail=request.data.get('detail'),
             procedure=request.data.get('procedure'),
-            url=request.data.get('url'),
+            enroll_url=request.data.get('enrollUrl'),
             charge=request.data.get('charge'),
+            img_url=request.data.get('imgUrl'),
         )
         try:
             p = User.objects.get(username=request.data.get('publisher'))
@@ -47,7 +48,9 @@ class ContestCollectionView(View):
             collection = MONGO_CLIENT.competition.enrollForm
             collection.insert_one(
                 {'id': c.id, 'enrollForm': request.data.get('enrollForm')})
-
+            if(not c.enroll_url):
+                c.enroll_url = '/contest/enroll/{}'.format(c.id)
+                c.save()
         except Exception as e:
             return JsonResponse(make_errors(str(e)))
         return JsonResponse({'code': 0, 'data': c.to_dict()})
@@ -76,7 +79,7 @@ class ContestEnrollView(View):
             return JsonResponse(make_errors(str(e)))
 
     def post(self, request, contest_id):
-        if not check_input(request.data, ['name', 'leaderName', 'members', 'enrollForm']):
+        if not check_input(request.data, ['name', 'leaderName', 'members', 'form']):
             return JsonResponse(make_errors('invalid input'))
         try:
             group = Group(
@@ -88,8 +91,8 @@ class ContestEnrollView(View):
             group.save()
             collection = MONGO_CLIENT.group.enrollForm
             collection.insert_one(
-                {'id': group.id, 'enrollForm': request.data.get('enrollForm')})
-            members = request.data.get('members')
+                {'id': group.id, 'enrollForm': request.data['form']})
+            members = request.data['members']
             for member in members:
                 group.members.add(User.objects.get(username=member))
         except Exception as e:

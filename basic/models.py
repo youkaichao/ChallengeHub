@@ -12,7 +12,7 @@ class Competition(models.Model):
     detail = models.TextField(default='')
     procedure = models.TextField(default='')
     img_url = models.URLField(default='')
-    url = models.URLField(default='')
+    enroll_url = models.URLField(default='')
     charge = models.IntegerField(default=0)
     upvote = models.IntegerField(default=0)
     downvote = models.IntegerField(default=0)
@@ -34,7 +34,7 @@ class Competition(models.Model):
             'detail': self.detail,
             'procedure': self.procedure,
             'imgUrl': self.img_url,
-            'url': self.url,
+            'enrollUrl': self.enroll_url,
             'charge': self.charge,
             'upvote': self.upvote,
             'downvote': self.downvote,

@@ -20,7 +20,7 @@
           <el-step :title="value.name" v-for="(value, index) in procedureList" :key="index">{{ value.name }}</el-step>
         </el-steps>
         <el-row>
-          <el-button type="primary"><a :href="contest.url">立即报名</a></el-button>
+          <el-button type="primary" @click="handleRoute(contest.enrollUrl)">立即报名</el-button>
         </el-row>
       </el-col>
       <el-col :span="6">
@@ -73,12 +73,17 @@ export default {
         enrollEnd: null,
         detail: null,
         procedure: null,
-        url: null,
+        enrollUrl: null,
         charge: 0,
         upvote: null,
         downvote: null,
         publisher: null
       }
+    }
+  },
+  methods: {
+    handleRoute(path) {
+      this.$router.push(path)
     }
   },
   created: async function() {

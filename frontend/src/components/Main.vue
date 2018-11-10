@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     handleLogout() {
-      this.$http.post('/auth/logout').then(function(response) {
+      this.$http.post('/auth/logout', {}).then(function(response) {
         if (response.body.code > 0) {
           alert('Logout faild with error: ' + response.body.error)
           return

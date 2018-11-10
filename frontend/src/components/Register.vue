@@ -87,18 +87,14 @@ export default {
   methods: {
     handleCreateAccount(type) {
       this.user.individual = type
-      this.$http
-        .post('/auth/register', this.user, {
-          emulateJSON: false
-        })
-        .then(function(response) {
-          if (response.data.code > 0) {
-            alert('Register failed with error: ' + response.data.error)
-            return
-          }
-          this.$store.commit('login', response.body.data)
-          this.$router.push('/user')
-        })
+      this.$http.post('/auth/register', this.user).then(function(response) {
+        if (response.data.code > 0) {
+          alert('Register failed with error: ' + response.data.error)
+          return
+        }
+        this.$store.commit('login', response.body.data)
+        this.$router.push('/user')
+      })
     },
     handleClick(tab) {
       this.activeTab = tab.name
