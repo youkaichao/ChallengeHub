@@ -2,17 +2,13 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth import logout, authenticate, login
 from useraction.models import User
-from ChallengeHub.utils import check_input, make_errors
+from ChallengeHub.utils import make_errors
 from ChallengeHub.utils import BaseView as View
 
 
 class UserLoginView(View):
-    def get(self, request):
-        return JsonResponse(make_errors('no such method'))
-
     def post(self, request):
-        if(not check_input(request.data, ['username', 'password'])):
-            return JsonResponse(make_errors('invalid input'))
+        self.check_input(['username', 'password'])
         user = authenticate(
             username=request.data.get('username'), password=request.data.get('password'))
         if(user and user.is_active):
@@ -29,14 +25,8 @@ class UserLoginView(View):
 
 
 class UserRegisterView(View):
-    def get(self, request):
-        return JsonResponse(make_errors('no such method'))
-
     def post(self, request):
-        available = check_input(
-            request.data, ['username', 'password', 'email', 'individual'])
-        if(not available):
-            return JsonResponse(make_errors('Invalid input'))
+        self.check_input(['username', 'password', 'email', 'individual'])
         user = User.objects.filter(username=request.data.get('username'))
         if(user):
             return JsonResponse(make_errors('username already exists'))
@@ -59,9 +49,6 @@ class UserRegisterView(View):
 
 
 class UserLogoutView(View):
-    def get(self, request):
-        return JsonResponse(make_errors('no such method'))
-
     def post(self, request):
         logout(request)
         return JsonResponse({'code': 0, 'data': 'success'})
