@@ -43,16 +43,56 @@ class ContestCollectionView(View):
         collection = MONGO_CLIENT.competition.enrollForm
         collection.insert_one(
             {'id': c.id, 'enrollForm': request.data.get('enrollForm')})
+        collection = MONGO_CLIENT.competition.stage
+        collection.insert_one(
+            {'id': c.id, 'stage': 0})
         if(not c.enroll_url):
             c.enroll_url = '/contest/enroll/{}'.format(c.id)
             c.save()
         return JsonResponse({'code': 0, 'data': c.to_dict()})
+
 
 class ContestDetailView(View):
     def get(self, request, contest_id):
         c = Competition.objects.get(id=contest_id)
         info = c.to_dict()
         return JsonResponse({'code': 0, 'data': info})
+
+
+class ContestStageView(View):
+    def post(self, request, contest_id):
+        self.check_input(['stage'])
+        collection = MONGO_CLIENT.competition.stage
+        collection.find_one_and_update({'id': int(contest_id)}, {
+                                       '$set': {'stage': request.data['stage']}})
+        return JsonResponse({'code': 0, 'data': 'success'})
+
+    def get(self, request, contest_id):
+        collection = MONGO_CLIENT.competition.stage
+        data = collection.find_one({'id': int(contest_id)})
+        return JsonResponse({'code': 0, 'data': {'stage': data['stage']}})
+
+
+class GroupStageView(View):
+    def post(self, request, contest_id):
+        self.check_input(['group_ids', 'stage'])
+        stage = request.data['stage']
+        collection = MONGO_CLIENT.group.stage
+        with MONGO_CLIENT.start_session() as session:
+            with session.start_transaction():
+                for id in request.data['group_ids']:
+                    collection.find_one_and_update(
+                        {'id': id}, {'$set': {'stage': stage}})
+        return JsonResponse({'code': 0, 'data': 'success'})
+
+    def get(self, request, contest_id):
+        c = Competition.objects.get(id=contest_id)
+        groups = c.group_set.all()
+        groups_ids = [x.id for x in groups]
+        collection = MONGO_CLIENT.group.stage
+        data = [{'id': id, 'stage': collection.find_one(
+            {'id': id})['stage']} for id in groups_ids]
+        return JsonResponse({'code': 0, 'data': data})
 
 
 class ContestEnrollView(View):
@@ -73,6 +113,9 @@ class ContestEnrollView(View):
         collection = MONGO_CLIENT.group.enrollForm
         collection.insert_one(
             {'id': group.id, 'enrollForm': request.data['form']})
+        collection = MONGO_CLIENT.group.stage
+        collection.insert_one(
+            {'id': group.id, 'stage': 0})
         members = request.data['members']
         for member in members:
             group.members.add(User.objects.get(username=member))
@@ -143,6 +186,7 @@ class UserJudgedView(View):
         return JsonResponse({'code': 0, "data": [
             competition.to_dict() for competition in competitions]})
 
+
 class GroupCollectionView(View):
     def post(self, request):
         self.check_input([
@@ -165,4 +209,7 @@ class GroupDetailView(View):
     def get(self, request, group_id):
         g = Group.objects.get(id=group_id)
         info = g.to_dict()
+        collection = MONGO_CLIENT.group.stage
+        stage = collection.find_one({'id': int(group_id)})['stage']
+        info['stage'] = stage
         return JsonResponse({'code': 0, 'data': info})

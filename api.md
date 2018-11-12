@@ -7,6 +7,10 @@
     - [POST /api/contests](#post-apicontests)
     - [GET /api/contests/<id\>](#get-apicontestsid)
     - [GET /api/contests/<id\>/enroll](#get-apicontestsidenroll)
+    - [GET /api/contests/<id\>/stage](#get-apicontestsidstage)
+    - [POST /api/contests/<id\>/stage](#post-apicontestsidstage)
+    - [GET /api/contests/<id\>/groups](#get-apicontestsidgroups)
+    - [POST /api/contests/<id\>/groups](#post-apicontestsidgroups)
     - [POST /api/contests/<id\>/enroll](#post-apicontestsidenroll)
     - [POST /auth/login/](#post-authlogin)
     - [POST /auth/register/](#post-authregister)
@@ -17,15 +21,15 @@
     - [GET /api/users/enrolled](#get-apiusersenrolled)
     - [GET /users/judged](#get-usersjudged)
   - [未完成](#%E6%9C%AA%E5%AE%8C%E6%88%90)
-    - [GET /api/contests/<contest-id>/submissions&status=unfinished](#get-apicontestscontest-idsubmissionsstatusunfinished)
-    - [GET /api/contests/<contest-id>/submissions/<submission_id>](#get-apicontestscontest-idsubmissionssubmissionid)
-    - [PUT /api/contests/<contest-id>/submissions/<submission_id>](#put-apicontestscontest-idsubmissionssubmissionid)
-    - [POST /api/contests/<contest-id>/reviewers](#post-apicontestscontest-idreviewers)
-    - [POST /api/contests/<contest-id>/allocate](#post-apicontestscontest-idallocate)
-    - [POST /api/contests/<contest-id>/reviewers/adjust?username=username&num=num](#post-apicontestscontest-idreviewersadjustusernameusernamenumnum)
+    - [GET /api/contests/<contest-id\>/submissions&status=unfinished](#get-apicontestscontest-idsubmissionsstatusunfinished)
+    - [GET /api/contests/<contest-id\>/submissions/<submission_id\>](#get-apicontestscontest-idsubmissionssubmissionid)
+    - [PUT /api/contests/<contest-id\>/submissions/<submission_id\>](#put-apicontestscontest-idsubmissionssubmissionid)
+    - [POST /api/contests/<contest-id\>/reviewers](#post-apicontestscontest-idreviewers)
+    - [POST /api/contests/<contest-id\>/allocate](#post-apicontestscontest-idallocate)
+    - [POST /api/contests/<contest-id\>/reviewers/adjust?username=username&num=num](#post-apicontestscontest-idreviewersadjustusernameusernamenumnum)
     - [GET /groups](#get-groups)
     - [POST /groups](#post-groups)
-    - [POST /groups/<group_id>/submission](#post-groupsgroupidsubmission)
+    - [POST /groups/<group_id\>/submission](#post-groupsgroupidsubmission)
     - [GET /groups/?contest=id](#get-groupscontestid)
     - [GET /notices/?contest=id](#get-noticescontestid)
     - [POST /notices/?contest=id](#post-noticescontestid)
@@ -162,6 +166,82 @@
   enrollForm: str
 }
 ```
+
+***
+
+### GET /api/contests/<id\>/stage
+
+权限要求: 已登录
+
+功能描述: 获得一个比赛当前所处阶段
+
+传入参数: 无
+
+返回数据:
+
+```javascript
+{
+  stage: int
+}
+```
+
+***
+
+### POST /api/contests/<id\>/stage
+
+权限要求: 已登录
+
+功能描述: 修改一个比赛当前所处阶段
+
+传入参数:
+
+```javascript
+{
+  stage : int
+}
+```
+
+返回数据: 无
+
+***
+
+### GET /api/contests/<id\>/groups
+
+权限要求: 已登录
+
+功能描述: 获得一个比赛所有队伍的阶段
+
+传入参数: 无
+
+返回数据:
+
+```javascript
+[
+  {
+    id:int,
+    stage:int
+  }
+]
+```
+
+***
+
+### POST /api/contests/<id\>/groups
+
+权限要求: 已登录
+
+功能描述: 获得一个比赛某些队伍的阶段
+
+传入参数:
+
+```javascript
+{
+  group_ids: [int],
+  stage: int
+}
+```
+
+返回数据: 无
 
 ***
 
@@ -434,41 +514,40 @@
 
 ## 未完成
 
-
 ***
 ***
 
-### GET /api/contests/<contest-id>/submissions&status=unfinished
+### GET /api/contests/<contest-id\>/submissions&status=unfinished
 
 获得比赛的所有提交文件信息（评委使用）
 
 ***
 
-### GET /api/contests/<contest-id>/submissions/<submission_id>
+### GET /api/contests/<contest-id\>/submissions/<submission_id\>
 
 获得比赛的某一个提交文件（有权限限制）（评委使用）
 
 ***
 
-### PUT /api/contests/<contest-id>/submissions/<submission_id>
+### PUT /api/contests/<contest-id\>/submissions/<submission_id\>
 
 更新比赛的某一个提交文件的打分（评委使用）
 
 ***
 
-### POST /api/contests/<contest-id>/reviewers
+### POST /api/contests/<contest-id\>/reviewers
 
 为比赛添加评委
 
 ***
 
-### POST /api/contests/<contest-id>/allocate
+### POST /api/contests/<contest-id\>/allocate
 
 为比赛自动分配评委
 
 ***
 
-### POST /api/contests/<contest-id>/reviewers/adjust?username=username&num=num
+### POST /api/contests/<contest-id\>/reviewers/adjust?username=username&num=num
 
 为某个评委调整需要评的作品数
 
@@ -487,7 +566,7 @@ TBD
 
 ***
 
-### POST /groups/<group_id>/submission
+### POST /groups/<group_id\>/submission
 
 提交比赛文件
 
