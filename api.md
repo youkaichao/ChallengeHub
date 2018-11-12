@@ -12,14 +12,15 @@
     - [GET /api/contests/<id\>/groups](#get-apicontestsidgroups)
     - [POST /api/contests/<id\>/groups](#post-apicontestsidgroups)
     - [POST /api/contests/<id\>/enroll](#post-apicontestsidenroll)
-    - [POST /auth/login/](#post-authlogin)
-    - [POST /auth/register/](#post-authregister)
-    - [POST /auth/logout/](#post-authlogout)
     - [GET /api/users](#get-apiusers)
     - [GET /api/users/<username\>](#get-apiusersusername)
     - [GET /api/users/created](#get-apiuserscreated)
     - [GET /api/users/enrolled](#get-apiusersenrolled)
     - [GET /users/judged](#get-usersjudged)
+    - [POST /auth/login/](#post-authlogin)
+    - [POST /auth/register/](#post-authregister)
+    - [POST /auth/logout/](#post-authlogout)
+    - [POST /auth/info](#post-authinfo)
   - [未完成](#%E6%9C%AA%E5%AE%8C%E6%88%90)
     - [GET /api/contests/<contest-id\>/submissions&status=unfinished](#get-apicontestscontest-idsubmissionsstatusunfinished)
     - [GET /api/contests/<contest-id\>/submissions/<submission_id\>](#get-apicontestscontest-idsubmissionssubmissionid)
@@ -27,13 +28,10 @@
     - [POST /api/contests/<contest-id\>/reviewers](#post-apicontestscontest-idreviewers)
     - [POST /api/contests/<contest-id\>/allocate](#post-apicontestscontest-idallocate)
     - [POST /api/contests/<contest-id\>/reviewers/adjust?username=username&num=num](#post-apicontestscontest-idreviewersadjustusernameusernamenumnum)
-    - [GET /groups](#get-groups)
-    - [POST /groups](#post-groups)
     - [POST /groups/<group_id\>/submission](#post-groupsgroupidsubmission)
     - [GET /groups/?contest=id](#get-groupscontestid)
     - [GET /notices/?contest=id](#get-noticescontestid)
     - [POST /notices/?contest=id](#post-noticescontestid)
-    - [POST /groups/?status=type](#post-groupsstatustype)
 
 # 1. 前后端数据交互接口设计
 
@@ -53,11 +51,7 @@
 
 # 2. 具体接口
 
-
 ## 已完成
-
-***
-***
 
 ### GET /api/contests
 
@@ -268,78 +262,6 @@
 
 ***
 
-### POST /auth/login/
-
-权限要求: 无
-
-功能描述: 登录
-
-传入参数:
-
-```javascript
-{
-  username: str,
-  password: str,
-}
-```
-
-返回数据:
-
-```javascript
-{
-  username: str,
-  email: str,
-  introduction: str,
-  school: str,
-  individual: int,
-}
-```
-
-***
-
-### POST /auth/register/
-
-权限要求: 无
-
-功能描述: 注册
-
-传入参数:
-
-```javascript
-{
-  username: str,
-  password: str,
-  email: str,
-  individual: int,
-}
-```
-
-返回数据:
-
-```javascript
-{
-  username: str,
-  email: str,
-  introduction: str,
-  school: str,
-  individual: int,
-}
-```
-
-***
-
-### POST /auth/logout/
-
-权限要求: 已登录
-
-功能描述: 登出
-
-传入参数: 无
-
-返回数据: 无
-
-***
-
 ### GET /api/users
 
 权限要求: 已登录
@@ -512,26 +434,123 @@
 
 ***
 
-## 未完成
+### POST /auth/login/
+
+权限要求: 无
+
+功能描述: 登录
+
+传入参数:
+
+```javascript
+{
+  username: str,
+  password: str,
+}
+```
+
+返回数据:
+
+```javascript
+{
+  username: str,
+  email: str,
+  introduction: str,
+  school: str,
+  individual: int,
+}
+```
 
 ***
+
+### POST /auth/register/
+
+权限要求: 无
+
+功能描述: 注册
+
+传入参数:
+
+```javascript
+{
+  username: str,
+  password: str,
+  email: str,
+  individual: int,
+}
+```
+
+返回数据:
+
+```javascript
+{
+  username: str,
+  email: str,
+  introduction: str,
+  school: str,
+  individual: int,
+}
+```
+
 ***
+
+### POST /auth/logout/
+
+权限要求: 已登录
+
+功能描述: 登出
+
+传入参数: 无
+
+返回数据: 无
+
+***
+
+### POST /auth/info
+
+权限要求: 已登录
+
+功能描述: 获取用户信息
+
+传入参数:
+
+```javascript
+{
+  username: str,
+}
+```
+
+返回数据:
+
+```javascript
+{
+  username: str,
+  email: str,
+  introduction: str,
+  school: str,
+  individual: int,
+}
+```
+
+***
+
+## 未完成
 
 ### GET /api/contests/<contest-id\>/submissions&status=unfinished
 
-获得比赛的所有提交文件信息（评委使用）
+获得比赛的所有提交文件信息
 
 ***
 
 ### GET /api/contests/<contest-id\>/submissions/<submission_id\>
 
-获得比赛的某一个提交文件（有权限限制）（评委使用）
+获得比赛的某一个提交文件
 
 ***
 
 ### PUT /api/contests/<contest-id\>/submissions/<submission_id\>
 
-更新比赛的某一个提交文件的打分（评委使用）
+更新比赛的某一个提交文件的打分
 
 ***
 
@@ -550,19 +569,6 @@
 ### POST /api/contests/<contest-id\>/reviewers/adjust?username=username&num=num
 
 为某个评委调整需要评的作品数
-
-***
-
-
-### GET /groups
-
-TBD
-
-***
-
-### POST /groups
-
-TBD
 
 ***
 
@@ -587,11 +593,5 @@ TBD
 ### POST /notices/?contest=id
 
 创建一个比赛公告
-
-***
-
-### POST /groups/?status=type
-
-修改一个队伍在其比赛中的状态(阶段)，如让一支队伍进入复赛
 
 ***

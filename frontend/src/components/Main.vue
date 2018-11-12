@@ -28,6 +28,17 @@ export default {
       return this.$store.state.login
     }
   },
+  created: function() {
+    if (!this.$store.state.login && this.$cookies.isKey('username')) {
+      let response = this.$http
+        .get('/auth/info', {
+          params: { username: this.$cookies.get('username') }
+        })
+        .then(function(response) {
+          this.$store.commit('login', response.body.data)
+        })
+    }
+  },
   methods: {
     handleLogout() {
       this.$http.post('/auth/logout', {}).then(function(response) {
@@ -35,6 +46,7 @@ export default {
           alert('Logout faild with error: ' + response.body.error)
           return
         }
+        this.$cookies.remove('usename')
         this.$store.commit('logout', response.body.data)
         this.$router.push('/')
       })

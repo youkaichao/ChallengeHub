@@ -13,10 +13,8 @@ class User(AbstractUser):
     def to_dict(self):
         return {
             'username': self.username,
-            'firstName': self.first_name,
-            'lastName': self.last_name,
             'email': self.email,
             'introduction': self.introduction,
             'school': self.school,
-            'isIndividual': self.individual
+            'individual': self.individual
         }

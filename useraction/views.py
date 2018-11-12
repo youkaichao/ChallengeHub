@@ -13,15 +13,18 @@ class UserLoginView(View):
             username=request.data.get('username'), password=request.data.get('password'))
         if(user and user.is_active):
             login(request, user)
-            return JsonResponse({'code': 0, 'data': {
-                'username': user.username,
-                'email': user.email,
-                'introduction': user.introduction,
-                'school': user.school,
-                'individual': user.individual
-            }})
+            return JsonResponse({'code': 0, 'data': user.to_dict()})
         else:
             return JsonResponse(make_errors('wrong username or password'))
+
+
+class UserInfoView(View):
+    def get(self, request):
+        self.check_input(['username'])
+        user = User.objects.get(username=request.data.get('username'))
+        if(not user or not user.is_active):
+            return JsonResponse(make_errors('user not logged in'))
+        return JsonResponse({'code': 0, 'data': user.to_dict()})
 
 
 class UserRegisterView(View):
@@ -39,13 +42,7 @@ class UserRegisterView(View):
         )
         user.save()
         login(request, user)
-        return JsonResponse({'code': 0, 'data': {
-            'name': user.username,
-            'email': user.email,
-            'introduction': user.introduction,
-            'school': user.school,
-            'individual': user.individual
-        }})
+        return JsonResponse({'code': 0, 'data': user.to_dict()})
 
 
 class UserLogoutView(View):

@@ -46,6 +46,7 @@ export default {
         }
         this.$store.commit('login', response.body.data)
         this.$router.push('/user')
+        this.$cookies.set('username', response.body.data.username)
       })
     },
     handleRegister() {
