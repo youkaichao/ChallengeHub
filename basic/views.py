@@ -87,7 +87,7 @@ class GroupStageView(View):
 
     def get(self, request, contest_id):
         c = Competition.objects.get(id=contest_id)
-        groups = c.group_set.all()
+        groups = c.enrolled_groups.all()
         groups_ids = [x.id for x in groups]
         collection = MONGO_CLIENT.group.stage
         data = [{'id': id, 'stage': collection.find_one(

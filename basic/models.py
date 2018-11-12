@@ -43,7 +43,8 @@ class Competition(models.Model):
 
 
 class Notice(models.Model):
-    competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
+    competition = models.ForeignKey(
+        Competition, on_delete=models.CASCADE, related_name='published_notices')
     posted_time = models.DateTimeField(default=timezone.now)
     content = models.TextField(blank=False)
 
@@ -61,7 +62,8 @@ class Notice(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=32, blank=False)
-    competition = models.ForeignKey(Competition, on_delete=models.PROTECT)
+    competition = models.ForeignKey(
+        Competition, on_delete=models.PROTECT, related_name='enrolled_groups')
     leader = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name='lead_groups')
     members = models.ManyToManyField(
