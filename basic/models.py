@@ -23,15 +23,14 @@ class Competition(models.Model):
     def __str__(self):
         return self.name
 
-    def to_dict(self):
-        return {
+    def to_dict(self, detail=False):
+        data = {
             'id': self.id,
             'name': self.name,
             'subject': self.subject,
             'groupSize': self.group_size,
             'enrollStart': self.enroll_start,
             'enrollEnd': self.enroll_end,
-            'detail': self.detail,
             'procedure': self.procedure,
             'imgUrl': self.img_url,
             'enrollUrl': self.enroll_url,
@@ -40,6 +39,9 @@ class Competition(models.Model):
             'downvote': self.downvote,
             'publisher': self.publisher.username
         }
+        if detail:
+            data['detail'] = self.detail
+        return data
 
 
 class Notice(models.Model):
@@ -51,13 +53,15 @@ class Notice(models.Model):
     def __str__(self):
         return f'{self.competition}: {self.content}'
 
-    def to_dict(self):
-        return {
+    def to_dict(self, detail=False):
+        data = {
             'competitionId': self.competition.id,
             'competitionName': self.competition.name,
             'postedTime': self.posted_time,
-            'content': self.content
         }
+        if detail:
+            data['content'] = self.content
+        return data
 
 
 class Group(models.Model):
@@ -74,7 +78,7 @@ class Group(models.Model):
     def __str__(self):
         return self.name
 
-    def to_dict(self):
+    def to_dict(self, detail=False):
         return {
             'id': self.id,
             'name': self.name,

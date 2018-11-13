@@ -51,26 +51,37 @@ class ContestCollectionView(View):
             c.save()
         return JsonResponse({'code': 0, 'data': c.to_dict()})
 
+        
+class ContestCollectionEnrolledView(View):
+    def get(self, request):
+        self.check_input(['username'])
+        user = User.objects.get(username=request.data['username'])
+        return JsonResponse({
+            'code': 0, 
+            "data": [
+                        {
+                        'group':group.to_dict(), 
+                        'contest':group.competition.to_dict()
+                        } for group in user.joint_groups.all()
+                    ]
+        })
+        
 
 class ContestDetailView(View):
     def get(self, request, contest_id):
         c = Competition.objects.get(id=contest_id)
-        info = c.to_dict()
+        info = c.to_dict(detail=True)
+        collection = MONGO_CLIENT.competition.stage
+        data = collection.find_one({'id': int(contest_id)})
+        info['stage'] = data['stage']
         return JsonResponse({'code': 0, 'data': info})
-
-
-class ContestStageView(View):
+    
     def post(self, request, contest_id):
         self.check_input(['stage'])
         collection = MONGO_CLIENT.competition.stage
         collection.find_one_and_update({'id': int(contest_id)}, {
                                        '$set': {'stage': request.data['stage']}})
         return JsonResponse({'code': 0, 'data': 'success'})
-
-    def get(self, request, contest_id):
-        collection = MONGO_CLIENT.competition.stage
-        data = collection.find_one({'id': int(contest_id)})
-        return JsonResponse({'code': 0, 'data': {'stage': data['stage']}})
 
 
 class GroupStageView(View):
@@ -92,6 +103,8 @@ class GroupStageView(View):
         collection = MONGO_CLIENT.group.stage
         data = [{'id': id, 'stage': collection.find_one(
             {'id': id})['stage']} for id in groups_ids]
+        for (each, group) in zip(data, groups):
+            each.update(group.to_dict())
         return JsonResponse({'code': 0, 'data': data})
 
 
@@ -167,15 +180,6 @@ class UserCreatedView(View):
         competitions = user.published_competitions.all()
         return JsonResponse({'code': 0, "data": [
             competition.to_dict() for competition in competitions]})
-
-
-class UserEnrolledView(View):
-    def get(self, request):
-        self.check_input(['username'])
-        user = User.objects.get(username=request.data['username'])
-        groups = user.joint_groups.all()
-        return JsonResponse({'code': 0, "data": [
-            group.competition.to_dict() for group in groups]})
 
 
 class UserJudgedView(View):

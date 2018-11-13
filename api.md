@@ -49,6 +49,11 @@
 
 **下面的描述中, 只需要描述 `data` 域的结构**
 
+# 1. 返回数据格式说明（详细格式与简略格式）
+
+``notice`` 和 ``contest`` 的返回格式有简略格式和具体格式两种，具体格式中，``notice``会有公告详情（key为content）, ``contest``会有比赛细节（key为detail）.
+其他具体的域见models中的``to_dict``定义
+
 # 2. 具体接口
 
 ## 已完成
@@ -73,14 +78,7 @@
 
 ```javascript
 [
-  {
-    id: int,
-    name: str,
-    subject: str,
-    upvote: int,
-    downvote: int,
-    publisher: str,
-  }
+contest 的简略版信息
 ]
 ```
 
@@ -112,6 +110,31 @@
 
 返回数据: 无
 
+### GET /api/contests/enrolled
+
+权限要求: 
+
+功能描述: 获取用户参加的比赛
+
+传入参数:
+
+```javascript
+{
+  username: str
+}
+```
+
+返回数据: 空
+
+```javascript
+[
+{
+    group : group 的简略版信息,
+    contest: contest 的简略版信息
+}
+]
+```
+
 ***
 
 ### GET /api/contests/<id\>
@@ -126,22 +149,27 @@
 
 ```javascript
 {
-  id: int,
-  name: str,
-  subject: str,
-  groupSize: int,
-  enrollStart: str,
-  enrollEnd: str,
-  detail: str,
-  procedure: str,
-  enrollUrl: str,
-  imgUrl: str,
-  charge: int,
-  upvote: int,
-  downvote: int,
-  publisher: str,
+contest 的详细版信息
 }
 ```
+
+------
+
+### POST /api/contests/<id\>
+
+权限要求: 已登录
+
+功能描述: 修改一个比赛的阶段
+
+传入参数: 
+
+```javascript
+{
+  stage:int
+}
+```
+
+返回数据:无
 
 ***
 
@@ -163,47 +191,11 @@
 
 ***
 
-### GET /api/contests/<id\>/stage
-
-权限要求: 已登录
-
-功能描述: 获得一个比赛当前所处阶段
-
-传入参数: 无
-
-返回数据:
-
-```javascript
-{
-  stage: int
-}
-```
-
-***
-
-### POST /api/contests/<id\>/stage
-
-权限要求: 已登录
-
-功能描述: 修改一个比赛当前所处阶段
-
-传入参数:
-
-```javascript
-{
-  stage : int
-}
-```
-
-返回数据: 无
-
-***
-
 ### GET /api/contests/<id\>/groups
 
 权限要求: 已登录
 
-功能描述: 获得一个比赛所有队伍的阶段
+功能描述: 获得一个比赛所有队伍的信息
 
 传入参数: 无
 
@@ -211,10 +203,7 @@
 
 ```javascript
 [
-  {
-    id:int,
-    stage:int
-  }
+group 的信息
 ]
 ```
 
@@ -224,7 +213,7 @@
 
 权限要求: 已登录
 
-功能描述: 获得一个比赛某些队伍的阶段
+功能描述: 修改一个比赛某些队伍的阶段
 
 传入参数:
 
@@ -332,44 +321,6 @@
   username: str,
 }
 ```
-返回参数:
-
-```javascript
-[
-  {
-    id: int,
-    name: str,
-    subject: str,
-    groupSize: int,
-    enrollStart: str,
-    enrollEnd: str,
-    detail: str,
-    procedure: str,
-    enrollUrl: str,
-    imgUrl: str,
-    charge: int,
-    upvote: int,
-    downvote: int,
-    publisher: str,
-  }
-]
-```
-
-***
-
-### GET /api/users/enrolled
-
-权限要求: 已登录
-
-功能描述: 获取用户参加的比赛
-
-传入参数:
-```javascript
-{
-  username: str,
-}
-```
-
 返回参数:
 
 ```javascript

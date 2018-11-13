@@ -1,4 +1,5 @@
 import json
+import traceback
 from django.views.generic import View
 from django.http import JsonResponse
 
@@ -27,6 +28,8 @@ class BaseView(View):
             request.data = request.GET.dict()
         elif request.content_type == 'application/json':
             request.data = json.loads(request.body)
+        else:
+            request.data = request.body
         return self.do_dispatch(request, *args, **kwargs)
 
     def do_dispatch(self, *args, **kwargs):
@@ -37,6 +40,7 @@ class BaseView(View):
             try:
                 return handler(*args, **kwargs)
             except Exception as e:
+                traceback.print_exc()
                 return JsonResponse(make_errors(str(e)))
 
     def check_input(self, names):

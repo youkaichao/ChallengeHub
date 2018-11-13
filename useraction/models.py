@@ -10,7 +10,7 @@ class User(AbstractUser):
     # need to set this or cannot create super user
     individual = models.BooleanField(default=True)
 
-    def to_dict(self):
+    def to_dict(self, detail=False):
         return {
             'username': self.username,
             'email': self.email,
