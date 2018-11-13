@@ -28,8 +28,9 @@ class BaseView(View):
             request.data = request.GET.dict()
         elif request.content_type == 'application/json':
             request.data = json.loads(request.body)
-        else:
-            request.data = request.body
+        elif request.content_type == 'multipart/form-data':
+            request.data = request.POST.dict()
+            request.data['file'] = request.FILES['file']
         return self.do_dispatch(request, *args, **kwargs)
 
     def do_dispatch(self, *args, **kwargs):

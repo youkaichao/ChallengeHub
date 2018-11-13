@@ -6,7 +6,8 @@ from basic.models import Competition, Group
 from useraction.models import User
 from ChallengeHub.utils import *
 from ChallengeHub.utils import BaseView as View
-from ChallengeHub.settings import MONGO_CLIENT
+from ChallengeHub.settings import MONGO_CLIENT, BASE_DIR
+import os
 
 
 class ContestCollectionView(View):
@@ -132,6 +133,23 @@ class ContestEnrollView(View):
         members = request.data['members']
         for member in members:
             group.members.add(User.objects.get(username=member))
+        return JsonResponse({'code': 0, 'data': 'success'})
+
+
+class ContestSubmitView(View):
+    def post(self, request, contest_id):
+        group_id = request.data.get('groupId')
+        submit = request.data.get('file')
+        collection = MONGO_CLIENT.competition.stage
+        stage = collection.find_one({'id': int(contest_id)})['stage']
+        path = os.path.join(BASE_DIR, 'submit', 'contest',
+                            contest_id, str(stage))
+        if(not os.path.exists(path)):
+            os.makedirs(path)
+        _, extension = os.path.splitext(submit.name)
+        with open(os.path.join(path, f'{group_id}{extension}'), 'wb+') as f:
+            for chunk in submit.chunks():
+                f.write(chunk)
         return JsonResponse({'code': 0, 'data': 'success'})
 
 

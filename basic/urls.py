@@ -11,6 +11,8 @@ urlpatterns = [
         views.ContestEnrollView.as_view()),
     url(r'contests/(?P<contest_id>[0-9]+)/groups$',
         views.GroupStageView.as_view()),
+    url(r'contests/(?P<contest_id>[0-9]+)/submit',
+        views.ContestSubmitView.as_view()),
     url(r'users$', views.UserCollectionView.as_view()),
     url(r'users/(?P<username>\w+)$', views.UserDetailView.as_view()),
     url(r'users/judged$', views.UserJudgedView.as_view()),

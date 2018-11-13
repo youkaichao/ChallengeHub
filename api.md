@@ -12,11 +12,12 @@
     - [GET /api/contests/<id\>/enroll](#get-apicontestsidenroll)
     - [GET /api/contests/<id\>/groups](#get-apicontestsidgroups)
     - [POST /api/contests/<id\>/groups](#post-apicontestsidgroups)
+    - [POST /api/contests/<id\>/submit](#post-apicontestsidsubmit)
     - [POST /api/contests/<id\>/enroll](#post-apicontestsidenroll)
     - [GET /api/users](#get-apiusers)
     - [GET /api/users/<username\>](#get-apiusersusername)
     - [GET /api/users/created](#get-apiuserscreated)
-    - [GET /users/judged](#get-usersjudged)
+    - [GET /api/users/judged](#get-apiusersjudged)
     - [POST /auth/login/](#post-authlogin)
     - [POST /auth/register/](#post-authregister)
     - [POST /auth/logout/](#post-authlogout)
@@ -228,6 +229,18 @@ contest 的简略版信息
 
 ***
 
+### POST /api/contests/<id\>/submit
+
+权限要求: 个人账户, 已登陆
+
+功能描述: 提交比赛作品
+
+传入参数: 格式为 form data, `file` 字段为提交的文件, `groupId` 字段为提交的队伍序号
+
+返回参数: 无
+
+***
+
 ### POST /api/contests/<id\>/enroll
 
 权限要求: 个人账户, 已登录
@@ -346,7 +359,7 @@ contest 的简略版信息
 
 ***
 
-### GET /users/judged
+### GET /api/users/judged
 
 权限要求: 已登录
 
