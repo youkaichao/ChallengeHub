@@ -1,21 +1,21 @@
 这篇文档还在施工中 da☆ze
 
 - [1. 前后端数据交互接口设计](#1-%E5%89%8D%E5%90%8E%E7%AB%AF%E6%95%B0%E6%8D%AE%E4%BA%A4%E4%BA%92%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1)
+- [1. 返回数据格式说明(详细格式与简略格式)](#1-%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%AF%B4%E6%98%8E%E8%AF%A6%E7%BB%86%E6%A0%BC%E5%BC%8F%E4%B8%8E%E7%AE%80%E7%95%A5%E6%A0%BC%E5%BC%8F)
 - [2. 具体接口](#2-%E5%85%B7%E4%BD%93%E6%8E%A5%E5%8F%A3)
   - [已完成](#%E5%B7%B2%E5%AE%8C%E6%88%90)
     - [GET /api/contests](#get-apicontests)
     - [POST /api/contests](#post-apicontests)
+    - [GET /api/contests/enrolled](#get-apicontestsenrolled)
     - [GET /api/contests/<id\>](#get-apicontestsid)
+    - [POST /api/contests/<id\>](#post-apicontestsid)
     - [GET /api/contests/<id\>/enroll](#get-apicontestsidenroll)
-    - [GET /api/contests/<id\>/stage](#get-apicontestsidstage)
-    - [POST /api/contests/<id\>/stage](#post-apicontestsidstage)
     - [GET /api/contests/<id\>/groups](#get-apicontestsidgroups)
     - [POST /api/contests/<id\>/groups](#post-apicontestsidgroups)
     - [POST /api/contests/<id\>/enroll](#post-apicontestsidenroll)
     - [GET /api/users](#get-apiusers)
     - [GET /api/users/<username\>](#get-apiusersusername)
     - [GET /api/users/created](#get-apiuserscreated)
-    - [GET /api/users/enrolled](#get-apiusersenrolled)
     - [GET /users/judged](#get-usersjudged)
     - [POST /auth/login/](#post-authlogin)
     - [POST /auth/register/](#post-authregister)
@@ -49,10 +49,10 @@
 
 **下面的描述中, 只需要描述 `data` 域的结构**
 
-# 1. 返回数据格式说明（详细格式与简略格式）
+# 1. 返回数据格式说明(详细格式与简略格式)
 
-``notice`` 和 ``contest`` 的返回格式有简略格式和具体格式两种，具体格式中，``notice``会有公告详情（key为content）, ``contest``会有比赛细节（key为detail）.
-其他具体的域见models中的``to_dict``定义
+``notice`` 和 ``contest`` 的返回格式有简略格式和具体格式两种, 具体格式中, ``notice``会有公告详情(key 为 content ), ``contest`` 会有比赛细节(key 为 detail).
+其他具体的域见 models 中的 ``to_dict`` 定义
 
 # 2. 具体接口
 
@@ -112,7 +112,7 @@ contest 的简略版信息
 
 ### GET /api/contests/enrolled
 
-权限要求: 
+权限要求: 无
 
 功能描述: 获取用户参加的比赛
 
@@ -124,14 +124,14 @@ contest 的简略版信息
 }
 ```
 
-返回数据: 空
+返回数据: 无
 
 ```javascript
 [
-{
-    group : group 的简略版信息,
+  {
+    group: group 的简略版信息,
     contest: contest 的简略版信息
-}
+  }
 ]
 ```
 
@@ -149,11 +149,11 @@ contest 的简略版信息
 
 ```javascript
 {
-contest 的详细版信息
+  contest 的详细版信息
 }
 ```
 
-------
+***
 
 ### POST /api/contests/<id\>
 
@@ -161,15 +161,15 @@ contest 的详细版信息
 
 功能描述: 修改一个比赛的阶段
 
-传入参数: 
+传入参数:
 
 ```javascript
 {
-  stage:int
+  stage: int
 }
 ```
 
-返回数据:无
+返回数据: 无
 
 ***
 
@@ -203,7 +203,7 @@ contest 的详细版信息
 
 ```javascript
 [
-group 的信息
+  group 的信息
 ]
 ```
 
