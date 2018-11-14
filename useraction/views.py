@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth import logout, authenticate, login
 from useraction.models import User
-from ChallengeHub.utils import make_errors
+from ChallengeHub.utils import make_errors, require_logged_in
 from ChallengeHub.utils import BaseView as View
 
 
@@ -19,12 +19,17 @@ class UserLoginView(View):
 
 
 class UserInfoView(View):
+    @require_logged_in
     def get(self, request):
-        self.check_input(['username'])
-        user = User.objects.get(username=request.data.get('username'))
-        if(not user or not user.is_active):
-            return JsonResponse(make_errors('user not logged in'))
-        return JsonResponse({'code': 0, 'data': user.to_dict()})
+        return JsonResponse({'code': 0, 'data': request.user.to_dict()})
+        
+    @require_logged_in
+    def post(self, request):
+        for name in ['email', 'introduction', 'school']:
+            if request.data.get(name) != None:
+                setattr(request.user, name, request.data.get(name))
+        request.user.save()
+        return JsonResponse({'code': 0, 'data': request.user.to_dict()})
 
 
 class UserRegisterView(View):
@@ -46,6 +51,7 @@ class UserRegisterView(View):
 
 
 class UserLogoutView(View):
+    @require_logged_in
     def post(self, request):
         logout(request)
         return JsonResponse({'code': 0, 'data': 'success'})

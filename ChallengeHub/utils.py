@@ -27,7 +27,7 @@ class BaseView(View):
         if request.method == 'GET':
             request.data = request.GET.dict()
         elif request.content_type == 'application/json':
-            request.data = json.loads(request.body)
+            request.data = json.loads(request.body or '{}')
         elif request.content_type == 'multipart/form-data':
             request.data = request.POST.dict()
             request.data['file'] = request.FILES['file']

@@ -184,26 +184,19 @@ class UserCollectionView(View):
         return JsonResponse({'code': 0, 'data': 'success'})
 
 
-class UserDetailView(View):
-    def get(self, request, username):
-        u = User.objects.get(username=username)
-        info = u.to_dict()
-        return JsonResponse({'code': 0, 'data': info})
-
-
 class UserCreatedView(View):
+    @require_logged_in
     def get(self, request):
-        self.check_input(['username'])
-        user = User.objects.get(username=request.data['username'])
+        user = request.user
         competitions = user.published_competitions.all()
         return JsonResponse({'code': 0, "data": [
             competition.to_dict() for competition in competitions]})
 
 
 class UserJudgedView(View):
+    @require_logged_in
     def get(self, request):
-        self.check_input(['username'])
-        user = User.objects.get(username=request.data['username'])
+        user = request.user
         competitions = user.judged_competitions.all()
         return JsonResponse({'code': 0, "data": [
             competition.to_dict() for competition in competitions]})

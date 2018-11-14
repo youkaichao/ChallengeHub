@@ -16,7 +16,6 @@ urlpatterns = [
     url(r'users$', views.UserCollectionView.as_view()),
     url(r'users/judged$', views.UserJudgedView.as_view()),
     url(r'users/created$', views.UserCreatedView.as_view()),
-    url(r'users/(?P<username>\w+)$', views.UserDetailView.as_view()),
     url(r'groups$', views.GroupCollectionView.as_view()),
     url(r'groups/(?P<group_id>[0-9]+)$', views.GroupDetailView.as_view()),
 ]
