@@ -12,8 +12,12 @@ import CompetitorDashboard from '@/components/dashboard/CompetitorDashboard'
 import JudgeDashboard from '@/components/dashboard/JudgeDashboard'
 import JudgedContestUnfinished from '@/components/dashboard/JudgedContestUnfinished'
 import User from '@/components/User'
+import ControlPanel from '@/components/organizer/ControlPanel'
 import VueResource from 'vue-resource'
 import VueCookies from 'vue-cookies'
+import ManageGroup from '@/components/organizer/ManageGroup'
+import Overview from '@/components/organizer/Overview'
+import MyOrganizeContests from '@/components/organizer/MyOrganizeContests'
 
 Vue.use(VueCookies)
 Vue.use(VueResource)
@@ -68,6 +72,28 @@ export default new Router({
           component: User
         },
         {
+          path: 'organizer',
+          name: '/organizer',
+          component: MyOrganizeContests
+        },
+        {
+          path: 'organizer/controlpanel/:id',
+          name: '/organizer/controlpanel',
+          component: ControlPanel,
+          children: [
+            {
+              path: 'managegroup',
+              name: '/organizer/controlpanel/:id/managegroup',
+              component: ManageGroup
+            },
+            {
+              path: '',
+              name: '/organizer/controlpanel/:id',
+              component: Overview
+            }
+          ]
+        },
+        {
           path: 'competitor_dashboard',
           name: '/competitor_dashboard',
           component: CompetitorDashboard
@@ -76,11 +102,6 @@ export default new Router({
           path: 'judge_dashboard',
           name: '/judge_dashboard',
           component: JudgeDashboard
-        },
-        {
-          path: 'test',
-          name: '/test',
-          component: JudgedContestUnfinished
         }
       ]
     }

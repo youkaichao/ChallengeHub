@@ -65,7 +65,7 @@
       <ContestView :data-list="user.contestIReviewList" />
     </el-tab-pane>
     <el-tab-pane v-if="!user.individual" label="我发起的比赛" name="contestILaunch">
-      <ContestView :data-list="user.contestIReviewList" />
+      <MyOrganizeContests />
     </el-tab-pane>
     <el-tab-pane label="修改密码" name="resetPassword">
       <el-row>
@@ -104,6 +104,7 @@
 </template>
 <script>
 import ContestView from '@/components/contest/ContestView'
+import MyOrganizeContests from '@/components/organizer/MyOrganizeContests'
 export default {
   name: 'User',
   data() {
@@ -134,7 +135,8 @@ export default {
     handleResetPassword() {}
   },
   components: {
-    ContestView
+    ContestView,
+    MyOrganizeContests
   }
 }
 </script>
