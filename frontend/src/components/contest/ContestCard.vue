@@ -21,10 +21,7 @@
 </template>
 
 <script>
-function isoToHumanReadable(isoString) {
-  let time = new Date(Date.parse(isoString))
-  return `${time.getFullYear()} 年 ${time.getMonth()} 月 ${time.getDate()} 日`
-}
+import { isoToHumanReadable } from '@/lib/util.js'
 
 export default {
   name: 'ContestCard',

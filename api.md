@@ -33,6 +33,9 @@
     - [GET /groups/?contest=id](#get-groupscontestid)
     - [GET /notices/?contest=id](#get-noticescontestid)
     - [POST /notices/?contest=id](#post-noticescontestid)
+    - [GET /api/groups?username=username](#get-apigroupsusernameusername)
+    - [GET /api/enrolled_competitions](#get-apienrolledcompetitions)
+    - [GET /api/judged_competitions](#get-apijudgedcompetitions)
 
 # 1. 前后端数据交互接口设计
 
@@ -559,3 +562,58 @@ contest 的简略版信息
 创建一个比赛公告
 
 ***
+
+### GET /api/groups?username=username
+
+获得某个用户参加的所有队伍
+
+```javascript
+[
+  {
+    name: str,
+    leader: str,
+    hasCommit: bool // 是否已经提交了
+    rank: str // 最后的排名
+    stage: str // 如果中途被淘汰了，这里指明在哪个阶段被淘汰
+  }
+]
+```
+
+***
+
+### GET /api/enrolled_competitions
+
+参数为选手名称 username
+
+```javascript
+[
+  {
+    group: {
+      // ...
+    },
+    contest: {
+      // ...
+    }
+  }
+]
+```
+
+***
+
+### GET /api/judged_competitions
+
+参数为评委 username
+
+```javascript
+[
+  {
+    task: {
+      count: number // 当前阶段任务量
+      done: number // 当前阶段已完成任务量
+    },
+    contest: {
+      // ...
+    }
+  }
+]
+```

@@ -8,6 +8,9 @@ import ContestView from '@/components/contest/ContestView'
 import ContestCreate from '@/components/contest/ContestCreate'
 import ContestDetail from '@/components/contest/ContestDetail'
 import ContestEnroll from '@/components/contest/ContestEnroll'
+import CompetitorDashboard from '@/components/dashboard/CompetitorDashboard'
+import JudgeDashboard from '@/components/dashboard/JudgeDashboard'
+import JudgedContestUnfinished from '@/components/dashboard/JudgedContestUnfinished'
 import User from '@/components/User'
 import VueResource from 'vue-resource'
 import VueCookies from 'vue-cookies'
@@ -63,6 +66,21 @@ export default new Router({
           path: 'user',
           name: '/user',
           component: User
+        },
+        {
+          path: 'competitor_dashboard',
+          name: '/competitor_dashboard',
+          component: CompetitorDashboard
+        },
+        {
+          path: 'judge_dashboard',
+          name: '/judge_dashboard',
+          component: JudgeDashboard
+        },
+        {
+          path: 'test',
+          name: '/test',
+          component: JudgedContestUnfinished
         }
       ]
     }
