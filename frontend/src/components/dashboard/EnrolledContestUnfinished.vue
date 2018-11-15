@@ -7,7 +7,10 @@
       <el-col :span="12" style="text-align: left; padding-left: 20px;">
         <div class="contest-name"> {{ contest.name }} </div>
         <div class="contest-info"> {{ contest.publisher }} </div>
-        <div class="contest-info"> 当前阶段 <b>{{ currentStage }}</b> 结束于 <b>{{ currentDeadline }}</b></div>
+        <div v-if="contest.stage === 0" class="contest-info">比赛尚未开始</div>
+        <div v-if="contest.stage !== 0 && contest.stage % 2 === 1" class="contest-info">当前阶段 <b>{{ currentStage }}</b> 结束于 <b>{{ currentDeadline }}</b></div>
+        <div v-if="contest.stage !== 0 && contest.stage % 2 === 0 && !isLastStage" class="contest-info">下一阶段 <b>{{ currentStage }}</b> 开始于 <b>{{ currentDeadline }}</b></div>
+        <div v-if="isLastStage" class="contest-info">请等待比赛结果</div>
         <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">查看比赛详情</el-button>
       </el-col>
       <el-col :span="8" style="text-align: right; padding-right: 20px;">
@@ -15,10 +18,11 @@
           <span> {{ group.name }}{{ group.identity }} </span>
         </div>
         <div class="commit-status">
-          <span> {{ group.hasCommit ? "作品已提交" : "作品未提交！" }} </span>
+          <span v-if="isCommitStage"> {{ group.hasCommit ? "作品已提交" : "作品未提交！" }} </span>
+          <span v-if="!isCommitStage">当前无法提交作品</span>
         </div>
-        <el-button type="primary" @click="todoHandler()" v-show="!group.hasCommit" class="commit-button">提交作品</el-button>
-        <el-button type="primary" @click="todoHandler()" v-show="group.hasCommit" class="commit-button" plain>修改作品</el-button>
+        <el-button type="primary" @click="todoHandler()" v-show="(!group.hasCommit) && isCommitStage" class="commit-button">提交作品</el-button>
+        <el-button type="primary" @click="todoHandler()" v-show="group.hasCommit && isCommitStage" class="commit-button" plain>修改作品</el-button>
         <el-button type="primary" @click="todoHandler()" v-show="group.hasCommit" class="commit-button" plain>下载作品</el-button>
       </el-col>
     </el-row>
@@ -39,11 +43,32 @@ export default {
   computed: {
     currentStage: function() {
       let stageIndex = this.contest.stage
-      return JSON.parse(this.contest.procedure)[stageIndex].name
+      let procedure = JSON.parse(this.contest.procedure)
+      if (stageIndex === 0 || stageIndex === 2 * procedure.length) return ''
+      if (stageIndex % 2 !== 0) {
+        return procedure[(stageIndex - 1) / 2].name
+      } else {
+        return procedure[stageIndex / 2].name
+      }
     },
     currentDeadline: function() {
       let stageIndex = this.contest.stage
-      return isoToHumanReadable(JSON.parse(this.contest.procedure)[stageIndex].endTime)
+      let procedure = JSON.parse(this.contest.procedure)
+      let returnDate = null
+      if (stageIndex === 0 || stageIndex === 2 * procedure.length) return ''
+      if (stageIndex % 2 !== 0) {
+        returnDate = procedure[(stageIndex - 1) / 2].endTime
+      } else {
+        returnDate = procedure[stageIndex / 2].startTime
+      }
+
+      return isoToHumanReadable(returnDate)
+    },
+    isLastStage() {
+      return this.contest.stage === JSON.parse(this.contest.procedure).length * 2
+    },
+    isCommitStage() {
+      return this.contest.stage > 0 && this.contest.stage % 2 === 1
     }
   }
 }

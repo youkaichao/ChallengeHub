@@ -20,7 +20,7 @@
           你已完成 {{ task.count }} 项评审任务
         </div>
         <div style="margin-top: 20px;">
-          <el-button type="primary" @click="todoHandler()">查看评审详情</el-button>
+          <el-button type="primary" @click="gotoWorkspace()">查看评审详情</el-button>
         </div>
       </el-col>
 
@@ -42,9 +42,8 @@ export default {
   },
   props: ['contest', 'task'],
   methods: {
-    todoHandler: function() {
-      // TODO
-      alert('todo')
+    gotoWorkspace() {
+      this.$router.push(`/judge/contests/${this.contest.id}/submissions`)
     }
   }
 }

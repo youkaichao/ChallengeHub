@@ -63,9 +63,6 @@ export default {
       } else {
         contestAndGroup.group.identity = '队员'
       }
-
-      // TODO replace with real one
-      contestAndGroup.group.hasCommit = Math.random() > 0.5 ? true : false
     }
   },
   computed: {

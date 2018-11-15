@@ -10,7 +10,7 @@ import ContestDetail from '@/components/contest/ContestDetail'
 import ContestEnroll from '@/components/contest/ContestEnroll'
 import CompetitorDashboard from '@/components/dashboard/CompetitorDashboard'
 import JudgeDashboard from '@/components/dashboard/JudgeDashboard'
-import JudgedContestUnfinished from '@/components/dashboard/JudgedContestUnfinished'
+import JudgeWorkspace from '@/components/workspace/JudgeWorkspace'
 import User from '@/components/User'
 import ControlPanel from '@/components/organizer/ControlPanel'
 import VueResource from 'vue-resource'
@@ -102,6 +102,10 @@ export default new Router({
           path: 'judge_dashboard',
           name: '/judge_dashboard',
           component: JudgeDashboard
+        },
+        {
+          path: 'judge/contests/:id/submissions',
+          component: JudgeWorkspace
         }
       ]
     }

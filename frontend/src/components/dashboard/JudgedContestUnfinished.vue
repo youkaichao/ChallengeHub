@@ -7,15 +7,17 @@
       <el-col :span="16" style="text-align: left; padding-left: 20px;">
         <div class="contest-name"> {{ contest.name }} </div>
         <div class="contest-info"> {{ contest.publisher }} </div>
-        <div class="contest-info"> 当前阶段 <b>{{ currentStage }}</b> 结束于 <b>{{ currentDeadline }}</b></div>
+        <div class="contest-info" v-if="contest.stage === 0">比赛尚未开始</div>
+        <div class="contest-info" v-if="ableToJudge">阶段 <b>{{ currentStage }}</b> 评审结束于 <b>{{ currentDeadline }}</b></div>
+        <div class="contest-info" v-if="contest.stage !== 0 && !ableToJudge">阶段 <b> {{ currentStage }} </b>评审开始于 <b>{{ currentDeadline }}</b></div>
         <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">查看比赛详情</el-button>
       </el-col>
 
       <el-col :span="4" style="text-align: right; padding-right: 20px; ">
-        <div class="judging-status"> {{ task.count === task.done ? "评审任务完成" : "评审进行中" }} </div>
-        <el-progress style="margin-top: 15px;" :percentage="(task.done * 100 / task.count).toFixed(1)" :text-inside="true" :stroke-width="18"></el-progress>
-        <el-button v-if="!judgeCompelete" style="margin-top: 20px;" type="primary" @click="todoHandler()">进行评审</el-button>
-        <el-button v-if="judgeCompelete" style="margin-top: 20px;" type="primary" plain @click="todoHandler()">修改评审</el-button>
+        <div class="judging-status" v-html="judgingStatus"></div>
+        <el-progress v-if="ableToJudge" style="margin-top: 15px;" :percentage="parseFloat((task.done * 100 / task.count).toFixed(1))" :text-inside="true" :stroke-width="18"></el-progress>
+        <el-button v-if="(!judgeCompelete) && ableToJudge" style="margin-top: 20px;" type="primary" @click="gotoWorkspace()">进行评审</el-button>
+        <el-button v-if="judgeCompelete && ableToJudge" style="margin-top: 20px;" type="primary" plain @click="gotoWorkspace()">修改评审</el-button>
       </el-col>
     </el-row>
   </el-card>
@@ -30,20 +32,37 @@ export default {
     todoHandler: function() {
       // TODO
       alert('todo')
+    },
+    gotoWorkspace() {
+      this.$router.push(`judge/contests/${this.contest.id}/submissions`)
     }
   },
   props: ['contest', 'task'],
   computed: {
+    ableToJudge: function() {
+      let currentStage = this.contest.stage
+      if (currentStage > 0 && currentStage % 2 === 0) return true
+      return false
+    },
     currentStage: function() {
       let stageIndex = this.contest.stage
-      return JSON.parse(this.contest.procedure)[stageIndex].name
+      if (stageIndex % 2 === 0) return JSON.parse(this.contest.procedure)[stageIndex / 2 - 1].name
+      else return JSON.parse(this.contest.procedure)[(stageIndex - 1) / 2].name
     },
     currentDeadline: function() {
       let stageIndex = this.contest.stage
-      return isoToHumanReadable(JSON.parse(this.contest.procedure)[stageIndex].endTime)
+      let procedure = JSON.parse(this.contest.procedure)
+      if (stageIndex % 2 === 0 && stageIndex !== procedure.length * 2) return isoToHumanReadable(procedure[stageIndex / 2].startTime)
+      else if (stageIndex % 2 === 0) return '主办方规定的时间'
+      else return isoToHumanReadable(JSON.parse(this.contest.procedure)[(stageIndex - 1) / 2].endTime)
     },
     judgeCompelete: function() {
       return this.task.count === this.task.done
+    },
+    judgingStatus() {
+      if (!this.ableToJudge) return '<span style="color: gray;">当前无法评审</span>'
+      if (this.task.count === this.task.done) return '<span style="color: gray;">评审任务完成</span>'
+      return '评审进行中'
     }
   }
 }
