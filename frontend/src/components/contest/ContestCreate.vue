@@ -139,7 +139,7 @@ export default {
       if (this.useDefaultEnrollLink) this.contest.enrollUrl = ''
       this.contest.enrollStart = formatDate(this.contest.enrollStart)
       this.contest.enrollEnd = formatDate(this.contest.enrollEnd)
-      this.contest.procedure = JSON.stringify(this.procedureList)
+      this.contest.procedure = this.procedureList
 
       let enrollForm = {}
       for (let extraField of this.extraFields) {

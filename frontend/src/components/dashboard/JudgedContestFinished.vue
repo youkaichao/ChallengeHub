@@ -35,7 +35,7 @@ export default {
   name: 'JudgedContestFinished',
   computed: {
     endingDeadline: function() {
-      let procedure = JSON.parse(this.contest.procedure)
+      let procedure = this.contest.procedure
       let deadline = procedure[procedure.length - 1].endTime
       return isoToHumanReadable(deadline)
     }

@@ -71,12 +71,12 @@ export default {
   },
   computed: {
     stages() {
-      if (this.contest === null) return [];
-      let procedure = JSON.parse(this.contest.procedure);
-      for(let i = 0;i<procedure.length; i++) {
-        procedure[i]['index'] = (i + 1) * 2;
+      if (this.contest === null) return []
+      let procedure = this.contest.procedure
+      for (let i = 0; i < procedure.length; i++) {
+        procedure[i]['index'] = (i + 1) * 2
       }
-      return procedure;
+      return procedure
     }
   }
 }

@@ -89,7 +89,7 @@ export default {
   created: async function() {
     let response = await this.$http.get(`/api/contests/${this.$route.params.id}`)
     this.contest = response.body.data
-    this.procedureList = JSON.parse(this.contest.procedure)
+    this.procedureList = this.contest.procedure
     for (let i = 0; i < this.procedureList.length; i++) {
       let prod = this.procedureList[i]
       let endTime = new Date(prod.endTime)

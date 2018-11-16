@@ -43,7 +43,7 @@ export default {
   computed: {
     currentStage: function() {
       let stageIndex = this.contest.stage
-      let procedure = JSON.parse(this.contest.procedure)
+      let procedure = this.contest.procedure
       if (stageIndex === 0 || stageIndex === 2 * procedure.length) return ''
       if (stageIndex % 2 !== 0) {
         return procedure[(stageIndex - 1) / 2].name
@@ -53,7 +53,7 @@ export default {
     },
     currentDeadline: function() {
       let stageIndex = this.contest.stage
-      let procedure = JSON.parse(this.contest.procedure)
+      let procedure = this.contest.procedure
       let returnDate = null
       if (stageIndex === 0 || stageIndex === 2 * procedure.length) return ''
       if (stageIndex % 2 !== 0) {
@@ -65,7 +65,7 @@ export default {
       return isoToHumanReadable(returnDate)
     },
     isLastStage() {
-      return this.contest.stage === JSON.parse(this.contest.procedure).length * 2
+      return this.contest.stage === this.contest.procedure.length * 2
     },
     isCommitStage() {
       return this.contest.stage > 0 && this.contest.stage % 2 === 1

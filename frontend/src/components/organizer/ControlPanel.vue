@@ -48,7 +48,7 @@ export default {
     refreshContest() {
       this.$http.get(`/api/contests/${this.contestId}`).then(resp => {
         this.contest = resp.body.data
-        this.procedureList = JSON.parse(this.contest.procedure)
+        this.procedureList = this.contest.procedure
       })
     }
   },

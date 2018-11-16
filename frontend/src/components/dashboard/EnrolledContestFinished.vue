@@ -18,8 +18,8 @@
           你的名次：<b>{{ group.rank }}</b>
         </div>
         <div style="margin-top: 20px;">
-        <el-button type="primary" plain @click="todoHandler()">下载作品</el-button>
-        <el-button type="primary" @click="todoHandler()">查看结果详情</el-button>
+          <el-button type="primary" plain @click="todoHandler()">下载作品</el-button>
+          <el-button type="primary" @click="todoHandler()">查看结果详情</el-button>
         </div>
       </el-col>
     </el-row>
@@ -33,7 +33,7 @@ export default {
   name: 'EnrolledContestFinished',
   computed: {
     endingDeadline: function() {
-      let procedure = JSON.parse(this.contest.procedure)
+      let procedure = this.contest.procedure
       let deadline = procedure[procedure.length - 1].endTime
       return isoToHumanReadable(deadline)
     }
