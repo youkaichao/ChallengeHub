@@ -19,7 +19,7 @@ class Competition(models.Model):
     publisher = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name='published_competitions')
     judges = models.ManyToManyField(User, related_name='judged_competitions')
-    current_stage = models.IntegerField(default=-2)
+    current_stage = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -38,7 +38,7 @@ class Competition(models.Model):
             'upvote': self.upvote,
             'downvote': self.downvote,
             'publisher': self.publisher.username,
-            'currentStage': self.current_stage,
+            'stage': self.current_stage,
             'procedure': [stage.to_dict() for stage in self.stage_list.all()]
         }
         if detail:
@@ -104,7 +104,7 @@ class Group(models.Model):
     members = models.ManyToManyField(
         User, related_name='joint_groups')
     rank = models.TextField()
-    current_stage = models.IntegerField(default=-2)
+    current_stage = models.IntegerField(default=1)
 
     def __str__(self):
         return self.name
@@ -115,10 +115,11 @@ class Group(models.Model):
             'name': self.name,
             'competitionId': self.competition.id,
             'competitionName': self.competition.name,
+            'hasCommit': self.stage_list.get(stage=self.current_stage).has_commit,
             'leaderName': self.leader.username,
             'membersName': [member.username for member in self.members.all()],
             'rank': self.rank,
-            'currentStage': self.current_stage
+            'stage': self.current_stage
         }
 
 
@@ -129,7 +130,9 @@ GStage: group stage data
 
 class GStage(models.Model):
     stage = models.IntegerField()
+    has_commit = models.BooleanField(default=False)
     commit_path = models.FilePathField(blank=True)
+    submission = models.CharField(default='', max_length=50)
     score = models.FloatField()
     group = models.ForeignKey(
         Group, related_name='stage_list', on_delete=models.PROTECT)
@@ -150,8 +153,9 @@ ReviewMeta: meta data for each reviewer with each group each stage
 
 class ReviewMeta(models.Model):
     reviewer = models.ForeignKey(
-        User, on_delete=models.PROTECT, related_name='reviews')
-    score = models.FloatField()
+        User, on_delete=models.PROTECT, related_name='review_list')
+    score = models.FloatField(default=0.0)
+    reviewed = models.BooleanField(default=False)
     stage = models.ForeignKey(
         GStage, related_name='review_meta_list', on_delete=models.PROTECT)
 

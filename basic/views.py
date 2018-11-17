@@ -25,7 +25,7 @@ class ContestCollectionView(View):
     def post(self, request):
         self.check_input([
             'name', 'subject', 'groupSize', 'enrollStart', 'enrollEnd',
-            'detail', 'procedure', 'enrollUrl', 'charge', 'publisher', 'enrollForm', 'imgUrl',
+            'detail', 'procedure', 'enrollUrl', 'charge', 'enrollForm', 'imgUrl',
         ])
         c = Competition(
             name=request.data.get('name'),
@@ -37,13 +37,13 @@ class ContestCollectionView(View):
             enroll_url=request.data.get('enrollUrl'),
             charge=request.data.get('charge'),
             img_url=request.data.get('imgUrl'),
+            publisher=request.user
         )
-        p = User.objects.get(username=request.data.get('publisher'))
-        c.publisher = p
         c.save()
         procedure = request.data.get('procedure')
         for (i, prod) in enumerate(procedure):
-            stage = CStage(name=prod["name"], start_time=prod["startTime"], end_time=prod["endTime"], stage=i+1, competition=c)
+            stage = CStage(name=prod["name"], start_time=prod["startTime"],
+                           end_time=prod["endTime"], stage=2*i+1, competition=c)
             stage.save()
         collection = MONGO_CLIENT.competition.enrollForm
         collection.insert_one(
@@ -54,33 +54,21 @@ class ContestCollectionView(View):
         return JsonResponse({'code': 0, 'data': c.to_dict()})
 
 
-class ContestCollectionEnrolledView(View):
-    @require_logged_in
-    def get(self, request):
-        user = request.user
-        return JsonResponse({
-            'code': 0,
-            "data": [
-                {
-                    'group': group.to_dict(),
-                    'contest': group.competition.to_dict()
-                } for group in user.joint_groups.all()
-            ]
-        })
-
-
 class ContestDetailView(View):
     def get(self, request, contest_id):
-        c = Competition.objects.get(id=contest_id)
+        c = Competition.objects.get(id=int(contest_id))
         info = c.to_dict(detail=True)
         return JsonResponse({'code': 0, 'data': info})
 
-    # def post(self, request, contest_id):
-        # self.check_input(['stage'])
-        # collection = MONGO_CLIENT.competition.stage
-        # collection.find_one_and_update({'id': int(contest_id)}, {
-                                       # '$set': {'stage': request.data['stage']}})
-        # return JsonResponse({'code': 0, 'data': 'success'})
+    def post(self, request, contest_id):
+        self.check_input(['stage'])
+        user = request.user
+        competition = Competition.objects.get(id=int(contest_id))
+        if(competition.publisher != user):
+            raise Exception('no authority to change stage')
+        competition.current_stage = request.body.get('stage')
+        competition.save()
+        return JsonResponse({'code': 0, 'data': 'success'})
 
 
 class GroupStageView(View):
@@ -95,7 +83,7 @@ class GroupStageView(View):
         return JsonResponse({'code': 0, 'data': 'success'})
 
     def get(self, request, contest_id):
-        c = Competition.objects.get(id=contest_id)
+        c = Competition.objects.get(id=int(contest_id))
         groups = c.enrolled_groups.all()
         data = [group.to_dict() for group in groups]
         return JsonResponse({'code': 0, 'data': data})
@@ -111,13 +99,13 @@ class ContestEnrollView(View):
         self.check_input(['name', 'leaderName', 'members', 'form'])
         group = Group(
             name=request.data.get('name'),
-            competition=Competition.objects.get(id=contest_id),
+            competition=Competition.objects.get(id=int(contest_id)),
             leader=User.objects.get(
                 username=request.data.get('leaderName'))
         )
         group.save()
-        g_stage = GStage(stage=1,score=0,group=group)
-        g_stage.save()
+        stage = GStage(stage=1, score=0, group=group)
+        stage.save()
 
         collection = MONGO_CLIENT.group.enrollForm
         collection.insert_one(
@@ -128,17 +116,19 @@ class ContestEnrollView(View):
         return JsonResponse({'code': 0, 'data': 'success'})
 
 
-class ContestSubmitView(View):
+class ContestSubmissionView(View):
     def post(self, request, contest_id):
-        group_id = request.data.get('groupId')
-        group = Group.objects.get(id=group_id)
+        user = request.user
+        group = user.joint_groups.get(competition__id=int(contest_id))
         submit = request.data.get('file')
         stage = group.current_stage
+        if(stage != group.competition.stage or stage % 2 != 1):
+            raise Exception('no authority to submit now')
         _, extension = os.path.splitext(submit.name)
 
         commit_dir = os.path.join('submit', 'contest',
-                            contest_id, str(stage), f'{group_id}{extension}')
-        commit_path = os.path.join(commit_dir, f'{group_id}{extension}')
+                                  contest_id, str(stage), f'{group.id}{extension}')
+        commit_path = os.path.join(commit_dir, f'{group.id}{extension}')
         abs_dir = os.path.join(BASE_DIR, commit_dir)
         abs_path = os.path.join(BASE_DIR, commit_path)
         if(not os.path.exists(abs_dir)):
@@ -148,39 +138,29 @@ class ContestSubmitView(View):
                 f.write(chunk)
         group_stage = group.stage_list.get(stage=stage)
         group_stage.commit_path = commit_path
+        group_stage.submission = request.data.get('submissionName')
+        group_stage.has_commit = True
         group_stage.save()
         return JsonResponse({'code': 0, 'data': 'success'})
 
-
-class UserCollectionView(View):
-    def get(self, request):
-        self.check_input(['type'])
-        user_type = request.data['type']
-        if user_type == 'organization':
-            users = User.objects.filter(individual=False)
-        elif user_type == 'contestant':
-            # FIXME will select admins too
-            users = User.objects.filter(individual=True)
-        else:
-            return JsonResponse(make_errors('invalid type'))
-        return JsonResponse({'code': 0, 'data': [user.to_dict() for user in users]})
-
-    def post(self, request):
-        self.check_input([
-            'username', 'firstName', 'lastName', 'email', 'introduction',
-            'school', 'isIndividual'
-        ])
-        u = User(
-            username=request.data.get['username'],
-            first_name=request.data.get['firstName'],
-            last_name=request.data.get['lastName'],
-            email=request.data.get['email'],
-            introduction=request.data.get['introduction'],
-            school=request.data.get['school'],
-            individual=request.data.get['isIndividual']
-        )
-        u.save()
-        return JsonResponse({'code': 0, 'data': 'success'})
+    def get(self, request, contest_id):
+        user = request.user
+        group = user.joint_groups.get(competition__id=int(contest_id))
+        stage = group.stage if not request.data.key(
+            'stage') else request.data.get('stage')
+        if stage < 1:
+            raise Exception('invalid stage')
+        if stage % 2 == 0:
+            stage = stage-1
+        group_stage = group.stage_list.get(stage=stage)
+        if not group_stage.has_commit:
+            raise Exception('not committed yet')
+        return JsonResponse({
+            'code': 0,
+            'data': {
+                'submissionName': group_stage.submission,
+                'url': group_stage.commit_path
+            }})
 
 
 class UserCreatedView(View):
@@ -196,9 +176,37 @@ class UserJudgedView(View):
     @require_logged_in
     def get(self, request):
         user = request.user
-        competitions = user.judged_competitions.all()
-        return JsonResponse({'code': 0, "data": [
-            competition.to_dict() for competition in competitions]})
+        competitions = [r.stage.group.competition for r in user.reviews.all()]
+        data = []
+        for competition in competitions:
+            reviews = user.reviews.filter(
+                stage__group__competition=competition, stage__stage=competition.current_stage)
+            data.append({
+                'contest': competition.to_dict(),
+                'task': {
+                    'count': reviews.len(),
+                    'done': reviews.filter(reviewed=True).len()
+                }
+            })
+        return JsonResponse({
+            'code': 0,
+            "data": data,
+        })
+
+
+class UserEnrolledView(View):
+    @require_logged_in
+    def get(self, request):
+        user = request.user
+        return JsonResponse({
+            'code': 0,
+            'data': [
+                {
+                    'group': group.to_dict(),
+                    'contest': group.competition.to_dict()
+                } for group in user.joint_groups.all()
+            ]
+        })
 
 
 class GroupCollectionView(View):
@@ -221,5 +229,39 @@ class GroupCollectionView(View):
 
 class GroupDetailView(View):
     def get(self, request, group_id):
-        g = Group.objects.get(id=group_id)
+        g = Group.objects.get(id=int(group_id))
         return JsonResponse({'code': 0, 'data': g.to_dict()})
+
+
+class JudgeReviewView(View):
+    def get(self, request, contest_id):
+        competition = Competition.objects.get(id=int(contest_id))
+        stage = competition.stage if not request.data.key(
+            'stage') else request.data.get('stage')
+        data = {}
+        data['contest'] = competition.to_dict()
+        reviews = request.user.reviews.filter(
+            stage__group__competition=competition, stage__stage=competition.current_stage)
+        data['task'] = {
+            'count': reviews.len(),
+            'done': reviews.filter(reviewed=True).len()
+        }
+        data['submissions'] = [{
+            'id': review.id,
+            'submissionName': review.stage.submission,
+            'reviewed': review.reviewed,
+            'rating': review.score,
+            'url': review.stage.commit_path
+        } for review in reviews]
+        return JsonResponse({'code': 0, 'data': data})
+
+    def post(self, request, contest_id):
+        self.check_input(['reviews'])
+        competition = Competition.objects.get(id=int(contest_id))
+        reviews = request.data.get('reviews')
+        for r in reviews:
+            meta = ReviewMeta.objects.get(id=r.id)
+            meta.reviewed = meta.reviewed or r.reviewed
+            meta.score = r.rating
+            meta.save()
+        return JsonResponse({'code':0,'data':'success'})
