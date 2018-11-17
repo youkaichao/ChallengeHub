@@ -4,13 +4,13 @@
   - [已完成](#%E5%B7%B2%E5%AE%8C%E6%88%90)
     - [GET /api/contests: 返回所有比赛](#get-apicontests-%E8%BF%94%E5%9B%9E%E6%89%80%E6%9C%89%E6%AF%94%E8%B5%9B)
     - [POST /api/contests: 创建一个比赛](#post-apicontests-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%AF%94%E8%B5%9B)
-    - [GET /api/contests/enrolled: 获取用户参加的所有比赛](#get-apicontestsenrolled-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E5%8F%82%E5%8A%A0%E7%9A%84%E6%89%80%E6%9C%89%E6%AF%94%E8%B5%9B)
     - [GET /api/contests/<id\>: 获取一个比赛的详情](#get-apicontestsid-%E8%8E%B7%E5%8F%96%E4%B8%80%E4%B8%AA%E6%AF%94%E8%B5%9B%E7%9A%84%E8%AF%A6%E6%83%85)
     - [POST /api/contests/<id\>: 修改一个比赛的阶段](#post-apicontestsid-%E4%BF%AE%E6%94%B9%E4%B8%80%E4%B8%AA%E6%AF%94%E8%B5%9B%E7%9A%84%E9%98%B6%E6%AE%B5)
     - [GET /api/contests/<id\>/enroll: 获得比赛的报名表单](#get-apicontestsidenroll-%E8%8E%B7%E5%BE%97%E6%AF%94%E8%B5%9B%E7%9A%84%E6%8A%A5%E5%90%8D%E8%A1%A8%E5%8D%95)
     - [POST /api/contests/<id\>/enroll: 报名比赛](#post-apicontestsidenroll-%E6%8A%A5%E5%90%8D%E6%AF%94%E8%B5%9B)
     - [GET /api/contests/<id\>/groups: 获得一个比赛所有队伍的信息](#get-apicontestsidgroups-%E8%8E%B7%E5%BE%97%E4%B8%80%E4%B8%AA%E6%AF%94%E8%B5%9B%E6%89%80%E6%9C%89%E9%98%9F%E4%BC%8D%E7%9A%84%E4%BF%A1%E6%81%AF)
     - [POST /api/contests/<id\>/groups: 修改一个比赛某些队伍的阶段](#post-apicontestsidgroups-%E4%BF%AE%E6%94%B9%E4%B8%80%E4%B8%AA%E6%AF%94%E8%B5%9B%E6%9F%90%E4%BA%9B%E9%98%9F%E4%BC%8D%E7%9A%84%E9%98%B6%E6%AE%B5)
+    - [GET /api/users/enrolled: 获取用户参加的所有比赛](#get-apiusersenrolled-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E5%8F%82%E5%8A%A0%E7%9A%84%E6%89%80%E6%9C%89%E6%AF%94%E8%B5%9B)
     - [GET /api/users/created: 获取用户创建的比赛](#get-apiuserscreated-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E5%88%9B%E5%BB%BA%E7%9A%84%E6%AF%94%E8%B5%9B)
     - [GET /api/users/judged: 获取用户评审的比赛](#get-apiusersjudged-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E8%AF%84%E5%AE%A1%E7%9A%84%E6%AF%94%E8%B5%9B)
     - [GET /api/contests/<id\>/submission: 获得本队在比赛中某阶段的提交](#get-apicontestsidsubmission-%E8%8E%B7%E5%BE%97%E6%9C%AC%E9%98%9F%E5%9C%A8%E6%AF%94%E8%B5%9B%E4%B8%AD%E6%9F%90%E9%98%B6%E6%AE%B5%E7%9A%84%E6%8F%90%E4%BA%A4)
@@ -123,53 +123,6 @@
 ```
 
 返回数据: 无
-
-### GET /api/contests/enrolled: 获取用户参加的所有比赛
-
-权限要求: 无
-
-返回数据: 无
-
-```javascript
-[
-  {
-    group: {
-      id: int,
-      name: str,
-      competitionId: int,
-      competitionName: str,
-      hasCommit: bool,
-      leaderName: int,
-      membersName: [int],
-      rank: str,
-      stage: int
-    },
-    contest: {
-      id: int,
-      name: str,
-      subject: str,
-      groupSize: int,
-      enrollStart: str,
-      enrollEnd: str,
-      imgUrl: str,
-      enrollUrl: str,
-      charge: int,
-      upvote: int,
-      downvote: int,
-      publisher: str,
-      stage: int,
-      procedure: [
-        {
-          name: str,
-          startTime: str,
-          endTime: str,
-          stage: int,
-        }
-      ],
-    },
-  }
-]
-```
 
 ---
 
@@ -301,6 +254,55 @@
 ```
 
 返回数据: 无
+
+---
+
+### GET /api/users/enrolled: 获取用户参加的所有比赛
+
+权限要求: 无
+
+返回数据: 无
+
+```javascript
+[
+  {
+    group: {
+      id: int,
+      name: str,
+      competitionId: int,
+      competitionName: str,
+      hasCommit: bool,
+      leaderName: int,
+      membersName: [int],
+      rank: str,
+      stage: int
+    },
+    contest: {
+      id: int,
+      name: str,
+      subject: str,
+      groupSize: int,
+      enrollStart: str,
+      enrollEnd: str,
+      imgUrl: str,
+      enrollUrl: str,
+      charge: int,
+      upvote: int,
+      downvote: int,
+      publisher: str,
+      stage: int,
+      procedure: [
+        {
+          name: str,
+          startTime: str,
+          endTime: str,
+          stage: int,
+        }
+      ],
+    },
+  }
+]
+```
 
 ---
 

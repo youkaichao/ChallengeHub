@@ -17,7 +17,7 @@
           评审已完成
         </div>
         <div class="right-info">
-          你已完成 {{ task.count }} 项评审任务
+          你已完成 {{ task.done }} 项评审任务
         </div>
         <div style="margin-top: 20px;">
           <el-button type="primary" @click="gotoWorkspace()">查看评审详情</el-button>
@@ -43,7 +43,7 @@ export default {
   props: ['contest', 'task'],
   methods: {
     gotoWorkspace() {
-      this.$router.push(`/judge/contests/${this.contest.id}/submissions`)
+      this.$router.push(`/judge/workspace/${this.contest.id}`)
     }
   }
 }

@@ -104,7 +104,7 @@ export default new Router({
           component: JudgeDashboard
         },
         {
-          path: 'judge/contests/:id/submissions',
+          path: 'judge/workspace/:id/',
           component: JudgeWorkspace
         }
       ]

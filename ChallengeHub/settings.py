@@ -31,6 +31,7 @@ MONGO_CLIENT = pymongo.MongoClient(
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend", "dist", "static"),
+    os.path.join(BASE_DIR, "submit"),
 ]
 
 

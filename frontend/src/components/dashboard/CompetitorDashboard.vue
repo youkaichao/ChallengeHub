@@ -6,7 +6,7 @@
         <el-col :span="6" style="text-align: left; margin: auto;"> <span class="info-tag">学校</span> {{ this.$store.state.school }} </el-col>
         <el-col :span="6" style="text-align: left; margin: auto;"> <span class="info-tag">邮箱</span> {{ this.$store.state.email }} </el-col>
         <el-col :span="6" style="text-align: right;">
-          <el-button type="text" @click="todoHandler()">修改个人信息</el-button>
+          <el-button type="text" @click="$router.push('/user')">修改个人信息</el-button>
         </el-col>
       </el-row>
       <el-row type="flex" align-items="center">
@@ -40,18 +40,10 @@ export default {
       enrolledContestsAndGroups: []
     }
   },
-  methods: {
-    todoHandler: function() {
-      // TODO
-      alert('todo')
-    }
-  },
   async created() {
-    let response = await this.$http.get('/api/enrolled_competitions', {
-      params: { username: this.$store.state.username }
-    })
+    let response = await this.$http.get('/api/users/enrolled')
     if (response.body.code !== 0) {
-      alert(response.body.error)
+      this.$message.error({ type: 'error', message: response.body.error })
       return
     }
     this.enrolledContestsAndGroups = response.body.data
@@ -94,7 +86,7 @@ export default {
 
 <style scoped>
 .info-tag {
-  color: #409EFF;
+  color: #409eff;
   margin-left: 10px;
   margin-right: 10px;
 }

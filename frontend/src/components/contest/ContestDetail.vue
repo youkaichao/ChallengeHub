@@ -63,7 +63,7 @@ export default {
   async created() {
     let response = await this.$http.get(`/api/contests/${this.$route.params.id}`)
     if (response.body.code !== 0) {
-      this.$message.error(response.body.error)
+      this.$message({ type: 'error', message: response.body.error })
       return
     }
     this.contestInfo = response.body.data

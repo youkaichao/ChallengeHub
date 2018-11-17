@@ -122,22 +122,22 @@ class ContestSubmissionView(View):
         group = user.joint_groups.get(competition__id=int(contest_id))
         submit = request.data.get('file')
         stage = group.current_stage
-        if(stage != group.competition.stage or stage % 2 != 1):
+        if(stage != group.competition.current_stage or stage % 2 != 1):
             raise Exception('no authority to submit now')
         _, extension = os.path.splitext(submit.name)
 
-        commit_dir = os.path.join('submit', 'contest',
+        commit_dir = os.path.join('contest',
                                   contest_id, str(stage), f'{group.id}{extension}')
         commit_path = os.path.join(commit_dir, f'{group.id}{extension}')
-        abs_dir = os.path.join(BASE_DIR, commit_dir)
-        abs_path = os.path.join(BASE_DIR, commit_path)
+        abs_dir = os.path.join(BASE_DIR, 'submit', commit_dir)
+        abs_path = os.path.join(BASE_DIR, 'submit', commit_path)
         if(not os.path.exists(abs_dir)):
             os.makedirs(abs_dir)
         with open(abs_path, 'wb+') as f:
             for chunk in submit.chunks():
                 f.write(chunk)
         group_stage = group.stage_list.get(stage=stage)
-        group_stage.commit_path = commit_path
+        group_stage.commit_path = os.path.join('/static', commit_path)
         group_stage.submission = request.data.get('submissionName')
         group_stage.has_commit = True
         group_stage.save()
@@ -146,8 +146,7 @@ class ContestSubmissionView(View):
     def get(self, request, contest_id):
         user = request.user
         group = user.joint_groups.get(competition__id=int(contest_id))
-        stage = group.stage if not request.data.key(
-            'stage') else request.data.get('stage')
+        stage = request.data.get('stage', group.current_stage)
         if stage < 1:
             raise Exception('invalid stage')
         if stage % 2 == 0:
@@ -176,10 +175,11 @@ class UserJudgedView(View):
     @require_logged_in
     def get(self, request):
         user = request.user
-        competitions = [r.stage.group.competition for r in user.reviews.all()]
+        competitions = [
+            r.stage.group.competition for r in user.review_list.all()]
         data = []
         for competition in competitions:
-            reviews = user.reviews.filter(
+            reviews = user.review_list.filter(
                 stage__group__competition=competition, stage__stage=competition.current_stage)
             data.append({
                 'contest': competition.to_dict(),
@@ -236,11 +236,11 @@ class GroupDetailView(View):
 class JudgeReviewView(View):
     def get(self, request, contest_id):
         competition = Competition.objects.get(id=int(contest_id))
-        stage = competition.stage if not request.data.key(
+        stage = competition.current_stage if not request.data.key(
             'stage') else request.data.get('stage')
         data = {}
         data['contest'] = competition.to_dict()
-        reviews = request.user.reviews.filter(
+        reviews = request.user.review_list.filter(
             stage__group__competition=competition, stage__stage=competition.current_stage)
         data['task'] = {
             'count': reviews.len(),

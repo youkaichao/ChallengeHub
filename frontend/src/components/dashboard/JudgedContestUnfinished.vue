@@ -8,16 +8,18 @@
         <div class="contest-name"> {{ contest.name }} </div>
         <div class="contest-info"> {{ contest.publisher }} </div>
         <div class="contest-info" v-if="contest.stage === 0">比赛尚未开始</div>
-        <div class="contest-info" v-if="ableToJudge">阶段 <b>{{ currentStage }}</b> 评审结束于 <b>{{ currentDeadline }}</b></div>
-        <div class="contest-info" v-if="contest.stage !== 0 && !ableToJudge">阶段 <b> {{ currentStage }} </b>评审开始于 <b>{{ currentDeadline }}</b></div>
+        <div class="contest-info" v-if="isJudgeStage">阶段 <b>{{ currentStage }}</b> 评审结束于 <b>{{ currentDeadline }}</b></div>
+        <div class="contest-info" v-if="contest.stage !== 0 && !isJudgeStage">阶段 <b> {{ currentStage }} </b>评审开始于 <b>{{ currentDeadline }}</b></div>
         <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">查看比赛详情</el-button>
       </el-col>
 
       <el-col :span="4" style="text-align: right; padding-right: 20px; ">
         <div class="judging-status" v-html="judgingStatus"></div>
-        <el-progress v-if="ableToJudge" style="margin-top: 15px;" :percentage="parseFloat((task.done * 100 / task.count).toFixed(1))" :text-inside="true" :stroke-width="18"></el-progress>
-        <el-button v-if="(!judgeCompelete) && ableToJudge" style="margin-top: 20px;" type="primary" @click="gotoWorkspace()">进行评审</el-button>
-        <el-button v-if="judgeCompelete && ableToJudge" style="margin-top: 20px;" type="primary" plain @click="gotoWorkspace()">修改评审</el-button>
+        <el-progress v-if="isJudgeStage" style="margin-top: 15px;" :percentage="parseFloat((task.done * 100 / task.count).toFixed(1))" :text-inside="true" :stroke-width="18"></el-progress>
+        <el-progress v-if="!isJudgeStage" style="margin-top: 15px; visibility: hidden;" :percentage="0" :text-inside="true" :stroke-width="18"></el-progress>
+        <el-button v-if="!isJudgeStage" style="margin-top: 20px;" type="primary" plain @click="gotoWorkspace()">查看评审</el-button>
+        <el-button v-if="isJudgeStage && (!judgeCompelete)" style="margin-top: 20px;" type="primary" @click="gotoWorkspace()">进行评审</el-button>
+        <el-button v-if="isJudgeStage && judgeCompelete" style="margin-top: 20px;" type="primary" plain @click="gotoWorkspace()">修改评审</el-button>
       </el-col>
     </el-row>
   </el-card>
@@ -34,12 +36,12 @@ export default {
       alert('todo')
     },
     gotoWorkspace() {
-      this.$router.push(`judge/contests/${this.contest.id}/submissions`)
+      this.$router.push(`judge/workspace/${this.contest.id}`)
     }
   },
   props: ['contest', 'task'],
   computed: {
-    ableToJudge: function() {
+    isJudgeStage: function() {
       let currentStage = this.contest.stage
       if (currentStage > 0 && currentStage % 2 === 0) return true
       return false
@@ -60,7 +62,7 @@ export default {
       return this.task.count === this.task.done
     },
     judgingStatus() {
-      if (!this.ableToJudge) return '<span style="color: gray;">当前无法评审</span>'
+      if (!this.isJudgeStage) return '<span style="color: gray;">无评审任务</span>'
       if (this.task.count === this.task.done) return '<span style="color: gray;">评审任务完成</span>'
       return '评审进行中'
     }
