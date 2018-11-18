@@ -70,6 +70,122 @@ class ContestDetailView(View):
         competition.save()
         return JsonResponse({'code': 0, 'data': 'success'})
 
+        
+class TaskStatView(View):
+    def get(self, request, contest_id):
+        self.check_input(['stage'])
+        c = Competition.objects.get(id=int(contest_id))
+        stage = request.data['stage']
+        cstage = c.stage_list.get(stage=stage)
+        qualified_groups = c.enrolled_groups.filter(current_stage=cstage)
+        submitted_groups = 0
+        total_tasks = 0
+        reviewed_tasks = 0
+        for group in qualified_groups:
+            gstage = group.stage_list.get(stage=stage)
+            if gstage.has_commit:
+                submitted_groups += 1
+            review_metas = gstage.review_meta_list.all()
+            total_tasks += len(review_metas)
+            for task in review_metas:
+                if task.reviewed:
+                    reviewed_tasks += 1
+        return JsonResponse({
+                            'code': 0, 
+                            'data': {
+                                "totalTasks": total_tasks,
+                                "reviewedTasks": reviewed_tasks,
+                                "qualifiedGroups": len(qualified_groups),
+                                "submittedGroups": submitted_groups,
+                                "isAssigned": cstage.is_assigned
+                            }})
+        
+
+class ContestReviewTaskView(View):
+    def get(self, request, contest_id):
+        self.check_input(['stage'])
+        stage = int(request.data['stage'])
+        c = Competition.objects.get(id=int(contest_id))
+        data = []
+        for judge in c.judges.all():
+            assigned = 0
+            completed = 0
+            for task in judge.review_meta_list.all():
+                gstage = task.stage
+                if gstage.stage == stage and gstage.group.competition.id == int(contest_id):
+                    assigned += 1
+                    if task.reviewed:
+                        completed += 1
+            data.append({
+                "username": judge.username,
+                "email": judge.email,
+                "assigned": assigned,
+                "completed": completed
+            })
+        return JsonResponse({'code': 0, 'data': data})
+
+
+class ContestAutoAssignView(View):
+    def get(self, request, contest_id):
+        self.check_input(['stage', 'serious', 'maxconn', 'judges'])
+        c = Competition.objects.get(id=int(contest_id))
+        stage = request.data['stage']
+        maxconn = request.data['maxconn']
+        serious = request.data['serious']
+        cstage = c.stage_list.get(stage=stage)
+        if cstage.is_assigned:
+            raise Exception("already auto-assigned!")
+        qualified_groups = c.enrolled_groups.filter(current_stage=cstage)
+        submitted_gstages = []
+        for group in qualified_groups:
+            gstage = group.stage_list.get(stage=stage)
+            if gstage.has_commit:
+                submitted_gstages.append(gstage)
+        judges = list(c.judges.all())
+
+        judge_count = {x.username : 0 for x in judges}
+        group_count = {x.id : 0 for x in submitted_gstages}
+
+        # assign assignment
+        index = 0
+        for gstage in submitted_gstages:
+            for i in range(maxconn):
+                judge = judges[index % len(judges)]
+                index += 1
+                judge_count[judge.username] += 1
+                group_count[gstage.id] += 1
+                if serious:
+                    review_meta = ReviewMeta(reviewer=judge, stage=gstage)
+                    review_meta.save()
+        groupNotFull = len([key for key, value in group_count.items() if value < maxconn])
+        groupZero = len([key for key, value in group_count.items() if value == 0])
+        return JsonResponse({'code': 0, 'data': {
+            "judges":[
+               {"username":judge.username, "assign": judge_count[judge.username]} for judge in judges
+            ],
+           "groupNotFull":groupNotFull,
+           "groupZero":groupZero 
+        }})
+
+
+
+class ContestReviewerView(View):
+    def post(self, request, contest_id):
+        self.check_input(['username'])
+        c = Competition.objects.get(id=int(contest_id))
+        with transaction.atomic():
+            for username in request.data['username']:
+                user = User.objects.get(username=username)
+                c.judges.add(user)
+            c.save()
+        return JsonResponse({'code': 0, 'data': 'success'})
+
+    def get(self, request, contest_id):
+        c = Competition.objects.get(id=int(contest_id))
+        judges = c.judges.all()
+        data = [judge.to_dict() for judge in judges]
+        return JsonResponse({'code': 0, 'data': data})
+        
 
 class GroupStageView(View):
     def post(self, request, contest_id):

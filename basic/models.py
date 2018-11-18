@@ -59,6 +59,7 @@ class CStage(models.Model):
     stage = models.IntegerField()
     competition = models.ForeignKey(
         Competition, related_name='stage_list', on_delete=models.PROTECT)
+    is_assigned = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -68,7 +69,8 @@ class CStage(models.Model):
             'name': self.name,
             'startTime': self.start_time.strftime('%y-%m-%d'),
             'endTime': self.end_time.strftime('%y-%m-%d'),
-            'stage': self.stage
+            'stage': self.stage,
+            'isAssigned': self.is_assigned
         }
         if detail:
             data['criterion'] = self.criterion
