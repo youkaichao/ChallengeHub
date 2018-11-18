@@ -7,19 +7,25 @@
     <el-table :data="submissions">
       <el-table-column label="队伍名称" prop="teamName"></el-table-column>
       <el-table-column label="作品名称" prop="name"></el-table-column>
-      <el-table-column label="提交时间" prop="submissionTime"></el-table-column>
+      <el-table-column label="下载地址">
+        <template slot-scope="scope">
+          <el-button type="text" @click="downloadWithUrl(scope.row.downloadUrl)">
+            下载
+          </el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="平均分(点击查看详情)">
-        <template slot-scope="scope" prop="average" sortable>
+        <template slot-scope="scope" prop="score" sortable>
           <el-popover placement="left" trigger="click">
             <el-table :data="scope.row.judges">
-              <el-table-column prop="name" label="评委"></el-table-column>
+              <el-table-column prop="username" label="评委"></el-table-column>
               <el-table-column label="评分">
                 <template slot-scope="in_scope">
-                  {{in_scope.row.judged?in_scope.row.score:'未评分'}}
+                  {{in_scope.row.hasReviewed?in_scope.row.score:'未评分'}}
                 </template>
               </el-table-column>
             </el-table>
-            <el-button slot="reference">{{scope.row.average}}</el-button>
+            <el-button slot="reference">{{scope.row.score}}</el-button>
           </el-popover>
         </template>
       </el-table-column>
@@ -28,12 +34,13 @@
 </template>
 
 <script>
+import { downloadFile } from '@/lib/util'
 export default {
   name: 'ManageSubmission',
   props: ['contest', 'contestId'],
   data() {
     return {
-      currentTabIndex: '1',
+      currentTabIndex: '0',
       submissions: []
     }
   },
@@ -43,18 +50,15 @@ export default {
     }
   },
   methods: {
+    downloadWithUrl(url) {
+      downloadFile(document, url)
+    },
     getSubmission() {
-      if (!this.contest) {
+      if (this.contest.id === -1) {
         // null reference
         return
       }
-      this.stages = []
-      for (let i = 0; i < this.contest.procedure.length; i++) {
-        let step = this.contest.procedure[i]
-        this.stages.push({
-          name: step.name,
-          submission: []
-        })
+      if (0 <= this.tabIndex && this.tabIndex < this.contest.procedure.length) {
         this.$http
           .get(`/api/contests/${this.contestId}/submission_all`, {
             params: {
@@ -65,14 +69,10 @@ export default {
             if (resp.body.code !== 0) {
               throw new Error(resp.body.code + ' ' + resp.body.error)
             }
-            this.stages.splice(i, 1, {
-              name: step.name,
-              submission: resp.body.data
-            })
             this.submissions = resp.body.data
           })
           .catch(err => {
-            this.$alert(err)
+            this.$alert(err.toString())
           })
       }
     }

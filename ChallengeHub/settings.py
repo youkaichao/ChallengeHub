@@ -46,7 +46,7 @@ SECRET_KEY = 'wl7lznjp**r&dsn(8stzhbsb&3&1rq!yly#*2lnk987a)wdqc+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIGS['DEBUG']
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 

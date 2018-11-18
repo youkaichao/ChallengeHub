@@ -15,7 +15,7 @@
 
       <el-col :span="4" style="text-align: right; padding-right: 20px; ">
         <div class="judging-status" v-html="judgingStatus"></div>
-        <el-progress v-if="isJudgeStage" style="margin-top: 15px;" :percentage="parseFloat((task.done * 100 / task.count).toFixed(1))" :text-inside="true" :stroke-width="18"></el-progress>
+        <el-progress v-if="isJudgeStage" style="margin-top: 15px;" :percentage="task.count === 0 ? 1.0 : parseFloat((task.done * 100 / task.count).toFixed(1))" :text-inside="true" :stroke-width="18"></el-progress>
         <el-progress v-if="!isJudgeStage" style="margin-top: 15px; visibility: hidden;" :percentage="0" :text-inside="true" :stroke-width="18"></el-progress>
         <el-button v-if="!isJudgeStage" style="margin-top: 20px;" type="primary" plain @click="gotoWorkspace()">查看评审</el-button>
         <el-button v-if="isJudgeStage && (!judgeCompelete)" style="margin-top: 20px;" type="primary" @click="gotoWorkspace()">进行评审</el-button>

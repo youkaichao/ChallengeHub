@@ -54,20 +54,28 @@ export default {
         this.$alert('没有选中队伍')
         return
       }
-      let ids = this.selected.map(x => x.id)
-      this.$http
-        .post(`/api/contests/${this.contestId}/groups`, {
-          group_ids: ids,
-          stage: this.targetStage
-        })
-        .then(resp => {
-          if (resp.code !== 0) {
-            throw new Error(resp.error)
-          }
-          this.reloadGroupData()
+      this.$confirm('是否将选定选手晋级？')
+        .then(() => {
+          let ids = this.selected.map(x => x.id)
+          this.$http
+            .post(`/api/contests/${this.contestId}/groups`, {
+              group_ids: ids,
+              stage: this.targetStage.stage
+            })
+            .then(resp => {
+              if (resp.body.code !== 0) {
+                throw new Error(resp.body.error)
+              }
+              this.reloadGroupData()
+            })
+            .catch(err => {
+              this.$alert(err.toString())
+            })
         })
         .catch(err => {
-          this.$alert(err)
+          if (err.toString() !== 'cancel') {
+            this.$alert(err.toString())
+          }
         })
     },
     reloadGroupData() {
@@ -77,7 +85,7 @@ export default {
           this.groups = resp.body.data
         })
         .catch(err => {
-          this.$alert(err)
+          this.$alert(err.toString())
         })
     },
     groupStageName(stage) {

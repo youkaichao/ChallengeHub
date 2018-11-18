@@ -44,9 +44,19 @@ export default {
         subject: '比赛学科',
         groupSize: '队伍人数',
         publisher: '举办方',
-        procedure: []
+        procedure: [],
+        id: -1,
+        enrollStart: '',
+        enrollEnd: '',
+        imgUrl: '',
+        enrollUrl: '',
+        charge: 0,
+        upvote: 0,
+        downvote: 0,
+        publisher: '',
+        stage: 0,
+        detail: ''
       },
-      procedureList: [],
       sidebarList: [
         {
           name: 'overview',
@@ -86,7 +96,7 @@ export default {
           this.contest = resp.body.data
         })
         .catch(err => {
-          this.$alert(err)
+          this.$alert(err.toString())
         })
     },
     pushRoute(name) {

@@ -67,8 +67,8 @@ class CStage(models.Model):
     def to_dict(self, detail=False):
         data = {
             'name': self.name,
-            'startTime': self.start_time.strftime('%y-%m-%d'),
-            'endTime': self.end_time.strftime('%y-%m-%d'),
+            'startTime': self.start_time.strftime('%Y-%m-%d'),
+            'endTime': self.end_time.strftime('%Y-%m-%d'),
             'stage': self.stage,
             'isAssigned': self.is_assigned
         }
@@ -135,7 +135,7 @@ class GStage(models.Model):
     has_commit = models.BooleanField(default=False)
     commit_path = models.FilePathField(blank=True)
     submission = models.CharField(default='', max_length=50)
-    score = models.FloatField()
+    score = models.FloatField(default=0.0)
     group = models.ForeignKey(
         Group, related_name='stage_list', on_delete=models.PROTECT)
 

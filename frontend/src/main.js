@@ -18,9 +18,9 @@ Vue.use(VueCookies)
 Vue.use(VueResource)
 Vue.use(mavonEditor)
 
-if (process.env.NODE_ENV !== 'production') {
-  Vue.use(VueResourceMock, MockData)
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   Vue.use(VueResourceMock, MockData)
+// }
 
 Vue.config.productionTip = false
 

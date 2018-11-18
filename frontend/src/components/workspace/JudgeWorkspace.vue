@@ -26,7 +26,7 @@
         <div class="section-header" style="color: ">
           阶段 <span style="color: #409eff;">{{currentStage}}</span> 评审进度
         </div>
-        <el-progress style="margin-top: 15px; margin-bottom: 50px;" :percentage="parseFloat((task.done * 100 / task.count).toFixed(1))" :text-inside="true" :stroke-width="18" />
+        <el-progress style="margin-top: 15px; margin-bottom: 50px;" :percentage="task.count === 0 ? 1.0 : parseFloat((task.done * 100 / task.count).toFixed(1))" :text-inside="true" :stroke-width="18" />
 
         <div class="section-header">
           选手作品
@@ -99,11 +99,12 @@ export default {
           this.$message({ type: 'error', message: response.body.error })
         } else {
           this.$message({ type: 'sucess', message: '提交成功' })
-          await this.initializeData()
         }
       } catch (error) {
         this.$message({ type: 'error', message: '提交失败，发生意外错误' })
       }
+
+      await this.initializeData()
     },
     downloadAll() {
       for (let i = 1; i < this.submissions.length; i++) {
@@ -157,10 +158,16 @@ export default {
     },
     async initializeData(stage) {
       let response = null
-      if (stage === null) {
-        response = await this.$http.get(`/api/judges/${this.$route.params.id}`)
-      } else {
-        response = await this.$http.get(`/api/judges/${this.$route.params.id}&stage=${stage}`)
+
+      try {
+        if (stage === null || stage === undefined) {
+          response = await this.$http.get(`/api/judges/${this.$route.params.id}`)
+        } else {
+          response = await this.$http.get(`/api/judges/${this.$route.params.id}&stage=${stage}`)
+        }
+      } catch (error) {
+        this.$message({ type: 'error', message: '数据刷新失败' })
+        return false
       }
 
       if (response.body.code !== 0) {

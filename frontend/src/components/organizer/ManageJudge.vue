@@ -45,7 +45,7 @@ export default {
           this.judges = resp.body.data
         })
         .catch(err => {
-          this.$alert(err)
+          this.$alert(err.toString())
         })
     },
     addJudge() {
@@ -62,7 +62,7 @@ export default {
           this.refreshJudge()
         })
         .catch(err => {
-          this.$alert(err)
+          this.$alert(err.toString())
         })
     },
     removeJudge(username) {
