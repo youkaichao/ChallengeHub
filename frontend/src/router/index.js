@@ -16,8 +16,12 @@ import ControlPanel from '@/components/organizer/ControlPanel'
 import VueResource from 'vue-resource'
 import VueCookies from 'vue-cookies'
 import ManageGroup from '@/components/organizer/ManageGroup'
+import ManageJudge from '@/components/organizer/ManageJudge'
 import Overview from '@/components/organizer/Overview'
-import MyOrganizeContests from '@/components/organizer/MyOrganizeContests'
+import ManageSubmission from '@/components/organizer/ManageSubmission'
+import NoticeList from '@/components/organizer/NoticeList'
+import ManageReview from '@/components/organizer/ManageReview'
+import NoticeDetail from '@/components/organizer/NoticeDetail'
 
 Vue.use(VueCookies)
 Vue.use(VueResource)
@@ -72,24 +76,43 @@ export default new Router({
           component: User
         },
         {
-          path: 'organizer',
-          name: '/organizer',
-          component: MyOrganizeContests
-        },
-        {
-          path: 'organizer/controlpanel/:id',
-          name: '/organizer/controlpanel',
+          path: 'organizer/:id',
           component: ControlPanel,
           children: [
             {
               path: 'managegroup',
-              name: '/organizer/controlpanel/:id/managegroup',
+              name: 'managegroup',
               component: ManageGroup
             },
             {
+              path: 'managejudge',
+              name: 'managejudge',
+              component: ManageJudge
+            },
+            {
               path: '',
-              name: '/organizer/controlpanel/:id',
+              name: 'overview',
               component: Overview
+            },
+            {
+              path: 'managereview',
+              name: 'managereview',
+              component: ManageReview
+            },
+            {
+              path: 'managesubmission',
+              name: 'managesubmission',
+              component: ManageSubmission
+            },
+            {
+              path: 'notices',
+              name: 'notices',
+              component: NoticeList
+            },
+            {
+              path: 'notices/:noticeId',
+              name: 'noticedetail',
+              component: NoticeDetail
             }
           ]
         },

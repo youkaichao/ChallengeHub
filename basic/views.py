@@ -48,7 +48,7 @@ class ContestCollectionView(View):
         collection = MONGO_CLIENT.competition.enrollForm
         collection.insert_one(
             {'id': c.id, 'enrollForm': request.data.get('enrollForm')})
-        if(not c.enroll_url):
+        if (not c.enroll_url):
             c.enroll_url = '/contest/enroll/{}'.format(c.id)
             c.save()
         return JsonResponse({'code': 0, 'data': c.to_dict()})
@@ -70,7 +70,7 @@ class ContestDetailView(View):
         competition.save()
         return JsonResponse({'code': 0, 'data': 'success'})
 
-        
+
 class TaskStatView(View):
     def get(self, request, contest_id):
         self.check_input(['stage'])
@@ -91,7 +91,7 @@ class TaskStatView(View):
                 if task.reviewed:
                     reviewed_tasks += 1
         return JsonResponse({
-                            'code': 0, 
+                            'code': 0,
                             'data': {
                                 "totalTasks": total_tasks,
                                 "reviewedTasks": reviewed_tasks,
@@ -99,7 +99,7 @@ class TaskStatView(View):
                                 "submittedGroups": submitted_groups,
                                 "isAssigned": cstage.is_assigned
                             }})
-        
+
 
 class ContestReviewTaskView(View):
     def get(self, request, contest_id):
@@ -164,7 +164,7 @@ class ContestAutoAssignView(View):
                {"username":judge.username, "assign": judge_count[judge.username]} for judge in judges
             ],
            "groupNotFull":groupNotFull,
-           "groupZero":groupZero 
+           "groupZero":groupZero
         }})
 
 
@@ -185,7 +185,7 @@ class ContestReviewerView(View):
         judges = c.judges.all()
         data = [judge.to_dict() for judge in judges]
         return JsonResponse({'code': 0, 'data': data})
-        
+
 
 class GroupStageView(View):
     def post(self, request, contest_id):
@@ -381,3 +381,53 @@ class JudgeReviewView(View):
             meta.score = r.rating
             meta.save()
         return JsonResponse({'code':0,'data':'success'})
+class CriterionView(View):
+    def get(self, request, contest_id):
+        self.check_input(['stage'])
+        contest_id = int(contest_id)
+        stage = int(request.data['stage'])
+        contest = Competition.objects.get(id=contest_id)
+        cstage = CStage.objects.get(stage=stage, competition=contest)
+        return JsonResponse({'code': 0, 'data': {
+            'criterion': cstage.criterion
+        }})
+
+    def post(self, request, contest_id):
+        self.check_input([
+            'stage', 'criterion'
+        ])
+        contest_id = int(contest_id)
+        stage = request.data['stage']
+        criterion = request.data['criterion']
+        contest = Competition.objects.get(id=contest_id)
+        cstage = CStage.objects.get(stage=stage, competition=contest)
+        cstage.criterion = criterion
+        cstage.save()
+        return JsonResponse({'code': 0, 'data': ''})
+
+
+class SubmissionAllView(View):
+    def get(self, request, contest_id):
+        self.check_input(['stage'])
+        contest_id = int(contest_id)
+        stage = int(request.data['stage'])
+        contest = Competition.objects.get(id=contest_id)
+        submissions = GStage.objects.filter(stage=stage, group__competition=contest)
+        res = []
+        for submission in submissions:
+            obj = {}
+            obj['teamName'] = submission.group.name
+            obj['name'] = submission.submission
+            obj['downloadUrl'] = submission.commit_path
+            obj['score'] = submission.score
+            judges = []
+            review_set = ReviewMeta.objects.filter(stage=submission)
+            for review in review_set:
+                judges.append({
+                    'username': review.reviewer.username,
+                    'hasReviewed': review.reviewed,
+                    'score': review.score
+                })
+            obj['judges'] = judges
+            res.append(obj)
+        return JsonResponse({'code': 0, 'data': res})

@@ -11,8 +11,8 @@ export default {
 </script>
 
 <style>
-::-webkit-scrollbar{
-display:none;
+::-webkit-scrollbar {
+  display: none;
 }
 
 #app {

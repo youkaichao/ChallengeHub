@@ -1,55 +1,51 @@
 <template>
   <div>
     <el-table :data="groups" stripe style="width: 100%" @selection-change="handleSelectionChange">
-      <el-table-column type="selection"></el-table-column>
+      <el-table-column type="selection"></el-table-column> -->
       <el-table-column prop="id" label="序号">
       </el-table-column>
       <el-table-column prop="name" label="队名">
       </el-table-column>
-      <el-table-column prop="leaderName" label="队长名字">
+      <el-table-column prop="leaderName" label="队长">
       </el-table-column>
-      <el-table-column prop="rank" label="排名">
+      <el-table-column label="队员列表">
+        <template slot-scope="scope">
+          {{ scope.row.membersName.join(', ') }}
+        </template>
+      </el-table-column>
+      <el-table-column label="是否提交">
+        <template slot-scope="scope">
+          {{ scope.row.hasCommit?'已经提交':'未提交' }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="rank" label="奖项">
       </el-table-column>
       <el-table-column label="阶段">
-        <template slot-scope="scope">{{ getStageString(scope.row.stage) }}</template>
+        <template slot-scope="scope">{{ groupStageName(scope.row.stage) }}</template>
       </el-table-column>
     </el-table>
     <el-row>
-      <el-col :span="4">
-        <el-select v-model="targetStage" placeholder="0">
-          <el-option label="尚未开始" :value="0"></el-option>
-          <el-option v-for="(stage,index) in procedureList" :key="index" :label="stage.name" :value="index+1"></el-option>
-          <el-option label="已经结束" :value="-1"></el-option>
-        </el-select>
-      </el-col>
       <el-col :span="4" :offset="1">
-        <el-button type="primary" @click="changeStage">将选中的队伍改变至阶段</el-button>
+        <el-button type="primary" @click="changeStage" :disabled="targetStage.stage===-1">
+          {{targetStage.stage === -1 ? targetStage.name : '将选中的队伍晋级至 '+targetStage.name}}
+        </el-button>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
+import { getGroupStage, isJudgeStage } from '@/lib/util.js'
 export default {
   name: 'ManageGroup',
-  props: ['contest', 'procedureList', 'contestId'],
+  props: ['contest', 'contestId'],
   data() {
     return {
       groups: [],
-      selected: [],
-      targetStage: 0
+      selected: []
     }
   },
   methods: {
-    getStageString(number) {
-      if (number === 0) {
-        return '尚未开始'
-      } else if (number === -1) {
-        return '已经结束'
-      } else {
-        return this.procedureList[number - 1].name
-      }
-    },
     handleSelectionChange(val) {
       this.selected = val
     },
@@ -64,22 +60,50 @@ export default {
           group_ids: ids,
           stage: this.targetStage
         })
-        .then(
-          () => {
-            this.reloadGroupData()
-          },
-          err => {
-            alert(err)
+        .then(resp => {
+          if (resp.code !== 0) {
+            throw new Error(resp.error)
           }
-        )
+          this.reloadGroupData()
+        })
+        .catch(err => {
+          this.$alert(err)
+        })
     },
     reloadGroupData() {
-      this.$http.get(`/api/contests/${this.contestId}/groups`).then(resp => {
-        this.groups = resp.body.data
-      })
+      this.$http
+        .get(`/api/contests/${this.contestId}/groups`)
+        .then(resp => {
+          this.groups = resp.body.data
+        })
+        .catch(err => {
+          this.$alert(err)
+        })
+    },
+    groupStageName(stage) {
+      return getGroupStage(this.contest.procedure, stage)
     }
   },
-  mounted() {
+  computed: {
+    targetStage() {
+      if (!isJudgeStage(this.contest.stage)) {
+        return {
+          name: '只有在评审阶段才能晋级选手',
+          stage: -1
+        }
+      }
+      for (let item of this.contest.procedure) {
+        if (this.contest.stage + 1 === item.stage) {
+          return item
+        }
+      }
+      return {
+        name: '没有下一个阶段，晋级不可用',
+        stage: -1
+      }
+    }
+  },
+  created() {
     this.reloadGroupData()
   }
 }

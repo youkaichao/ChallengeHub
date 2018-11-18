@@ -1,5 +1,5 @@
 /* eslint-disable */
-let stage = 0
+let stage = 2
 
 export default {
   ['GET */api/contests/1'](pathMatch, query, request, passThrough) {
@@ -553,6 +553,307 @@ export default {
               stage: -1
             }
           }
+        ]
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['POST */api/contests/1/stage'](pathMatch, query, request, passThrough) {
+    stage = request.body.stage
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {}
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/1/groups'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: [
+          {
+            id: 1,
+            name: 'ysdui',
+            competitionId: 1,
+            competitionName: '咸鱼划水大赛',
+            leaderName: 'ykc',
+            membersName: ['ny', 'zy', 'ljw'],
+            hasCommit: true,
+            rank: 2,
+            stage: 1
+          },
+          {
+            id: 2,
+            name: '队伍名',
+            competitionId: 1,
+            competitionName: '咸鱼划水大赛',
+            hasCommit: false,
+            leaderName: '有神',
+            membersName: ['养身', '浇筑'],
+            rank: '获得奖项',
+            stage: 2
+          },
+          {
+            id: 4,
+            name: 'ysdui',
+            competitionId: 1,
+            competitionName: '咸鱼划水大赛',
+            leaderName: 'ykc',
+            membersName: ['ny', 'zy', 'ljw'],
+            hasCommit: true,
+            rank: 3,
+            stage: 2
+          }
+        ]
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/users/created'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: [
+          {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: '2',
+            enrollStart: '2018-1-1',
+            enrollEnd: '2018-12-31',
+            detail: '哈哈',
+            procedure: `[{
+            "name":"决赛",
+            "startTime":"2018-2-1",
+            "endTime":"2018-2-2"
+          },{
+            "name":"决赛",
+            "startTime":"2018-2-1",
+            "endTime":"2018-2-2"
+          },{
+            "name":"决赛",
+            "startTime":"2018-2-1",
+            "endTime":"2018-2-2"
+          },{
+            "name":"决赛",
+            "startTime":"2018-2-1",
+            "endTime":"2018-2-2"
+          }]`,
+            enrollUrl: 'www.baidu.com',
+            imgUrl: 'www.baidu.com',
+            charge: 0,
+            upvote: 100,
+            downvote: 999,
+            publisher: 'SSS',
+            stage
+          },
+          {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: '2',
+            enrollStart: '2018-1-1',
+            enrollEnd: '2018-12-31',
+            detail: '哈哈',
+            procedure: `[{
+            "name":"决赛",
+            "startTime":"2018-2-1",
+            "endTime":"2018-2-2"
+          },{
+            "name":"决赛",
+            "startTime":"2018-2-1",
+            "endTime":"2018-2-2"
+          },{
+            "name":"决赛",
+            "startTime":"2018-2-1",
+            "endTime":"2018-2-2"
+          },{
+            "name":"决赛",
+            "startTime":"2018-2-1",
+            "endTime":"2018-2-2"
+          }]`,
+            enrollUrl: 'www.baidu.com',
+            imgUrl: 'www.baidu.com',
+            charge: 0,
+            upvote: 100,
+            downvote: 999,
+            publisher: 'SSS',
+            stage
+          }
+        ]
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/1'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          id: 1,
+          name: '咸鱼划水大赛',
+          subject: '体育',
+          groupSize: '2',
+          enrollStart: '2018-1-1',
+          enrollEnd: '2018-12-31',
+          enrollUrl: 'www.baidu.com',
+          imgUrl: 'www.baidu.com',
+          charge: 0,
+          upvote: 100,
+          downvote: 999,
+          publisher: 'SSS',
+          stage,
+          procedure: [
+            {
+              name: '初赛',
+              startTime: '2018-1-1',
+              endTime: '2018-2-29',
+              stage: 1
+            },
+            {
+              name: '复赛',
+              startTime: '2018-1-1',
+              endTime: '2018-2-29',
+              stage: 3
+            },
+            {
+              name: '决赛',
+              startTime: '2018-1-1',
+              endTime: '2018-2-29',
+              stage: 5
+            }
+          ],
+          detail: '这是详情'
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */auth/info'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          username: 'abc',
+          email: `${request.body.username}@ts.com`,
+          selfDescription: `I am a ${request.body.username}`,
+          sourceSchool: `${request.body.username} school`,
+          isIndividual: request.body.username === 'organizer'
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/1/reviewer'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: [
+          {
+            username: 'ykc',
+            email: 'ykc@abc.com',
+            school: 'THU'
+          },
+          {
+            username: 'ykc',
+            email: 'ykc@abc.com',
+            school: 'THU'
+          }
+        ]
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/1/taskstat'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          totalTasks: 70,
+          reviewedTasks: 50,
+          qualifiedGroups: 20,
+          submittedGroups: 10,
+          isAssigned: false // 是否之前一键分配过
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/1/reviewtask'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: [
+          {
+            username: 'abbbbbbbb',
+            email: '1@2.com',
+            assigned: 33, // 被分配的作品数
+            completed: 20
+          },
+          {
+            username: 'abbbbbbbb',
+            email: '1@2.com',
+            assigned: 33, // 被分配的作品数
+            completed: 20
+          },
+          {
+            username: 'abbbbbbbb',
+            email: '1@2.com',
+            assigned: 33, // 被分配的作品数
+            completed: 20
+          }
+        ]
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/1/criterion'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          criterion: '看脸给分\n'
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/1/submission_all'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: [
+          {
+            name: '网络优化器',
+            teamName: '队伍名',
+            submissionTime: '2018-1-1 12:00',
+            judges: [{ name: '刘红', judged: true, score: 100 }, { name: '刘黄', judged: true, score: 100 }],
+            average: 100
+          },
+          { name: '网络优化器', teamName: '队伍名', submissionTime: '2018-1-1 12:00', judges: [], average: 0 },
+          { name: '网络优化器', teamName: '队伍名', submissionTime: '2018-1-1 12:00', judges: [], average: 0 }
         ]
       },
       status: 200,

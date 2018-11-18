@@ -1,77 +1,120 @@
 <template>
   <el-container>
-    <el-header height="auto">
+    <el-aside>
       <el-card class="box-card">
         <div slot="header">
           <span>{{contest.name}}</span>
         </div>
-        <el-tag>{{'学科: '+contest.subject}}</el-tag>
-        <el-tag>{{'队伍人数: '+contest.groupSize}}</el-tag>
-        <el-tag>{{'举办方: '+contest.publisher}}</el-tag>
-        <el-tag>{{'报名开始时间: '+contest.enrollStart}}</el-tag>
-        <el-tag>{{'报名结束时间: '+contest.enrollEnd}}</el-tag>
+        <el-row class="carditem">
+          <el-tag>{{'学科: '+contest.subject}}</el-tag>
+        </el-row>
+        <el-row class="carditem">
+          <el-tag>{{'队伍人数: '+contest.groupSize}}</el-tag>
+        </el-row>
+        <el-row class="carditem">
+          <el-tag>{{'举办方: '+contest.publisher}}</el-tag>
+        </el-row>
       </el-card>
-    </el-header>
-    <el-container>
-      <el-aside>
-        <el-menu :default-active="activeIndex" class="el-menu-vertical-demo">
-          <el-menu-item index="1" @click="$router.push(`/organizer/controlpanel/${contestId}`)">比赛总览
-          </el-menu-item>
-          <el-menu-item index="2" @click="$router.push(`/organizer/controlpanel/${contestId}/managegroup`)">管理报名队伍
-          </el-menu-item>
-        </el-menu>
-      </el-aside>
-      <el-main>
-        <router-view :contest="contest" :procedureList="procedureList" :contestId="contestId" @refreshContest="refreshContest"></router-view>
-      </el-main>
-    </el-container>
+      <el-menu :default-active="activeIndex" class="el-menu-vertical-demo">
+        <el-menu-item v-for="(item,index) in sidebarList" :key="index" :index="index.toString()" @click="pushRoute(item.name)">{{ item.label }}</el-menu-item>
+      </el-menu>
+    </el-aside>
+    <el-main>
+      <router-view :contest="contest" :contestId="contestId" @refreshContest="refreshContest"></router-view>
+    </el-main>
   </el-container>
 </template>
 
 <script>
 import ManageGroup from '@/components/organizer/ManageGroup'
+import ManageJudge from '@/components/organizer/ManageJudge'
 import Overview from '@/components/organizer/Overview'
+import ManageSubmission from '@/components/organizer/ManageSubmission'
+import NoticeList from '@/components/organizer/NoticeList'
+import ManageReview from '@/components/organizer/ManageReview'
 export default {
   name: 'ControlPanel',
-  async created() {
-    this.contestId = this.$route.params.id
+  created() {
     this.refreshContest()
   },
   data() {
     return {
-      contest: null,
-      contestId: null,
-      procedureList: []
+      contest: {
+        name: '比赛名称',
+        subject: '比赛学科',
+        groupSize: '队伍人数',
+        publisher: '举办方',
+        procedure: []
+      },
+      procedureList: [],
+      sidebarList: [
+        {
+          name: 'overview',
+          label: '比赛总览'
+        },
+        {
+          name: 'managegroup',
+          label: '管理报名队伍'
+        },
+        {
+          name: 'managejudge',
+          label: '管理评委'
+        },
+        {
+          name: 'managesubmission',
+          label: '管理提交'
+        },
+        {
+          name: 'managereview',
+          label: '管理批阅'
+        },
+        {
+          name: 'notices',
+          label: '管理公告'
+        }
+      ]
     }
   },
   methods: {
     refreshContest() {
-      this.$http.get(`/api/contests/${this.contestId}`).then(resp => {
-        this.contest = resp.body.data
-        this.procedureList = this.contest.procedure
+      this.$http
+        .get(`/api/contests/${this.contestId}`)
+        .then(resp => {
+          if (resp.body.code !== 0) {
+            throw new Error(resp.body.error)
+          }
+          this.contest = resp.body.data
+        })
+        .catch(err => {
+          this.$alert(err)
+        })
+    },
+    pushRoute(name) {
+      this.$router.push({
+        name,
+        params: {
+          id: this.contestId
+        }
       })
     }
   },
   computed: {
+    contestId() {
+      return parseInt(this.$route.params.id)
+    },
     activeIndex() {
-      if (this.$route.matched.length > 0) {
-        let lastName = this.$route.matched[this.$route.matched.length - 1].components.default
-        switch (lastName) {
-          case ManageGroup:
-            return '2'
-          case Overview:
-            return '1'
-          default:
-            return '1'
+      let name = this.$route.name
+      for (let i = 0; i < this.sidebarList.length; i++) {
+        if (name === this.sidebarList[i].name) {
+          return i.toString()
         }
-      } else {
-        return '1'
       }
+      return '0'
     }
   }
 }
 </script>
-<style>
+<style scoped>
 .el-tag {
   width: auto;
   margin: 5px;

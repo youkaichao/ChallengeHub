@@ -8,7 +8,7 @@
       <el-table-column label="主办方" prop="publisher"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="text" @click="$router.push(`/organizer/controlpanel/${scope.row.id}`)">管理比赛</el-button>
+          <el-button type="text" @click="$router.push(`/organizer/${scope.row.id}`)">管理比赛</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -27,17 +27,22 @@ export default {
   name: 'MyOrganizeContests',
   data() {
     return {
-      contests: [],
-      procedureList: []
+      contests: []
     }
   },
-  async created() {
-    let resp = await this.$http.get('/api/users/created', {
-      params: {
-        username: this.$store.state.username
-      }
-    })
-    this.contests = resp.body.data
+  created() {
+    this.$http
+      .get('/api/users/created', {
+        params: {
+          username: this.$store.state.username
+        }
+      })
+      .then(resp => {
+        this.contests = resp.body.data
+      })
+      .catch(err => {
+        this.$alert(err)
+      })
   }
 }
 </script>
