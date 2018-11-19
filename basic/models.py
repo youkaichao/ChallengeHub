@@ -120,7 +120,7 @@ class Group(models.Model):
             'name': self.name,
             'competitionId': self.competition.id,
             'competitionName': self.competition.name,
-            'hasCommit': self.stage_list.get(stage=self.current_stage).has_commit,
+            'hasCommit': self.stage_list.get(stage=self.current_stage if self.current_stage % 2 == 1 else self.current_stage - 1).has_commit,
             'leaderName': self.leader.username,
             'membersName': [member.username for member in self.members.all()],
             'rank': self.rank,

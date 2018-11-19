@@ -140,13 +140,14 @@ class ContestAutoAssignView(View):
         stage = int(request.data['stage'])
         maxconn = request.data['maxconn']
         serious = request.data['serious']
-        cstage = c.stage_list.get(stage=stage)
+        cstage = c.stage_list.get(stage=stage if stage % 2 == 1 else stage - 1)
         if cstage.is_assigned:
             raise Exception("already auto-assigned!")
         qualified_groups = c.enrolled_groups.filter(current_stage=stage)
         submitted_gstages = []
         for group in qualified_groups:
-            gstage = group.stage_list.get(stage=stage)
+            gstage = group.stage_list.get(
+                stage=stage if stage % 2 == 1 else stage - 1)
             if gstage.has_commit:
                 submitted_gstages.append(gstage)
         judges = list(c.judges.all())
@@ -379,6 +380,7 @@ class JudgeReviewView(View):
 
         competition = Competition.objects.get(id=int(contest_id))
         stage = request.data.get('stage', competition.current_stage)
+        stage = stage if stage % 2 == 1 else stage - 1
         data = {}
         data['contest'] = competition.to_dict()
         reviews = request.user.review_list.filter(
@@ -405,7 +407,7 @@ class JudgeReviewView(View):
             meta.reviewed = meta.reviewed or r['reviewed']
             meta.score = r['rating']
             meta.save()
-            reviews = meta.stage.review_meta_list
+            reviews = meta.stage.review_meta_list.all()
             sum = 0.0
             for x in reviews:
                 sum += x.score
