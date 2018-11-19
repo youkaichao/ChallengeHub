@@ -92,7 +92,7 @@ class Notice(models.Model):
             'id': self.id,
             'competitionId': self.competition.id,
             'competitionName': self.competition.name,
-            'modifiedTime': self.posted_time.strftime('%Y-%m-%d'),
+            'modifiedTime': self.modified_time.strftime('%Y-%m-%d'),
             'title': self.title,
         }
         if detail:

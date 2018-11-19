@@ -264,7 +264,7 @@ class ContestSubmissionView(View):
         _, extension = os.path.splitext(submit.name)
 
         commit_dir = os.path.join('contest',
-                                  contest_id, str(stage), f'{group.id}{extension}')
+                                  contest_id, str(stage))
         commit_path = os.path.join(commit_dir, f'{group.id}{extension}')
         abs_dir = os.path.join(BASE_DIR, 'submit', commit_dir)
         abs_path = os.path.join(BASE_DIR, 'submit', commit_path)
@@ -478,9 +478,13 @@ class SubmissionAllView(View):
 
 class NoticeCollectionView(View):
     def get(self, request, contest_id):
+        competition = Competition.objects.get(id=int(contest_id))
         return JsonResponse({
             'code': 0,
-            'data': [notice.to_dict() for notice in Notice.objects.filter(competition__id=int(contest_id))],
+            'data': {
+                'notices': [notice.to_dict() for notice in Notice.objects.filter(competition=competition)],
+                'contest': competition.to_dict(),
+            },
         })
 
     def post(self, request, contest_id):
@@ -491,9 +495,10 @@ class NoticeCollectionView(View):
         notice = Notice(
             competition=competition,
             title=request.data.get('title'),
-            modified_time=timezone.now,
+            modified_time=timezone.now(),
             content=request.data.get('content'),
         )
+        notice.save()
         return JsonResponse({'code': 0, 'data': 'success'})
 
 
