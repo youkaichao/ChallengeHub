@@ -31,6 +31,70 @@ export default {
       statusText: 'OK'
     }
   },
+  ['GET */api/contests/1/notices/3'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          id: 3,
+          competitionId: 7,
+          competitionName: '吃垃圾大赛',
+          modifiedTime: '2019-03-25T06:26:01.927Z',
+          title: '请选手吃垃圾！',
+          content:
+            '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功\n\n'
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/1/notices'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          notices: [
+            {
+              id: 1,
+              modifiedTime: '2019-03-25T06:26:01.927Z',
+              title: '请选手吃垃圾！'
+            },
+            {
+              id: 2,
+              modifiedTime: '2019-03-25T06:26:01.927Z',
+              title: '游神太强啦！'
+            },
+            {
+              id: 3,
+              modifiedTime: '2019-03-25T06:26:01.927Z',
+              title: '叶神牛逼！'
+            },
+            {
+              id: 4,
+              modifiedTime: '2019-03-25T06:26:01.927Z',
+              title: '请选手吃辣鸡！'
+            }
+          ],
+          contest: {
+            name: '咸鱼划水大赛',
+            imgUrl: 'https://picsum.photos/400/300/?random&amp;k=2',
+            publisher: '华清大学',
+            standard: '# 评审标准\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            stage: 4
+          }
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
   ['POST */api/contests/2345234/submission'](pathMatch, query, request, passThrough) {
     return {
       body: {
@@ -313,7 +377,7 @@ export default {
               stage: 1
             },
             contest: {
-              id: 333333,
+              id: 1,
               name: '垃圾划水大赛',
               imgUrl: 'https://picsum.photos/400/300/?random&amp;k=2',
               publisher: '华清大学',

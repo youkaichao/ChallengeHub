@@ -8,6 +8,7 @@ import ContestView from '@/components/contest/ContestView'
 import ContestCreate from '@/components/contest/ContestCreate'
 import ContestDetail from '@/components/contest/ContestDetail'
 import ContestEnroll from '@/components/contest/ContestEnroll'
+import ContestNoticeList from '@/components/contest/ContestNoticeList'
 import CompetitorDashboard from '@/components/dashboard/CompetitorDashboard'
 import JudgeDashboard from '@/components/dashboard/JudgeDashboard'
 import JudgeWorkspace from '@/components/workspace/JudgeWorkspace'
@@ -49,6 +50,10 @@ export default new Router({
           path: 'contest/detail/:id',
           name: '/contest/detail/:id',
           component: ContestDetail
+        },
+        {
+          path: 'contest/notice/:id',
+          component: ContestNoticeList
         },
         {
           path: 'contest/enroll/:id',

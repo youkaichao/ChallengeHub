@@ -9,7 +9,8 @@
         <div class="contest-name"> {{ contest.name }} </div>
         <div class="contest-info"> {{ contest.publisher }} </div>
         <div class="contest-info"> 比赛已结束于 {{ endingDeadline }} </div>
-        <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">查看比赛详情</el-button>
+        <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">比赛详情</el-button>
+        <el-button type="text" @click="$router.push(`/contest/notice/${contest.id}`)">比赛公告</el-button>
       </el-col>
 
       <el-col :span="8" style="text-align: right; padding-right: 20px;">

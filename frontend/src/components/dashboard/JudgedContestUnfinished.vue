@@ -10,7 +10,8 @@
         <div class="contest-info" v-if="contest.stage === 0">比赛尚未开始</div>
         <div class="contest-info" v-if="isJudgeStage">阶段 <b>{{ currentStage }}</b> 评审结束于 <b>{{ currentDeadline }}</b></div>
         <div class="contest-info" v-if="contest.stage !== 0 && !isJudgeStage">阶段 <b> {{ currentStage }} </b>评审开始于 <b>{{ currentDeadline }}</b></div>
-        <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">查看比赛详情</el-button>
+        <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">比赛详情</el-button>
+        <el-button type="text" @click="$router.push(`/contest/notice/${contest.id}`)">比赛公告</el-button>
       </el-col>
 
       <el-col :span="4" style="text-align: right; padding-right: 20px; ">

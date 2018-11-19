@@ -12,7 +12,8 @@
           <div v-else-if="contest.stage !== 0 && contest.stage % 2 === 1" class="contest-info">提交中，当前阶段 <b>{{ currentStage }}</b> 结束于 <b>{{ currentDeadline }}</b></div>
           <div v-else-if="contest.stage !== 0 && contest.stage % 2 === 0 && !isLastStage" class="contest-info">审核中，下一阶段 <b>{{ currentStage }}</b> 开始于 <b>{{ currentDeadline }}</b></div>
           <div v-else-if="isLastStage" class="contest-info">审核中，请等待比赛结果</div>
-          <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">查看比赛详情</el-button>
+          <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">比赛详情</el-button>
+          <el-button type="text" @click="$router.push(`/contest/notice/${contest.id}`)">比赛公告</el-button>
         </el-col>
 
         <!--选手查看的信息-->
