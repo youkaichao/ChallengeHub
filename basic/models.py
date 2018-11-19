@@ -80,7 +80,8 @@ class CStage(models.Model):
 class Notice(models.Model):
     competition = models.ForeignKey(
         Competition, on_delete=models.CASCADE, related_name='published_notices')
-    posted_time = models.DateTimeField(default=timezone.now)
+    title = models.CharField(default='', max_length=50)
+    modified_time = models.DateTimeField(default=timezone.now)
     content = models.TextField(blank=False)
 
     def __str__(self):
@@ -88,9 +89,11 @@ class Notice(models.Model):
 
     def to_dict(self, detail=False):
         data = {
+            'id': self.id,
             'competitionId': self.competition.id,
             'competitionName': self.competition.name,
-            'postedTime': self.posted_time,
+            'modifiedTime': self.posted_time.strftime('%Y-%m-%d'),
+            'title': self.title,
         }
         if detail:
             data['content'] = self.content

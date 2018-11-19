@@ -2,6 +2,10 @@
 - [1. 返回数据格式说明(详细格式与简略格式)](#1-%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%AF%B4%E6%98%8E%E8%AF%A6%E7%BB%86%E6%A0%BC%E5%BC%8F%E4%B8%8E%E7%AE%80%E7%95%A5%E6%A0%BC%E5%BC%8F)
 - [2. 具体接口](#2-%E5%85%B7%E4%BD%93%E6%8E%A5%E5%8F%A3)
   - [已完成](#%E5%B7%B2%E5%AE%8C%E6%88%90)
+    - [POST /auth/login: 登录](#post-authlogin-%E7%99%BB%E5%BD%95)
+    - [POST /auth/register: 注册](#post-authregister-%E6%B3%A8%E5%86%8C)
+    - [POST /auth/logout: 登出](#post-authlogout-%E7%99%BB%E5%87%BA)
+    - [POST /auth/info: 获取用户信息](#post-authinfo-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
     - [GET /api/contests: 返回所有比赛](#get-apicontests-%E8%BF%94%E5%9B%9E%E6%89%80%E6%9C%89%E6%AF%94%E8%B5%9B)
     - [POST /api/contests: 创建一个比赛](#post-apicontests-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%AF%94%E8%B5%9B)
     - [GET /api/contests/<id\>: 获取一个比赛的详情](#get-apicontestsid-%E8%8E%B7%E5%8F%96%E4%B8%80%E4%B8%AA%E6%AF%94%E8%B5%9B%E7%9A%84%E8%AF%A6%E6%83%85)
@@ -17,10 +21,19 @@
     - [POST /api/contests/<id\>/submission: 提交比赛作品](#post-apicontestsidsubmission-%E6%8F%90%E4%BA%A4%E6%AF%94%E8%B5%9B%E4%BD%9C%E5%93%81)
     - [GET /api/judges/<id\>: 获得某比赛某阶段的评审信息](#get-apijudgesid-%E8%8E%B7%E5%BE%97%E6%9F%90%E6%AF%94%E8%B5%9B%E6%9F%90%E9%98%B6%E6%AE%B5%E7%9A%84%E8%AF%84%E5%AE%A1%E4%BF%A1%E6%81%AF)
     - [POST /api/judges/<id\>: 评委打分](#post-apijudgesid-%E8%AF%84%E5%A7%94%E6%89%93%E5%88%86)
-    - [POST /auth/login: 登录](#post-authlogin-%E7%99%BB%E5%BD%95)
-    - [POST /auth/register: 注册](#post-authregister-%E6%B3%A8%E5%86%8C)
-    - [POST /auth/logout: 登出](#post-authlogout-%E7%99%BB%E5%87%BA)
-    - [POST /auth/info: 获取用户信息](#post-authinfo-%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF)
+    - [GET /api/contests/<id\>/taskstat: 返回批改统计信息](#get-apicontestsidtaskstat-%E8%BF%94%E5%9B%9E%E6%89%B9%E6%94%B9%E7%BB%9F%E8%AE%A1%E4%BF%A1%E6%81%AF)
+    - [GET /api/contests/<id\>/reviewer: 返回某比赛的所有评委](#get-apicontestsidreviewer-%E8%BF%94%E5%9B%9E%E6%9F%90%E6%AF%94%E8%B5%9B%E7%9A%84%E6%89%80%E6%9C%89%E8%AF%84%E5%A7%94)
+    - [POST /api/contests/<id\>/reviewer: 为比赛添加评委](#post-apicontestsidreviewer-%E4%B8%BA%E6%AF%94%E8%B5%9B%E6%B7%BB%E5%8A%A0%E8%AF%84%E5%A7%94)
+    - [GET /api/contests/<id\>/criterion: 获得某阶段的评分标准](#get-apicontestsidcriterion-%E8%8E%B7%E5%BE%97%E6%9F%90%E9%98%B6%E6%AE%B5%E7%9A%84%E8%AF%84%E5%88%86%E6%A0%87%E5%87%86)
+    - [POST /api/contests/<id\>/criterion: 修改某阶段的评分标准](#post-apicontestsidcriterion-%E4%BF%AE%E6%94%B9%E6%9F%90%E9%98%B6%E6%AE%B5%E7%9A%84%E8%AF%84%E5%88%86%E6%A0%87%E5%87%86)
+    - [GET /api/contests/<id\>/reviewtask: 获得评委的工作完成情况](#get-apicontestsidreviewtask-%E8%8E%B7%E5%BE%97%E8%AF%84%E5%A7%94%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%AE%8C%E6%88%90%E6%83%85%E5%86%B5)
+    - [GET /api/contests/<id\>/submission_all: 获得某阶段所有提交](#get-apicontestsidsubmissionall-%E8%8E%B7%E5%BE%97%E6%9F%90%E9%98%B6%E6%AE%B5%E6%89%80%E6%9C%89%E6%8F%90%E4%BA%A4)
+    - [POST /api/contests/<id\>/auto_assign: 自动分配评审任务](#post-apicontestsidautoassign-%E8%87%AA%E5%8A%A8%E5%88%86%E9%85%8D%E8%AF%84%E5%AE%A1%E4%BB%BB%E5%8A%A1)
+    - [GET /api/contests/<id\>/notices: 获取某比赛所有公告](#get-apicontestsidnotices-%E8%8E%B7%E5%8F%96%E6%9F%90%E6%AF%94%E8%B5%9B%E6%89%80%E6%9C%89%E5%85%AC%E5%91%8A)
+    - [POST /api/contests/<id\>/notices: 创建比赛公告](#post-apicontestsidnotices-%E5%88%9B%E5%BB%BA%E6%AF%94%E8%B5%9B%E5%85%AC%E5%91%8A)
+    - [GET /api/contests/<contest-id\>/notices/<notice-id\>: 获取比赛公告](#get-apicontestscontest-idnoticesnotice-id-%E8%8E%B7%E5%8F%96%E6%AF%94%E8%B5%9B%E5%85%AC%E5%91%8A)
+    - [PUT /api/contests/<contest-id\>/notices/<notice-id\>: 修改比赛公告](#put-apicontestscontest-idnoticesnotice-id-%E4%BF%AE%E6%94%B9%E6%AF%94%E8%B5%9B%E5%85%AC%E5%91%8A)
+    - [DELETE /api/contests/<contest-id\>/notices/<notice-id\>: 删除比赛公告](#delete-apicontestscontest-idnoticesnotice-id-%E5%88%A0%E9%99%A4%E6%AF%94%E8%B5%9B%E5%85%AC%E5%91%8A)
   - [未完成](#%E6%9C%AA%E5%AE%8C%E6%88%90)
 
 # 1. 前后端数据交互接口设计
@@ -47,6 +60,90 @@
 # 2. 具体接口
 
 ## 已完成
+
+### POST /auth/login: 登录
+
+权限要求: 无
+
+传入参数:
+
+```javascript
+{
+  username: str,
+  password: str,
+}
+```
+
+返回数据:
+
+```javascript
+{
+  username: str,
+  email: str,
+  introduction: str,
+  school: str,
+  individual: int,
+}
+```
+
+---
+
+### POST /auth/register: 注册
+
+权限要求: 无
+
+传入参数:
+
+```javascript
+{
+  username: str,
+  password: str,
+  email: str,
+  individual: int,
+}
+```
+
+返回数据:
+
+```javascript
+{
+  username: str,
+  email: str,
+  introduction: str,
+  school: str,
+  individual: int,
+}
+```
+
+---
+
+### POST /auth/logout: 登出
+
+权限要求: 已登录
+
+传入参数: 无
+
+返回数据: 无
+
+---
+
+### POST /auth/info: 获取用户信息
+
+权限要求: 已登录
+
+传入参数: 无
+
+返回数据:
+
+```javascript
+{
+  username: str,
+  email: str,
+  introduction: str,
+  school: str,
+  individual: int,
+}
+```
 
 ### GET  /api/contests: 返回所有比赛
 
@@ -477,7 +574,8 @@
       submissionName: str,
       reviewed: bool,
       rating: int,
-      url: str
+      url: str,
+      extension: str // 文件扩展名
     }
   ]
 }
@@ -506,16 +604,15 @@
 
 ---
 
-### POST /auth/login: 登录
+### GET  /api/contests/<id\>/taskstat: 返回批改统计信息
 
-权限要求: 无
+权限要求: 已登陆
 
-传入参数:
+传入参数：
 
-```javascript
+```js
 {
-  username: str,
-  password: str,
+  stage: int
 }
 ```
 
@@ -523,72 +620,270 @@
 
 ```javascript
 {
-  username: str,
-  email: str,
-  introduction: str,
-  school: str,
-  individual: int,
+  totalTasks: int,
+  reviewedTasks: int,
+  qualifiedGroups: int,
+  submittedGroups: int,
+  isAssigned: boolean //是否之前一键分配过
 }
 ```
 
 ---
 
-### POST /auth/register: 注册
+### GET  /api/contests/<id\>/reviewer: 返回某比赛的所有评委
 
-权限要求: 无
+权限要求: 是那场比赛的主办方
+
+传入参数: 无
+
+返回数据:
+
+```js
+[
+  {
+    username: str,
+    email: str,
+    school: str,
+  }
+]
+```
+---
+
+### POST  /api/contests/<id\>/reviewer: 为比赛添加评委
+
+权限要求: 是那场比赛的主办方
 
 传入参数:
 
-```javascript
+```js
 {
-  username: str,
-  password: str,
-  email: str,
-  individual: int,
+  username: [str]
 }
 ```
 
 返回数据:
 
-```javascript
-{
-  username: str,
-  email: str,
-  introduction: str,
-  school: str,
-  individual: int,
-}
-```
+无
 
 ---
 
-### POST /auth/logout: 登出
+### GET /api/contests/<id\>/criterion: 获得某阶段的评分标准
 
 权限要求: 已登录
 
+传入参数:
+
+```js
+{
+  stage: int
+}
+```
+
+返回数据:
+
+```js
+{
+  criterion: str
+}
+```
+
+---
+
+### POST /api/contests/<id\>/criterion: 修改某阶段的评分标准
+
+权限要求: 是那场比赛的主办方
+
+参数:
+
+```js
+{
+  stage: int,
+  criterion: str
+}
+```
+
+返回数据:
+
+无
+
+---
+
+### GET /api/contests/<id\>/reviewtask: 获得评委的工作完成情况
+
+权限要求: 比赛主办方, 已登录
+
+传入参数:
+
+```js
+{
+  stage: int
+}
+```
+
+返回数据:
+
+```js
+[
+  {
+    username: str,
+    email: str,
+    assigned: int, // 被分配的作品数
+    completed: int, // 评委批改的作品数
+  }
+]
+```
+
+### GET /api/contests/<id\>/submission_all: 获得某阶段所有提交
+
+权限要求: 比赛主办方, 已登录
+
+传入参数:
+
+```js
+{
+  stage: int,
+}
+```
+
+返回数据:
+
+```js
+[
+  {
+    teamName: str,
+    name: str, // 作品名
+    downloadUrl: str, // 下载地址
+    score: int, // 平均分
+    judges: [
+      {
+        username: str,
+        hasReviewed: bool,
+        score: int,
+      }
+    ]
+  }
+]
+```
+
+---
+
+### POST /api/contests/<id\>/auto_assign: 自动分配评审任务
+
+权限要求: 主办方, 已登录
+
+传入参数:
+
+```js
+{
+  stage: int,
+  serious: boolean, // 是否需要应用到数据库
+  maxconn: int, // 每个作品最多几个选手评
+  judges: [
+    {
+      username: str,
+      assign: int, // 最多被分配的任务数
+    }
+  ]
+}
+```
+
+返回数据:
+
+```js
+{
+  judges: [
+    {
+      username: str,
+      assign: int, // 实际被分配的任务数
+    }
+  ],
+  groupNotFull: int, // 没有评满的队伍数
+  groupZero: int // 没有人评的队伍数
+}
+```
+
+### GET /api/contests/<id\>/notices: 获取某比赛所有公告
+
+权限要求: 无
+
 传入参数: 无
+
+返回数据:
+
+```js
+[
+  {
+    id: int,
+    competitionId: int,
+    competitionName: str,
+    modifiedTime: str,
+    title: str,
+  }
+]
+```
+
+---
+
+### POST /api/contests/<id\>/notices: 创建比赛公告
+
+权限要求: 此比赛主办方, 已登录
+
+传入参数:
+
+```js
+{
+  title: str,
+  content: str,
+}
+```
 
 返回数据: 无
 
 ---
 
-### POST /auth/info: 获取用户信息
+### GET /api/contests/<contest-id\>/notices/<notice-id\>: 获取比赛公告
 
-权限要求: 已登录
+权限要求: 无
 
 传入参数: 无
 
 返回数据:
 
-```javascript
+```js
 {
-  username: str,
-  email: str,
-  introduction: str,
-  school: str,
-  individual: int,
+  id: int,
+  competitionId: int,
+  competitionName: str,
+  modifiedTime: str,
+  title: str,
+  content: str,
 }
 ```
+
+---
+
+### PUT /api/contests/<contest-id\>/notices/<notice-id\>: 修改比赛公告
+
+权限要求: 此比赛主办方, 已登录
+
+传入参数:
+
+```js
+{
+  title: str,
+  content: str,
+}
+```
+
+返回数据: 无
+
+### DELETE /api/contests/<contest-id\>/notices/<notice-id\>: 删除比赛公告
+
+权限要求: 此比赛主办方, 已登录
+
+传入参数: 无
+
+返回数据: 无
 
 ---
 

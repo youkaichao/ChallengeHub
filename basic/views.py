@@ -2,8 +2,8 @@ from django.db import transaction
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core import serializers
-from django.core import serializers
-from basic.models import Competition, Group, CStage, GStage, ReviewMeta
+from django.utils import timezone
+from basic.models import Competition, Group, CStage, GStage, ReviewMeta, Notice
 from useraction.models import User
 from ChallengeHub.utils import BaseView as View, require_logged_in, make_errors
 from ChallengeHub.settings import MONGO_CLIENT, BASE_DIR
@@ -20,7 +20,7 @@ class ContestCollectionView(View):
                 competitions = Competition.objects.all()
         else:
             competitions = Competition.objects.all()
-        return JsonResponse({'code': 0, "data": [competition.to_dict() for competition in competitions.all()]})
+        return JsonResponse({'code': 0, "data": [competition.to_dict() for competition in competitions]})
 
     def post(self, request):
         self.check_input([
@@ -472,3 +472,53 @@ class SubmissionAllView(View):
                 obj['judges'] = judges
                 res.append(obj)
         return JsonResponse({'code': 0, 'data': res})
+
+
+class NoticeCollectionView(View):
+    def get(self, request, contest_id):
+        return JsonResponse({
+            'code': 0,
+            'data': [notice.to_dict() for notice in Notice.objects.filter(competition__id=int(contest_id))],
+        })
+
+    def post(self, request, contest_id):
+        competition = Competition.objects.get(id=int(contest_id))
+        if request.user != competition.publisher:
+            raise Exception('no authority to publish notice')
+        self.check_input(['title', 'content'])
+        notice = Notice(
+            competition=competition,
+            title=request.data.get('title'),
+            modified_time=timezone.now,
+            content=request.data.get('content'),
+        )
+        return JsonResponse({'code': 0, 'data': 'success'})
+
+
+class NoticeDetailView(View):
+    def get(self, request, contest_id, notice_id):
+        notice = Notice.objects.get(id=int(notice_id))
+        return JsonResponse({
+            'code': 0,
+            'data': notice.to_dict(detail=True)
+        })
+
+    def delete(self, request, contest_id, notice_id):
+        competition = Competition.objects.get(id=int(contest_id))
+        if request.user != competition.publisher:
+            raise Exception('no authority to delete notice')
+        notice = Notice.objects.get(id=int(notice_id))
+        notice.delete()
+        return JsonResponse({'code': 0, 'data': 'success', })
+
+    def put(self, request, contest_id, notice_id):
+        competition = Competition.objects.get(id=int(contest_id))
+        if request.user != competition.publisher:
+            raise Exception('no authority to modify notice')
+        notice = Notice.objects.get(id=int(notice_id))
+        self.check_input(['title', 'content'])
+        notice.title = request.data.get('title')
+        notice.content = request.data.get('content')
+        notice.modified_time = timezone.now
+        notice.save()
+        return JsonResponse({'code': 0, 'data': 'success'})
