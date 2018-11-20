@@ -526,6 +526,6 @@ class NoticeDetailView(View):
         self.check_input(['title', 'content'])
         notice.title = request.data.get('title')
         notice.content = request.data.get('content')
-        notice.modified_time = timezone.now
+        notice.modified_time = timezone.now()
         notice.save()
         return JsonResponse({'code': 0, 'data': 'success'})

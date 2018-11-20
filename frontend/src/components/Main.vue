@@ -42,13 +42,13 @@ export default {
   methods: {
     handleLogout() {
       this.$http.post('/auth/logout', {}).then(function(response) {
-        if (response.body.code > 0) {
-          alert('Logout faild with error: ' + response.body.error)
-          return
-        }
         this.$cookies.remove('usename')
         this.$store.commit('logout', response.body.data)
         this.$router.push('/')
+        if (response.body.code > 0) {
+          this.$alert('Logout faild with error: ' + response.body.error)
+          return
+        }
       })
     },
     handleRoute(path) {

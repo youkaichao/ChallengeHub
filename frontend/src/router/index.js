@@ -23,6 +23,7 @@ import ManageSubmission from '@/components/organizer/ManageSubmission'
 import NoticeList from '@/components/organizer/NoticeList'
 import ManageReview from '@/components/organizer/ManageReview'
 import NoticeDetail from '@/components/organizer/NoticeDetail'
+import NewNotice from '@/components/organizer/NewNotice'
 
 Vue.use(VueCookies)
 Vue.use(VueResource)
@@ -118,6 +119,11 @@ export default new Router({
               path: 'notices/:noticeId',
               name: 'noticedetail',
               component: NoticeDetail
+            },
+            {
+              path: 'notices/newnotice',
+              name: 'newnotice',
+              component: NewNotice
             }
           ]
         },

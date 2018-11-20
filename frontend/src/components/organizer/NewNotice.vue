@@ -1,11 +1,9 @@
 <template>
   <div>
-    <el-form @submit.native.prevent label-width="160px">
+    <p>创建新公告</p>
+    <el-form @submit.native.prevent label-width="80px">
       <el-form-item label="公告标题">
         <el-input v-model="noticeTitle" placeholder="公告标题" width="100"></el-input>
-      </el-form-item>
-      <el-form-item label="上次修改时间">
-        {{this.modifiedTime}}
       </el-form-item>
     </el-form>
     <mavon-editor v-model="noticeDetail" style="height: 800px;" />
@@ -23,19 +21,13 @@ export default {
   data() {
     return {
       noticeDetail: '',
-      noticeTitle: '',
-      modifiedTime: ''
-    }
-  },
-  computed: {
-    noticeId() {
-      return this.$route.params.noticeId
+      noticeTitle: ''
     }
   },
   methods: {
     submitNotice() {
       this.$http
-        .put(`/api/contests/${this.contestId}/notices/${this.noticeId}`, {
+        .post(`/api/contests/${this.contestId}/notices`, {
           title: this.noticeTitle,
           content: this.noticeDetail
         })
@@ -43,14 +35,10 @@ export default {
           if (resp.body.code !== 0) {
             throw new Error(resp.body.error)
           }
-          this.$message({
-            message: '修改公告成功',
-            type: 'success'
-          })
-          this.getNotice()
+          this.cancelEdit()
         })
         .catch(err => {
-          this.$alert(err.toString())
+          this.$alert(err)
         })
     },
     cancelEdit() {
@@ -60,25 +48,7 @@ export default {
           id: this.contestId
         }
       })
-    },
-    getNotice() {
-      this.$http
-        .get(`/api/contests/${this.contestId}/notices/${this.noticeId}`)
-        .then(resp => {
-          if (resp.body.code !== 0) {
-            throw new Error(resp.body.error)
-          }
-          this.noticeTitle = resp.body.data.title
-          this.noticeDetail = resp.body.data.content
-          this.modifiedTime = resp.body.data.modifiedTime
-        })
-        .catch(err => {
-          this.$alert(err.toString())
-        })
     }
-  },
-  created() {
-    this.getNotice()
   }
 }
 </script>
