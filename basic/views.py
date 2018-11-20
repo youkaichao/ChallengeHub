@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.core import serializers
 from django.utils import timezone
-from basic.models import Competition, Group, CStage, GStage, ReviewMeta, Notice
+from basic.models import Competition, Group, CStage, GStage, ReviewMeta, Notice, Vote
 from useraction.models import User
 from ChallengeHub.utils import BaseView as View, require_logged_in, make_errors
 from ChallengeHub.settings import MONGO_CLIENT, BASE_DIR
@@ -58,6 +58,10 @@ class ContestDetailView(View):
     def get(self, request, contest_id):
         c = Competition.objects.get(id=int(contest_id))
         info = c.to_dict(detail=True)
+        info['userRelated'] = {}
+        vote = request.user.user_votes.filter(competition=c).first()
+        if vote:
+            info['userRelated']['upvoteStatus'] = vote.status
         return JsonResponse({'code': 0, 'data': info})
 
     def post(self, request, contest_id):
@@ -203,6 +207,21 @@ class ContestReviewerView(View):
         return JsonResponse({'code': 0, 'data': data})
 
 
+class ContestVoteView(View):
+    def post(self, request, contest_id):
+        self.check_input(['upvote'])
+        c = Competition.objects.get(id=int(contest_id))
+        vote = Vote.vote(c, request.user, request.data['upvote'])
+        return JsonResponse({
+            'code': 0,
+            'data': {
+                'upvote': c.upvote,
+                'downvote': c.downvote,
+                'upvoteStatus': vote.status,
+            }
+        })
+
+
 class GroupStageView(View):
     def post(self, request, contest_id):
         self.check_input(['group_ids', 'stage'])
@@ -294,6 +313,8 @@ class ContestSubmissionView(View):
         return JsonResponse({
             'code': 0,
             'data': {
+                'score': group_stage.score,
+                'reviews': [{'rating': x.score, 'msg': x.msg} for x in group_stage.review_meta_list.all()],
                 'submissionName': group_stage.submission,
                 'url': group_stage.commit_path
             }})
@@ -395,6 +416,7 @@ class JudgeReviewView(View):
             'reviewed': review.reviewed,
             'rating': review.score,
             'url': review.stage.commit_path,
+            'msg': review.msg,
             'extension': get_extension(review.stage.commit_path)} for review in reviews]
         return JsonResponse({'code': 0, 'data': data})
 
@@ -406,6 +428,7 @@ class JudgeReviewView(View):
             meta = ReviewMeta.objects.get(id=r['id'])
             meta.reviewed = meta.reviewed or r['reviewed']
             meta.score = r['rating']
+            meta.msg = r.get('msg', '')
             meta.save()
             reviews = meta.stage.review_meta_list.all()
             sum = 0.0
@@ -469,7 +492,8 @@ class SubmissionAllView(View):
                     judges.append({
                         'username': review.reviewer.username,
                         'hasReviewed': review.reviewed,
-                        'score': review.score
+                        'score': review.score,
+                        'msg': review.msg,
                     })
                 obj['judges'] = judges
                 res.append(obj)

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/AerysNan/ubiquitous-potato.svg?token=UB5Xzp6dhS72fDX13on9&branch=master)](https://travis-ci.com/AerysNan/ubiquitous-potato)
+[![Build Status](https://travis-ci.com/AerysNan/ChallengeHub.svg?token=UB5Xzp6dhS72fDX13on9&branch=master)](https://travis-ci.com/AerysNan/ubiquitous-potato)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 # ChallengeHub

@@ -24,7 +24,25 @@ export default {
           upvote: 200,
           downvote: 300,
           publisher: '华清大学',
-          detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功'
+          detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+          userRelated: {
+            upvoteStatus: 0
+          }
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['POST */api/contests/1/vote'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          upvote: 444,
+          downvote: 666,
+          upvoteStatus: 1
         }
       },
       status: 200,
@@ -753,52 +771,6 @@ export default {
             stage
           }
         ]
-      },
-      status: 200,
-      statusText: 'OK'
-    }
-  },
-  ['GET */api/contests/1'](pathMatch, query, request, passThrough) {
-    return {
-      body: {
-        code: 0,
-        error: '',
-        data: {
-          id: 1,
-          name: '咸鱼划水大赛',
-          subject: '体育',
-          groupSize: '2',
-          enrollStart: '2018-1-1',
-          enrollEnd: '2018-12-31',
-          enrollUrl: 'www.baidu.com',
-          imgUrl: 'www.baidu.com',
-          charge: 0,
-          upvote: 100,
-          downvote: 999,
-          publisher: 'SSS',
-          stage,
-          procedure: [
-            {
-              name: '初赛',
-              startTime: '2018-1-1',
-              endTime: '2018-2-29',
-              stage: 1
-            },
-            {
-              name: '复赛',
-              startTime: '2018-1-1',
-              endTime: '2018-2-29',
-              stage: 3
-            },
-            {
-              name: '决赛',
-              startTime: '2018-1-1',
-              endTime: '2018-2-29',
-              stage: 5
-            }
-          ],
-          detail: '这是详情'
-        }
       },
       status: 200,
       statusText: 'OK'

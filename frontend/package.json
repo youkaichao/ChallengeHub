@@ -9,6 +9,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.8",
+    "@fortawesome/free-regular-svg-icons": "^5.5.0",
+    "@fortawesome/free-solid-svg-icons": "^5.5.0",
+    "@fortawesome/vue-fontawesome": "^0.1.2",
     "element-ui": "^2.4.9",
     "mavon-editor": "^2.6.17",
     "vue": "^2.5.17",
@@ -19,6 +23,7 @@
     "vuex-persist": "^2.0.0"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.5.0",
     "@vue/cli-plugin-babel": "^3.1.0",
     "@vue/cli-plugin-eslint": "^3.1.0",
     "@vue/cli-service": "^3.1.0",

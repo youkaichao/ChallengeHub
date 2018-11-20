@@ -163,10 +163,53 @@ class ReviewMeta(models.Model):
     reviewed = models.BooleanField(default=False)
     stage = models.ForeignKey(
         GStage, related_name='review_meta_list', on_delete=models.PROTECT)
+    msg = models.CharField(max_length=256, blank=False)
 
     def to_dict(self, detail=False):
         data = {
             'reviewer': self.reviewer.username,
             'score': self.score,
+            'msg': self.msg
         }
         return data
+
+
+class Vote(models.Model):
+    competition = models.ForeignKey(
+        Competition, related_name='competition_votes', on_delete=models.PROTECT)
+    user = models.ForeignKey(User, related_name='user_votes',
+                             on_delete=models.PROTECT)
+    status = models.IntegerField(default=0)
+
+    @classmethod
+    def vote(cls, competition: Competition, user: User, upvote: int):
+        if not user.is_authenticated():
+            raise Exception("not logged in")
+        vote = Vote.objects.filter(competition=competition, user=user).first()
+        if not vote or vote.status == 0:
+            if not vote:
+                vote = Vote(competition=competition, user=user, status=upvote)
+            else:
+                vote.status = upvote
+            if upvote > 0:
+                competition.upvote += 1
+            elif upvote < 0:
+                competition.downvote += 1
+        else:
+            if vote.status == upvote:
+                vote.status = 0
+                if upvote > 0:
+                    competition.upvote -= 1
+                elif upvote < 0:
+                    competition.downvote -= 1
+            else:
+                vote.status = upvote
+                if upvote > 0:
+                    competition.upvote += 1
+                    competition.downvote -= 1
+                elif upvote < 0:
+                    competition.upvote -= 1
+                    competition.downvote += 1
+        vote.save()
+        competition.save()
+        return vote

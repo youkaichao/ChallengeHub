@@ -22,7 +22,7 @@ class UserInfoView(View):
     @require_logged_in
     def get(self, request):
         return JsonResponse({'code': 0, 'data': request.user.to_dict()})
-        
+
     @require_logged_in
     def post(self, request):
         for name in ['email', 'introduction', 'school']:
