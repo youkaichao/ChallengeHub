@@ -1,9 +1,13 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth import logout, authenticate, login
+from django.core.mail import send_mail
 from useraction.models import User
 from ChallengeHub.utils import make_errors, require_logged_in
 from ChallengeHub.utils import BaseView as View
+from ChallengeHub.settings import EMAIL_FROM, SITE_URL, VALIDATE_SALT
+import base64
+import hashlib
 
 
 class UserLoginView(View):
@@ -11,11 +15,13 @@ class UserLoginView(View):
         self.check_input(['username', 'password'])
         user = authenticate(
             username=request.data.get('username'), password=request.data.get('password'))
-        if(user and user.is_active):
+        if user and user.is_active:
             login(request, user)
             return JsonResponse({'code': 0, 'data': user.to_dict()})
+        elif not user.is_active:
+            raise Exception('user will stay inactive until validated')
         else:
-            return JsonResponse(make_errors('wrong username or password'))
+            raise Exception('wrong username or password')
 
 
 class UserInfoView(View):
@@ -36,14 +42,28 @@ class UserRegisterView(View):
     def post(self, request) -> JsonResponse:
         self.check_input(['username', 'password', 'email', 'individual'])
         user = User.objects.filter(username=request.data.get('username'))
-        if(user):
-            return JsonResponse(make_errors('username already exists'))
+        if user:
+            raise Exception('username already exist')
+        if User.objects.filter(email=request.data.get('email')):
+            raise Exception('email already is registered')
         user = User.objects.create_user(
             username=request.data.get('username'),
             password=request.data.get('password'),
             email=request.data.get('email'),
             individual=True if(request.data.get('individual')
-                               == 'individual') else False
+                               == 'individual') else False,
+            is_active=False
+        )
+        m = hashlib.md5()
+        m.update(user.email + VALIDATE_SALT)
+        encoded = base64.urlsafe_b64encode(f'{user.username}&{m.hexdigest()}')
+        link = f'http://{SITE_URL}/#/validate/{encoded}'
+        send_mail(
+            subject='Validate your email account on ChanllengeHub',
+            message=f'{user.username}, please validate your email account by visiting the link below\n{link}',
+            from_email=EMAIL_FROM,
+            recipient_list=[user.email],
+            fail_silently=False
         )
         user.save()
         login(request, user)
@@ -55,3 +75,19 @@ class UserLogoutView(View):
     def post(self, request) -> JsonResponse:
         logout(request)
         return JsonResponse({'code': 0, 'data': 'success'})
+
+
+class UserValidateView(View):
+    def post(self, request):
+        self.check_input(['token'])
+        token = request.data.get('token')
+        decoded = base64.urlsafe_b64decode(token)
+        username, email = decoded.split('&')
+        user = User.objects.get(username=username)
+        m = hashlib.md5()
+        m.update(user.email+VALIDATE_SALT)
+        if m.hexdigest() == email:
+            user.is_active = True
+            user.save()
+            return JsonResponse({'code': 0, 'data': 'success'})
+        raise Exception('validate email failed')

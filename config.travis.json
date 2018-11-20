@@ -6,5 +6,9 @@
   "DB_HOST": "127.0.0.1",
   "DB_PORT": 3306,
   "MONGO_HOST": "127.0.0.1",
-  "MONGO_PORT": 27017
+  "MONGO_PORT": 27017,
+  "EMAIL_ACCOUNT": "",
+  "EMAIL_PASSWORD": "",
+  "SITE_URL": "",
+  "VALIDATE_SALT": ""
 }
