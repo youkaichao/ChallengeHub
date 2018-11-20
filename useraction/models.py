@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from typing import Dict, Any
 
 
 class User(AbstractUser):
@@ -10,7 +11,7 @@ class User(AbstractUser):
     # need to set this or cannot create super user
     individual = models.BooleanField(default=True)
 
-    def to_dict(self, detail=False):
+    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
         return {
             'username': self.username,
             'email': self.email,

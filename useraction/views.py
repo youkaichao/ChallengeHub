@@ -7,7 +7,7 @@ from ChallengeHub.utils import BaseView as View
 
 
 class UserLoginView(View):
-    def post(self, request):
+    def post(self, request) -> JsonResponse:
         self.check_input(['username', 'password'])
         user = authenticate(
             username=request.data.get('username'), password=request.data.get('password'))
@@ -20,11 +20,11 @@ class UserLoginView(View):
 
 class UserInfoView(View):
     @require_logged_in
-    def get(self, request):
+    def get(self, request) -> JsonResponse:
         return JsonResponse({'code': 0, 'data': request.user.to_dict()})
 
     @require_logged_in
-    def post(self, request):
+    def post(self, request) -> JsonResponse:
         for name in ['email', 'introduction', 'school']:
             if request.data.get(name) != None:
                 setattr(request.user, name, request.data.get(name))
@@ -33,7 +33,7 @@ class UserInfoView(View):
 
 
 class UserRegisterView(View):
-    def post(self, request):
+    def post(self, request) -> JsonResponse:
         self.check_input(['username', 'password', 'email', 'individual'])
         user = User.objects.filter(username=request.data.get('username'))
         if(user):
@@ -52,6 +52,6 @@ class UserRegisterView(View):
 
 class UserLogoutView(View):
     @require_logged_in
-    def post(self, request):
+    def post(self, request) -> JsonResponse:
         logout(request)
         return JsonResponse({'code': 0, 'data': 'success'})

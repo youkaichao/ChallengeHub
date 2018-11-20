@@ -1,7 +1,10 @@
-import json
 from django.db import models
 import django.utils.timezone as timezone
 from useraction.models import User
+from typing import Type, TypeVar, Dict, Any
+import json
+
+V = TypeVar('V')
 
 
 class Competition(models.Model):
@@ -21,10 +24,10 @@ class Competition(models.Model):
     judges = models.ManyToManyField(User, related_name='judged_competitions')
     current_stage = models.IntegerField(default=0)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def to_dict(self, detail=False):
+    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
         data = {
             'id': self.id,
             'name': self.name,
@@ -61,10 +64,10 @@ class CStage(models.Model):
         Competition, related_name='stage_list', on_delete=models.PROTECT)
     is_assigned = models.BooleanField(default=False)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def to_dict(self, detail=False):
+    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
         data = {
             'name': self.name,
             'startTime': self.start_time.strftime('%Y-%m-%d'),
@@ -84,10 +87,10 @@ class Notice(models.Model):
     modified_time = models.DateTimeField(default=timezone.now)
     content = models.TextField(blank=False)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.competition}: {self.content}'
 
-    def to_dict(self, detail=False):
+    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
         data = {
             'id': self.id,
             'competitionId': self.competition.id,
@@ -111,10 +114,10 @@ class Group(models.Model):
     rank = models.TextField()
     current_stage = models.IntegerField(default=1)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
-    def to_dict(self, detail=False):
+    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
         return {
             'id': self.id,
             'name': self.name,
@@ -142,7 +145,7 @@ class GStage(models.Model):
     group = models.ForeignKey(
         Group, related_name='stage_list', on_delete=models.PROTECT)
 
-    def to_dict(self, detail=False):
+    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
         data = {
             'stage': self.stage,
             'commitPath': self.commit_path,
@@ -165,7 +168,7 @@ class ReviewMeta(models.Model):
         GStage, related_name='review_meta_list', on_delete=models.PROTECT)
     msg = models.CharField(max_length=256, blank=False)
 
-    def to_dict(self, detail=False):
+    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
         data = {
             'reviewer': self.reviewer.username,
             'score': self.score,
@@ -182,7 +185,7 @@ class Vote(models.Model):
     status = models.IntegerField(default=0)
 
     @classmethod
-    def vote(cls, competition: Competition, user: User, upvote: int):
+    def vote(cls: Type[V], competition: Competition, user: User, upvote: int) -> V:
         if not user.is_authenticated():
             raise Exception("not logged in")
         vote = Vote.objects.filter(competition=competition, user=user).first()
