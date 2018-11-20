@@ -128,16 +128,6 @@ export default new Router({
           ]
         },
         {
-          path: 'competitor_dashboard',
-          name: '/competitor_dashboard',
-          component: CompetitorDashboard
-        },
-        {
-          path: 'judge_dashboard',
-          name: '/judge_dashboard',
-          component: JudgeDashboard
-        },
-        {
           path: 'judge/workspace/:id/',
           component: JudgeWorkspace
         }

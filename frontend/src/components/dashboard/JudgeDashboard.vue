@@ -14,7 +14,7 @@
           <h1 style="font-size: 48px; margin: 0">我评审的比赛</h1>
         </el-col>
         <el-col :span="6" style="text-align: right; margin: auto;">
-          <el-button type="primary" plain @click="$router.push('/competitor_dashboard')">切换到选手视图</el-button>
+          <el-button type="primary" plain @click="$emit('switch-competitor')">切换到选手视图</el-button>
         </el-col>
       </el-row>
     </div>
