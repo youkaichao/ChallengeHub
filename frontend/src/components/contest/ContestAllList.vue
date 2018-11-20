@@ -1,10 +1,16 @@
 <template>
-  <div>
-    <el-input placeholder="请输入比赛名" v-model="searchInput" style="width: 500px;">
-      <el-button slot="append" icon="el-icon-search"></el-button>
-    </el-input>
-    <contest-burge style="margin-top: 20px;" v-on:detail-on-click="routeToDetail" v-for="contestInfo in allContestInfo" v-bind:contestInfo="contestInfo" v-bind:key="contestInfo.contestId"></contest-burge>
-  </div>
+  <el-row>
+    <el-row>
+      <el-input placeholder="请输入比赛名" v-model="searchInput" style="width: 500px;">
+        <el-button slot="append" icon="el-icon-search"></el-button>
+      </el-input>
+    </el-row>
+    <el-row>
+      <el-alert title="暂无比赛" type="warning" center show-icon v-if="contestListEmpty">
+      </el-alert>
+      <contest-burge style="margin-top: 20px;" v-on:detail-on-click="routeToDetail" v-for="contestInfo in allContestInfo" v-bind:contestInfo="contestInfo" v-bind:key="contestInfo.contestId"></contest-burge>
+    </el-row>
+  </el-row>
 </template>
 
 <script>
@@ -23,11 +29,22 @@ export default {
   methods: {
     routeToDetail: function(contestId) {
       this.$router.push(`/contest/detail/${contestId}`)
+    },
+    handleSearch: async function() {
+      let response = await this.$http.get('/api/contests', {
+        params: { search: this.searchInput }
+      })
+      this.allContestInfo = response.body.data
     }
   },
   async created() {
     let response = await this.$http.get('/api/contests')
     this.allContestInfo = response.body.data
+  },
+  computed: {
+    contestListEmpty() {
+      return this.allContestInfo.length == 0
+    }
   }
 }
 </script>

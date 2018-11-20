@@ -30,7 +30,7 @@ export default {
   },
   created: function() {
     if (!this.$store.state.login && this.$cookies.isKey('username')) {
-      let response = this.$http
+      this.$http
         .get('/auth/info', {
           params: { username: this.$cookies.get('username') }
         })

@@ -13,13 +13,13 @@ import json
 
 class ContestCollectionView(View):
     def get(self, request) -> JsonResponse:
-        if 'sortBy' in request.data.keys():
+        competitions = Competition.objects.all()
+        if 'search' in request.data:
+            competitions = competitions.filter(
+                name__icontains=request.data.get('search'))
+        if 'sortBy' in request.data:
             if request.data['sortBy'] == 'numVotes':
-                competitions = Competition.objects.all().order_by('-upvote')
-            else:
-                competitions = Competition.objects.all()
-        else:
-            competitions = Competition.objects.all()
+                competitions = competitions.order_by('-upvote')
         return JsonResponse({'code': 0, "data": [competition.to_dict() for competition in competitions]})
 
     def post(self, request) -> JsonResponse:
