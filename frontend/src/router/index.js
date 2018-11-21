@@ -22,6 +22,7 @@ import NoticeList from '@/components/organizer/NoticeList'
 import ManageReview from '@/components/organizer/ManageReview'
 import NoticeDetail from '@/components/organizer/NoticeDetail'
 import NewNotice from '@/components/organizer/NewNotice'
+import UserValidation from '@/components/UserValidation'
 
 Vue.use(VueCookies)
 Vue.use(VueResource)
@@ -35,6 +36,10 @@ export default new Router({
       component: Main,
       redirect: '/index',
       children: [
+        {
+          path: 'validate/:token',
+          component: UserValidation
+        },
         {
           path: 'contest/create',
           name: '/contest/create',

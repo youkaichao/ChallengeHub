@@ -18,10 +18,10 @@ class UserLoginView(View):
         if user and user.is_active:
             login(request, user)
             return JsonResponse({'code': 0, 'data': user.to_dict()})
-        elif not user.is_active:
-            raise Exception('user will stay inactive until validated')
-        else:
+        elif not user:
             raise Exception('wrong username or password')
+        else:
+            raise Exception('user will stay inactive until validated')
 
 
 class UserInfoView(View):
@@ -43,9 +43,9 @@ class UserRegisterView(View):
         self.check_input(['username', 'password', 'email', 'individual'])
         user = User.objects.filter(username=request.data.get('username'))
         if user:
-            raise Exception('username already exist')
+            raise Exception('username already exists')
         if User.objects.filter(email=request.data.get('email')):
-            raise Exception('email already is registered')
+            raise Exception('email is already registered')
         user = User.objects.create_user(
             username=request.data.get('username'),
             password=request.data.get('password'),
@@ -55,9 +55,10 @@ class UserRegisterView(View):
             is_active=False
         )
         m = hashlib.md5()
-        m.update(user.email + VALIDATE_SALT)
-        encoded = base64.urlsafe_b64encode(f'{user.username}&{m.hexdigest()}')
-        link = f'http://{SITE_URL}/#/validate/{encoded}'
+        m.update((user.email + VALIDATE_SALT).encode('utf-8'))
+        encoded = base64.urlsafe_b64encode(
+            f'{user.username}&{m.hexdigest()}'.encode('utf-8'))
+        link = f'http://{SITE_URL}/#/validate/{encoded.decode()}'
         send_mail(
             subject='Validate your email account on ChanllengeHub',
             message=f'{user.username}, please validate your email account by visiting the link below\n{link}',
@@ -66,7 +67,6 @@ class UserRegisterView(View):
             fail_silently=False
         )
         user.save()
-        login(request, user)
         return JsonResponse({'code': 0, 'data': user.to_dict()})
 
 
@@ -81,13 +81,13 @@ class UserValidateView(View):
     def post(self, request):
         self.check_input(['token'])
         token = request.data.get('token')
-        decoded = base64.urlsafe_b64decode(token)
+        decoded = base64.urlsafe_b64decode(token).decode()
         username, email = decoded.split('&')
         user = User.objects.get(username=username)
         m = hashlib.md5()
-        m.update(user.email+VALIDATE_SALT)
+        m.update((user.email+VALIDATE_SALT).encode('utf-8'))
         if m.hexdigest() == email:
             user.is_active = True
             user.save()
             return JsonResponse({'code': 0, 'data': 'success'})
-        raise Exception('validate email failed')
+        raise Exception('email validation failed')

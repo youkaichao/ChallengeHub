@@ -89,11 +89,14 @@ export default {
       this.user.individual = type
       this.$http.post('/auth/register', this.user).then(function(response) {
         if (response.data.code > 0) {
-          alert('Register failed with error: ' + response.data.error)
+          this.$alert('Register failed with error: ' + response.data.error)
           return
         }
-        this.$store.commit('login', response.body.data)
-        this.$router.push('/user')
+        this.$message({
+          message: '我们已经向您的注册邮箱中发送了一封验证邮件，请尽快点击邮件中验证链接以激活您的账号',
+          type: 'warning'
+        })
+        this.$router.push('/')
       })
     },
     handleClick(tab) {
