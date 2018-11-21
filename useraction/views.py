@@ -5,19 +5,20 @@ from django.core.mail import send_mail
 from useraction.models import User
 from ChallengeHub.utils import make_errors, require_logged_in
 from ChallengeHub.utils import BaseView as View
+from typing import Dict, Any, Callable, List
 from ChallengeHub.settings import EMAIL_FROM, SITE_URL, VALIDATE_SALT
 import base64
 import hashlib
 
 
 class UserLoginView(View):
-    def post(self, request) -> JsonResponse:
+    def post(self, request) -> Any:
         self.check_input(['username', 'password'])
         user = authenticate(
             username=request.data.get('username'), password=request.data.get('password'))
         if user and user.is_active:
             login(request, user)
-            return JsonResponse({'code': 0, 'data': user.to_dict()})
+            return user.to_dict()
         elif not user:
             raise Exception('wrong username or password')
         else:
@@ -26,20 +27,20 @@ class UserLoginView(View):
 
 class UserInfoView(View):
     @require_logged_in
-    def get(self, request) -> JsonResponse:
-        return JsonResponse({'code': 0, 'data': request.user.to_dict()})
+    def get(self, request) -> Any:
+        return request.user.to_dict()
 
     @require_logged_in
-    def post(self, request) -> JsonResponse:
+    def post(self, request) -> Any:
         for name in ['email', 'introduction', 'school']:
             if request.data.get(name) != None:
                 setattr(request.user, name, request.data.get(name))
         request.user.save()
-        return JsonResponse({'code': 0, 'data': request.user.to_dict()})
+        return request.user.to_dict()
 
 
 class UserRegisterView(View):
-    def post(self, request) -> JsonResponse:
+    def post(self, request) -> Any:
         self.check_input(['username', 'password', 'email', 'individual'])
         user = User.objects.filter(username=request.data.get('username'))
         if user:
@@ -67,18 +68,18 @@ class UserRegisterView(View):
             fail_silently=False
         )
         user.save()
-        return JsonResponse({'code': 0, 'data': user.to_dict()})
+        return user.to_dict()
 
 
 class UserLogoutView(View):
     @require_logged_in
-    def post(self, request) -> JsonResponse:
+    def post(self, request) -> Any:
         logout(request)
-        return JsonResponse({'code': 0, 'data': 'success'})
+        return 
 
 
 class UserValidateView(View):
-    def post(self, request):
+    def post(self, request) -> Any:
         self.check_input(['token'])
         token = request.data.get('token')
         decoded = base64.urlsafe_b64decode(token).decode()
@@ -89,5 +90,5 @@ class UserValidateView(View):
         if m.hexdigest() == email:
             user.is_active = True
             user.save()
-            return JsonResponse({'code': 0, 'data': 'success'})
+            return 
         raise Exception('email validation failed')

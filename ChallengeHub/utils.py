@@ -9,10 +9,10 @@ def make_errors(msg: str) -> Dict[str, Any]:
     return {'error': msg, 'code': 1}
 
 
-def require_logged_in(func: Callable[..., JsonResponse]) -> Callable[..., JsonResponse]:
-    def new_func(self, request) -> JsonResponse:
+def require_logged_in(func: Callable[..., Any]) -> Callable[..., Any]:
+    def new_func(self, request) -> Any:
         if not request.user.is_authenticated():
-            return JsonResponse(make_errors('not logged in'))
+            raise Exception('not logged in')
         else:
             return func(self, request)
     return new_func
@@ -37,7 +37,8 @@ class BaseView(View):
             return JsonResponse(make_errors(f"http method {self.request.method.lower()} not allowed "))
         else:
             try:
-                return handler(*args, **kwargs)
+                data =  handler(*args, **kwargs) or 'success'
+                return JsonResponse({'data': data, 'code': 0})
             except Exception as e:
                 traceback.print_exc()
                 return JsonResponse(make_errors(str(e)))
