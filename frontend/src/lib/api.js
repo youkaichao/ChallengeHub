@@ -188,6 +188,7 @@ export default {
         error: '',
         data: {
           contest: {
+            id: 1,
             name: '咸鱼划水大赛',
             imgUrl: 'https://picsum.photos/400/300/?random&amp;k=2',
             publisher: '华清大学',
@@ -262,6 +263,7 @@ export default {
         error: '',
         data: {
           contest: {
+            id: 1,
             name: '咸鱼划水大赛',
             imgUrl: 'https://picsum.photos/400/300/?random&amp;k=2',
             publisher: '华清大学',
@@ -278,49 +280,67 @@ export default {
           },
           submissions: [
             {
+              id: 1,
               title: '网络优化器',
               reviewed: true,
-              rating: 83
+              rating: 83,
+              msg: '群主牛逼！'
             },
             {
+              id: 2,
               title: '网络优化器',
               reviewed: true,
-              rating: 78
+              rating: 78,
+              msg: '群主太强了！'
             },
             {
+              id: 2,
               title: '网络优化器',
               reviewed: true,
-              rating: 94
+              rating: 94,
+              msg: '群主好厉害！'
             },
             {
+              id: 2,
               title: '网络优化器',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              msg: ''
             },
             {
+              id: 2,
               title: '网络优化器',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              msg: ''
             },
             {
+              id: 2,
               title: '网络优化器',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              msg: ''
             },
             {
+              id: 2,
               title: '网络优化器',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              msg: ''
             },
             {
+              id: 2,
               title: '网络优化器',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              msg: ''
             },
             {
+              id: 2,
               title: '网络优化器',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              msg: ''
             }
           ]
         }
@@ -354,25 +374,105 @@ export default {
             {
               title: '吃垃圾教程',
               reviewed: true,
-              rating: 83
+              rating: 83,
+              msg: '要不怎么说你屌呢？'
             },
             {
               title: '吃垃圾教程',
               reviewed: true,
-              rating: 78
+              rating: 78,
+              msg: '要不怎么说你巨呢？'
             },
             {
               title: '吃垃圾教程',
               reviewed: true,
-              rating: 94
+              rating: 94,
+              msg: '要不怎么说你强呢？'
             },
             {
               title: '吃垃圾教程',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              msg: '要不怎么说你牛逼呢？'
             }
           ]
         }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/567456/submissions&stage=2']() {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          submissionName: '吃垃圾的中级教程',
+          url: 'https://picsum.photos/200/300/?random',
+          score: 123,
+          reviews: [
+            {
+              rating: 56,
+              msg: '你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊v'
+            },
+            {
+              rating: 98,
+              msg: '膜！'
+            },
+            {
+              rating: 100,
+              msg: '膜满分！'
+            },
+            {
+              rating: 80,
+              msg: '',
+            }
+          ]
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests/23463456/submissions&stage=2']() {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          submissionName: '吃垃圾的中级教程',
+          url: 'https://picsum.photos/200/300/?random',
+          score: 123,
+          reviews: [
+            {
+              rating: 56,
+              msg: '你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊你好牛逼啊v'
+            },
+            {
+              rating: 98,
+              msg: '膜！'
+            },
+            {
+              rating: 100,
+              msg: '膜满分！'
+            },
+            {
+              rating: 80,
+              msg: '',
+            }
+          ]
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['POST */api/judges/1'](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 1,
+        error: JSON.stringify([request, passThrough])
       },
       status: 200,
       statusText: 'OK'

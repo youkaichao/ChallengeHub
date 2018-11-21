@@ -27,7 +27,7 @@
             <span v-if="!isCommitStage">当前无法提交作品</span>
           </div>
           <div style="margin-top: 5px;">
-            <el-button v-if="downloadableStageNames.length !== 0" type="text" style="padding: 0;" @click="downloadDialogVisible = true">下载过往作品</el-button>
+            <el-button v-if="downloadableStageNames.length !== 0" type="text" style="padding: 0;" @click="downloadDialogVisible = true">查看过往作品</el-button>
             <el-button v-else type="text" style="padding: 0;" disabled>无过往作品</el-button>
           </div>
           <el-upload v-show="isCommitStage && (!group.hasCommit)" :limit="1" :http-request="handleUpload" action="" style="display: inline-block">
@@ -36,30 +36,40 @@
           <el-upload v-show="isCommitStage && group.hasCommit" :limit="1" :http-request="handleUpload" action="" style="display: inline-block">
             <el-button type="primary" class="commit-button" plain>修改作品</el-button>
           </el-upload>
-          <el-button v-show="isCommitStage && group.hasCommit" type="primary" @click="handleDownload(null)" class="commit-button" plain>下载提交作品</el-button>
+          <el-button v-show="isCommitStage && group.hasCommit" type="primary" @click="checkDetail(null)" class="commit-button" plain>下载提交作品</el-button>
         </el-col>
       </el-row>
     </el-card>
 
-    <el-dialog title="下载作品" :visible.sync="downloadDialogVisible" :width="'30%'">
+    <el-dialog title="查看过往作品" :visible.sync="downloadDialogVisible" :width="'30%'">
       <div v-for="(name, index) of downloadableStageNames" :key="index" style="margin-top: 10px;">
-        <el-button type="primary" plain @click="handleDownload(index)">下载<span style="font-weight: bold;"> {{name}} </span>阶段提交</el-button>
+        <el-button type="primary" plain @click="checkDetail(index)">查看<span style="font-weight: bold;"> {{name}} </span>阶段作品</el-button>
       </div>
+    </el-dialog>
+
+    <el-dialog title="过往作品详情" :visible.sync="submissionDetailVisible">
+      <submission-detail :detail="selectedDetail" />
     </el-dialog>
   </div>
 </template>
 
 <script>
 import { isoToHumanReadable, downloadFile } from '@/lib/util.js'
+import SubmissionDetail from './SubmissionDetail.vue'
 
 export default {
   name: 'EnrolledContestUnfinished',
   data() {
     return {
-      downloadDialogVisible: false
+      downloadDialogVisible: false,
+      submissionDetailVisible: false,
+      selectedDetail: null
     }
   },
   methods: {
+    handleDownload() {
+      downloadFile(document, this.downloadLink)
+    },
     async handleUpload(param) {
       try {
         let result = await this.$prompt('请输入作品名', '请输入作品名', {
@@ -87,7 +97,7 @@ export default {
         return
       }
     },
-    async handleDownload(index) {
+    async checkDetail(index) {
       let response = null
       if (index === null) {
         response = await this.$http.get(`/api/contests/${this.contest.id}/submissions`)
@@ -99,7 +109,11 @@ export default {
         this.$message({ type: 'error', message: response.body.error })
         return
       }
-      downloadFile(document, response.body.data.url)
+
+      this.selectedDetail = response.body.data
+      this.submissionDetailVisible = true
+
+      //      this.downloadFile(document, response.body.data.url)
     }
   },
   props: ['contest', 'group'],
@@ -149,6 +163,9 @@ export default {
 
       return ret
     }
+  },
+  components: {
+    'submission-detail': SubmissionDetail
   }
 }
 </script>

@@ -36,12 +36,20 @@
     <el-dialog title="比赛结果详情" :visible.sync="resultDetailVisible">
       <p v-if="group.stage === -1">祝贺！你通过了比赛的所有阶段，最终获得 <span class="blue-bold">{{group.rank}}</span> 的成绩！</p>
       <p v-else>你坚持到了比赛的 <span class="blue-bold">{{contest.procedure[(group.stage / 2) - 1].name}}</span> 阶段，下次加油！</p>
+      <div v-for="(name, index) of downloadableStageNames" :key="index">
+        <el-button type="primary" style="margin-top: 10px;" @click="handelCheckDetail(index)">查看 <b>{{name}}</b> 阶段评审详情</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="过往作品详情" :visible.sync="reviewDetailVisible">
+      <submission-detail :detail="selectedDetail" />
     </el-dialog>
   </div>
 </template>
 
 <script>
 import { isoToHumanReadable, downloadFile } from '@/lib/util.js'
+import SubmissionDetail from './SubmissionDetail.vue'
 
 export default {
   name: 'EnrolledContestFinished',
@@ -75,13 +83,28 @@ export default {
         return
       }
       downloadFile(document, response.body.data.url)
+    },
+    async handelCheckDetail(index) {
+     let stage = (index + 1) * 2
+           let response = await this.$http.get(`/api/contests/${this.contest.id}/submissions&stage=${stage}`)
+      if (response.body.code !== 0) {
+        this.$message({ type: 'error', message: response.body.error })
+        return
+      }
+      this.selectedDetail = response.body.data
+      this.reviewDetailVisible = true
     }
   },
   data() {
     return {
       downloadDialogVisible: false,
-      resultDetailVisible: false
+      resultDetailVisible: false,
+      reviewDetailVisible: false,
+      selectedDetail: null
     }
+  },
+  components: {
+    'submission-detail': SubmissionDetail
   }
 }
 </script>

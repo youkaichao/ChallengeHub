@@ -49,8 +49,8 @@
       </el-col>
     </el-row>
 
-    <el-dialog title="撰写评语" :visible.sync="remarkDialogVisible" :width="'30%'">
-      <el-input type="textarea" v-model="currentRemark">
+    <el-dialog title="评语" :visible.sync="remarkDialogVisible" :width="'30%'">
+      <el-input type="textarea" v-model="currentRemark" :disabled="readonly">
       </el-input>
       <el-button style="margin-top: 20px;" type="primary" @click="handleRemarkConfirm">确定</el-button>
     </el-dialog>
@@ -73,7 +73,7 @@ export default {
       currentStage: '',
       dirty: new Set([]),
       currentRemark: '',
-      currentRemarkNumber: null,
+      currentRemarkIndex: null,
       remarkDialogVisible: false
     }
   },
@@ -89,7 +89,8 @@ export default {
           ret.push({
             id: instance.id,
             reviewed: true,
-            rating: instance.rating
+            rating: instance.rating,
+            msg: instance.msg
           })
         }
         let data = { reviews: ret }
@@ -102,6 +103,7 @@ export default {
         }
       } catch (error) {
         this.$message({ type: 'error', message: '提交失败，发生意外错误' })
+        throw error
       }
 
       await this.initializeData()
@@ -131,14 +133,14 @@ export default {
       this.submissions[number - 1].rating = rating
     },
     handleRemark(number) {
-      this.currentRemark = ''
-      this.currentRemarkNumber = number
+      this.currentRemarkIndex = number - 1
+      this.currentRemark = this.submissions[this.currentRemarkIndex].msg
       this.remarkDialogVisible = true
     },
     handleRemarkConfirm() {
-      this.$message({ type: 'success', message: '正在假装评语发送成功' })
+      this.submissions[this.currentRemarkIndex].msg = this.currentRemark
       this.currentRemark = ''
-      this.currentRemarkNumber = null
+      this.currentRemarkIndex = null
       this.remarkDialogVisible = false
     },
     handleCheck(number) {
@@ -180,13 +182,13 @@ export default {
       this.task = data.task
       this.submissions = data.submissions
 
-      if (stage !== null && stage !== response.body.data.contest.stage) {
+      if (stage !== null && stage !== undefined && stage !== response.body.data.contest.stage) {
         this.readonly = true
       } else {
         this.readonly = false
       }
 
-      if (stage === null) {
+      if (stage === null || stage === undefined) {
         this.currentStage = this.contest.procedure[this.contest.stage / 2 - 1].name
       } else {
         this.currentStage = this.contest.procedure[stage / 2 - 1].name
@@ -194,7 +196,7 @@ export default {
 
       this.dirty = new Set([])
       this.currentRemark = ''
-      this.currentRemarkNumber = ''
+      this.currentRemarkIndex = ''
       this.remarkDialogVisible = false
 
       return true

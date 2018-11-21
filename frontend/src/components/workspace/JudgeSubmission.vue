@@ -18,7 +18,7 @@
             <el-button v-if="!readonly" type="primary" icon="el-icon-check" style="margin-left: 20px;" :plain="isClean ? true : false" @click="handleCheck" />
           </div>
           <div>
-            <el-button v-if="!readonly" type="primary" plain @click="$emit('remark', number)">撰写评语</el-button>
+            <el-button type="primary" plain @click="$emit('remark', number)">{{ readonly ? '查看评语' : '撰写评语'}}</el-button>
             <el-button v-if="!readonly && !reviewed" type="primary" @click="$emit('download', number)">下载作品</el-button>
             <el-button v-if="!readonly && reviewed" type="primary" plain @click="$emit('download', number)">下载作品</el-button>
             <el-button v-if="readonly" type="primary" plain @click="$emit('download', number)">下载作品</el-button>
