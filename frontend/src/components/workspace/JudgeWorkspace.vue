@@ -38,7 +38,7 @@
             <el-button :disabled="readonly" type="primary" @click="downloadUnreviewed()">下载未评审作品</el-button>
           </span>
         </el-row>
-        <judge-submission v-for="(item, index) in wrappedSubmissions" :key="item.guid" :title="item.submission.title" :number="index + 1" :reviewed="item.submission.reviewed" :rating="item.submission.rating" style="margin-bottom: 10px" :readonly="readonly" v-on:rate="handleRate" v-on:remark="handleRemark" v-on:download="downloadOne" v-on:check="handleCheck" />
+        <judge-submission v-for="(item, index) in wrappedSubmissions" :key="item.guid" :title="item.submission.submissionName" :number="index + 1" :reviewed="item.submission.reviewed" :rating="item.submission.rating" style="margin-bottom: 10px" :readonly="readonly" v-on:rate="handleRate" v-on:remark="handleRemark" v-on:download="downloadOne" v-on:check="handleCheck" />
         <el-row type="flex" style="justify-content: space-between; margin-top: 20px;">
           <el-button :disabled="readonly" type="primary" @click="commitReviews">保存评审</el-button>
           <span>
@@ -149,7 +149,7 @@ export default {
     async switchStage(index) {
       if (index === null || index === '') {
         this.$message({ type: 'error', message: '无效的阶段名' })
-      } else if (parseInt(index) > this.contest.stage) {
+      } else if (this.contest.stage >= 0 && parseInt(index) > this.contest.stage) {
         this.$message({ type: 'error', message: '阶段尚未开始' })
       } else {
         let result = await this.initializeData(index)
@@ -165,7 +165,11 @@ export default {
         if (stage === null || stage === undefined) {
           response = await this.$http.get(`/api/judges/${this.$route.params.id}`)
         } else {
-          response = await this.$http.get(`/api/judges/${this.$route.params.id}&stage=${stage}`)
+          response = await this.$http.get(`/api/judges/${this.$route.params.id}`, {
+            params: {
+              stage
+            }
+          })
         }
       } catch (error) {
         this.$message({ type: 'error', message: '数据刷新失败' })
@@ -175,6 +179,12 @@ export default {
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return false
+      }
+
+      if (response.body.data.contest.stage === -1 && (stage === null || stage === undefined)) {
+        let lastStage = response.body.data.contest.procedure.length * 2
+        await this.initializeData(lastStage)
+        return
       }
 
       let data = response.body.data

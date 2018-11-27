@@ -103,7 +103,7 @@ export default {
         response = await this.$http.get(`/api/contests/${this.contest.id}/submissions`)
       } else {
         let stage = (index + 1) * 2
-        response = await this.$http.get(`/api/contests/${this.contest.id}/submissions&stage=${stage}`)
+        response = await this.$http.get(`/api/contests/${this.contest.id}/submissions`, { params: { stage } })
       }
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })

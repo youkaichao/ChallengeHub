@@ -80,7 +80,7 @@ class ContestDetailView(View):
 
         competition.current_stage = stage
         competition.save()
-        return 
+        return
 
 
 class TaskStatView(View):
@@ -104,12 +104,12 @@ class TaskStatView(View):
                 if task.reviewed:
                     reviewed_tasks += 1
         return {
-                "totalTasks": total_tasks,
-                "reviewedTasks": reviewed_tasks,
-                "qualifiedGroups": len(qualified_groups),
-                "submittedGroups": submitted_groups,
-                "isAssigned": cstage.is_assigned
-            }
+            "totalTasks": total_tasks,
+            "reviewedTasks": reviewed_tasks,
+            "qualifiedGroups": len(qualified_groups),
+            "submittedGroups": submitted_groups,
+            "isAssigned": cstage.is_assigned
+        }
 
 
 class ContestReviewTaskView(View):
@@ -123,7 +123,7 @@ class ContestReviewTaskView(View):
             completed = 0
             for task in judge.review_list.all():
                 gstage = task.stage
-                if gstage.stage == stage and gstage.group.competition.id == int(contest_id):
+                if gstage.stage == stage - 1 and gstage.group.competition.id == int(contest_id):
                     assigned += 1
                     if task.reviewed:
                         completed += 1
@@ -197,7 +197,7 @@ class ContestReviewerView(View):
                 user = User.objects.get(username=username)
                 c.judges.add(user)
             c.save()
-        return 
+        return
 
     def get(self, request, contest_id: str) -> Any:
         c = Competition.objects.get(id=int(contest_id))
@@ -212,10 +212,10 @@ class ContestVoteView(View):
         c = Competition.objects.get(id=int(contest_id))
         vote = Vote.vote(c, request.user, request.data['upvote'])
         return {
-                'upvote': c.upvote,
-                'downvote': c.downvote,
-                'upvoteStatus': vote.status,
-            }
+            'upvote': c.upvote,
+            'downvote': c.downvote,
+            'upvoteStatus': vote.status,
+        }
 
 
 class GroupStageView(View):
@@ -232,7 +232,7 @@ class GroupStageView(View):
                         f"stage {stage} already exists for group {group.name}")
                 gstage = GStage(stage=stage, group=group, score=0.0)
                 gstage.save()
-        return 
+        return
 
     def get(self, request, contest_id: str) -> Any:
         c = Competition.objects.get(id=int(contest_id))
@@ -265,7 +265,7 @@ class ContestEnrollView(View):
         members = request.data['members']
         for member in members:
             group.members.add(User.objects.get(username=member))
-        return 
+        return
 
 
 class ContestSubmissionView(View):
@@ -293,12 +293,13 @@ class ContestSubmissionView(View):
         group_stage.submission = request.data.get('submissionName')
         group_stage.has_commit = True
         group_stage.save()
-        return 
+        return
 
     def get(self, request, contest_id: str) -> Any:
         user = request.user
         group = user.joint_groups.get(competition__id=int(contest_id))
         stage = request.data.get('stage', group.current_stage)
+        stage = int(stage)
         if stage < 1:
             raise Exception('invalid stage')
         if stage % 2 == 0:
@@ -307,11 +308,11 @@ class ContestSubmissionView(View):
         if not group_stage.has_commit:
             raise Exception('not committed yet')
         return {
-                'score': group_stage.score,
-                'reviews': [{'rating': x.score, 'msg': x.msg} for x in group_stage.review_meta_list.all()],
-                'submissionName': group_stage.submission,
-                'url': group_stage.commit_path
-            }
+            'score': group_stage.score,
+            'reviews': [{'rating': x.score, 'msg': x.msg} for x in group_stage.review_meta_list.all()],
+            'submissionName': group_stage.submission,
+            'url': group_stage.commit_path
+        }
 
 
 class UserCreatedView(View):
@@ -330,13 +331,15 @@ class UserJudgedView(View):
             r.stage.group.competition for r in user.review_list.all()]
         data = []
         for competition in competitions:
+            stage = competition.current_stage
+            stage = stage if stage % 2 == 1 else stage - 1
             reviews = user.review_list.filter(
-                stage__group__competition=competition, stage__stage=competition.current_stage)
+                stage__group__competition=competition, stage__stage=stage)
             data.append({
                 'contest': competition.to_dict(),
                 'task': {
                     'count': reviews.count(),
-                    'done': len(reviews.filter(reviewed=True))
+                    'done': reviews.filter(reviewed=True).count()
                 }
             })
         return data
@@ -347,9 +350,9 @@ class UserEnrolledView(View):
     def get(self, request) -> Any:
         user = request.user
         return [{
-                    'group': group.to_dict(),
-                    'contest': group.competition.to_dict()
-                } for group in user.joint_groups.all()]
+            'group': group.to_dict(),
+            'contest': group.competition.to_dict()
+        } for group in user.joint_groups.all()]
 
 
 class GroupCollectionView(View):
@@ -367,7 +370,7 @@ class GroupCollectionView(View):
         for member_name in request.data['membersName']:
             g.members.add(User.objects.get(username=member_name))
         g.save()
-        return 
+        return
 
 
 class GroupDetailView(View):
@@ -386,9 +389,13 @@ class JudgeReviewView(View):
 
         competition = Competition.objects.get(id=int(contest_id))
         stage = request.data.get('stage', competition.current_stage)
+        stage = int(stage)
+        if stage == -1:
+            return {'contest': competition.to_dict(), 'task': None, 'submissions': []}  # contest ended
         stage = stage if stage % 2 == 1 else stage - 1
         data = {}
         data['contest'] = competition.to_dict()
+        data['contest']['standard'] = competition.stage_list.get(stage=stage).criterion
         reviews = request.user.review_list.filter(
             stage__group__competition=competition, stage__stage=stage)
         data['task'] = {
@@ -421,7 +428,7 @@ class JudgeReviewView(View):
                 sum += x.score
             meta.stage.score = sum / reviews.count()
             meta.stage.save()
-        return 
+        return
 
 
 class CriterionView(View):
@@ -448,7 +455,7 @@ class CriterionView(View):
         cstage = CStage.objects.get(stage=stage, competition=contest)
         cstage.criterion = criterion
         cstage.save()
-        return 
+        return
 
 
 class SubmissionAllView(View):
@@ -487,9 +494,9 @@ class NoticeCollectionView(View):
     def get(self, request, contest_id: str) -> Any:
         competition = Competition.objects.get(id=int(contest_id))
         return {
-                'notices': [notice.to_dict() for notice in Notice.objects.filter(competition=competition)],
-                'contest': competition.to_dict(),
-            }
+            'notices': [notice.to_dict() for notice in Notice.objects.filter(competition=competition)],
+            'contest': competition.to_dict(),
+        }
 
     def post(self, request, contest_id: str) -> Any:
         competition = Competition.objects.get(id=int(contest_id))
@@ -503,7 +510,7 @@ class NoticeCollectionView(View):
             content=request.data.get('content'),
         )
         notice.save()
-        return 
+        return
 
 
 class NoticeDetailView(View):
@@ -517,7 +524,7 @@ class NoticeDetailView(View):
             raise Exception('no authority to delete notice')
         notice = Notice.objects.get(id=int(notice_id))
         notice.delete()
-        return 
+        return
 
     def put(self, request, contest_id: str, notice_id: str) -> Any:
         competition = Competition.objects.get(id=int(contest_id))
@@ -529,4 +536,4 @@ class NoticeDetailView(View):
         notice.content = request.data.get('content')
         notice.modified_time = timezone.now()
         notice.save()
-        return 
+        return

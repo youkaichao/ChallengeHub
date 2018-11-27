@@ -25,9 +25,9 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 library.add(stu, std, rtu, rtd)
 
-if (process.env.NODE_ENV !== 'production') {
-  Vue.use(VueResourceMock, MockData)
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   Vue.use(VueResourceMock, MockData)
+// }
 
 Vue.config.productionTip = false
 

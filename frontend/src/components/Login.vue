@@ -41,7 +41,7 @@ export default {
     handleLogin() {
       this.$http.post('/auth/login', this.account).then(function(response) {
         if (response.body.code > 0) {
-          alert('Login failed with error: ' + response.body.error)
+          this.$message.error('Login failed with error: ' + response.body.error)
           return
         }
         this.$store.commit('login', response.body.data)

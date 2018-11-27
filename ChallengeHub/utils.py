@@ -15,6 +15,7 @@ def require_logged_in(func: Callable[..., Any]) -> Callable[..., Any]:
             raise Exception('not logged in')
         else:
             return func(self, request)
+
     return new_func
 
 
@@ -37,7 +38,9 @@ class BaseView(View):
             return JsonResponse(make_errors(f"http method {self.request.method.lower()} not allowed "))
         else:
             try:
-                data =  handler(*args, **kwargs) or 'success'
+                data = handler(*args, **kwargs)
+                if data is None:
+                    data = 'success'
                 return JsonResponse({'data': data, 'code': 0})
             except Exception as e:
                 traceback.print_exc()

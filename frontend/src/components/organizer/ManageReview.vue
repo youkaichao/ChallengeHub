@@ -13,7 +13,7 @@
         </el-col>
       </el-row>
     </div>
-    <p v-show="tried">有{{groupNotFull}}个作品没有达到{{maxconn}}个选手评，有{{groupZero}}个作品没有人评</p>
+    <p v-show="tried">有{{groupNotFull}}个作品没有达到{{maxconn}}个评委评，有{{groupZero}}个作品没有人评</p>
     <el-table :data="reviewers">todo
       <el-table-column width="160" label="评委用户名" prop="username"></el-table-column>
       <el-table-column label="邮箱" prop="email"></el-table-column>

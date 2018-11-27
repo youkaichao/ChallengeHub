@@ -77,7 +77,7 @@ export default {
   methods: {
     async handleDownload(index) {
       let stage = (index + 1) * 2
-      let response = await this.$http.get(`/api/contests/${this.contest.id}/submissions&stage=${stage}`)
+      let response = await this.$http.get(`/api/contests/${this.contest.id}/submissions`, { params: { stage } })
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return

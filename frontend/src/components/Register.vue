@@ -6,15 +6,18 @@
         <el-tab-pane label="注册学生账号" name="student">
           <el-row>
             <el-col :span="14">
-              <el-form ref="form" :model="user" label-width="80px">
-                <el-form-item label="用户名">
+              <el-form ref="form_individual" :rules="rules" :model="user" label-width="120px">
+                <el-form-item label="用户名" prop="username">
                   <el-input v-model="user.username"></el-input>
                 </el-form-item>
-                <el-form-item label="注册邮箱">
+                <el-form-item label="注册邮箱" prop="email">
                   <el-input v-model="user.email"></el-input>
                 </el-form-item>
-                <el-form-item label="密码">
+                <el-form-item label="密码" prop="password">
                   <el-input v-model="user.password" type="password"></el-input>
+                </el-form-item>
+                <el-form-item label="重新输入密码" prop="passwordAgain">
+                  <el-input v-model="passwordAgain" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="handleCreateAccount('individual')">创建账号</el-button>
@@ -36,15 +39,18 @@
         <el-tab-pane label="注册组织者账号" name="organization">
           <el-row>
             <el-col :span="14">
-              <el-form ref="form" :model="user" label-width="80px">
-                <el-form-item label="用户名">
+              <el-form ref="form_organization" :rules="rules" :model="user" label-width="120px">
+                <el-form-item label="用户名" prop="username">
                   <el-input v-model="user.username"></el-input>
                 </el-form-item>
-                <el-form-item label="机构邮箱">
+                <el-form-item label="机构邮箱" prop="email">
                   <el-input v-model="user.email"></el-input>
                 </el-form-item>
-                <el-form-item label="密码">
+                <el-form-item label="密码" prop="password">
                   <el-input v-model="user.password" type="password"></el-input>
+                </el-form-item>
+                <el-form-item label="重新输入密码" prop="passwordAgain">
+                  <el-input v-model="passwordAgain" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="handleCreateAccount('organization')">创建账号</el-button>
@@ -74,6 +80,13 @@
 export default {
   name: 'Register',
   data() {
+    let validatePass = (rule, value, callback) => {
+      if (this.user.password !== this.passwordAgain) {
+        callback(new Error('两次输入的密码不一致'))
+      } else {
+        callback()
+      }
+    }
     return {
       user: {
         username: null,
@@ -81,22 +94,50 @@ export default {
         password: null,
         individual: null
       },
-      activeTab: 'student'
+      passwordAgain: null,
+      activeTab: 'student',
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              if (value.includes('&')) {
+                callback(new Error('用户名不能包含&字符'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'change'
+          }
+        ],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+        passwordAgain: [{ validator: validatePass, trigger: 'blur' }, { validator: validatePass, trigger: 'change' }],
+        email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }, { type: 'email', message: '邮箱必须合法', trigger: 'change' }]
+      }
     }
   },
   methods: {
     handleCreateAccount(type) {
       this.user.individual = type
-      this.$http.post('/auth/register', this.user).then(function(response) {
-        if (response.data.code > 0) {
-          this.$alert('Register failed with error: ' + response.data.error)
-          return
+      let formName = type === 'individual' ? 'form_individual' : 'form_organization'
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.user.individual = type
+          this.$http.post('/auth/register', this.user).then(function(response) {
+            if (response.data.code > 0) {
+              this.$alert('Register failed with error: ' + response.data.error)
+              return
+            }
+            this.$message({
+              message: '我们已经向您的注册邮箱中发送了一封验证邮件，请尽快点击邮件中验证链接以激活您的账号',
+              type: 'warning'
+            })
+            this.$router.push('/')
+          })
+        } else {
+          this.$message.error('表单有误，请修改后提交')
+          return false
         }
-        this.$message({
-          message: '我们已经向您的注册邮箱中发送了一封验证邮件，请尽快点击邮件中验证链接以激活您的账号',
-          type: 'warning'
-        })
-        this.$router.push('/')
       })
     },
     handleClick(tab) {
