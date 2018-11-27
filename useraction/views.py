@@ -6,7 +6,7 @@ from useraction.models import User
 from ChallengeHub.utils import make_errors, require_logged_in
 from ChallengeHub.utils import BaseView as View
 from typing import Dict, Any, Callable, List
-from ChallengeHub.settings import EMAIL_FROM, SITE_URL, VALIDATE_SALT
+from ChallengeHub.settings import EMAIL_FROM, SITE_URL, VALIDATE_SALT, USE_MAIL_VALIDATE
 import base64
 import hashlib
 
@@ -51,22 +51,23 @@ class UserRegisterView(View):
             username=request.data.get('username'),
             password=request.data.get('password'),
             email=request.data.get('email'),
-            individual=True if(request.data.get('individual')
-                               == 'individual') else False,
-            is_active=False
+            individual=True if (request.data.get('individual')
+                                == 'individual') else False,
+            is_active=not USE_MAIL_VALIDATE
         )
         m = hashlib.md5()
         m.update((user.email + VALIDATE_SALT).encode('utf-8'))
         encoded = base64.urlsafe_b64encode(
             f'{user.username}&{m.hexdigest()}'.encode('utf-8'))
         link = f'http://{SITE_URL}/#/validate/{encoded.decode()}'
-        send_mail(
-            subject='Validate your email account on ChanllengeHub',
-            message=f'{user.username}, please validate your email account by visiting the link below\n{link}',
-            from_email=EMAIL_FROM,
-            recipient_list=[user.email],
-            fail_silently=False
-        )
+        if USE_MAIL_VALIDATE:
+            send_mail(
+                subject='Validate your email account on ChanllengeHub',
+                message=f'{user.username}, please validate your email account by visiting the link below\n{link}',
+                from_email=EMAIL_FROM,
+                recipient_list=[user.email],
+                fail_silently=False
+            )
         user.save()
         return user.to_dict()
 
@@ -75,7 +76,7 @@ class UserLogoutView(View):
     @require_logged_in
     def post(self, request) -> Any:
         logout(request)
-        return 
+        return
 
 
 class UserValidateView(View):
@@ -86,9 +87,9 @@ class UserValidateView(View):
         username, email = decoded.split('&')
         user = User.objects.get(username=username)
         m = hashlib.md5()
-        m.update((user.email+VALIDATE_SALT).encode('utf-8'))
+        m.update((user.email + VALIDATE_SALT).encode('utf-8'))
         if m.hexdigest() == email:
             user.is_active = True
             user.save()
-            return 
+            return
         raise Exception('email validation failed')

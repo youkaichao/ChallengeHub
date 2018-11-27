@@ -10,5 +10,6 @@
   "EMAIL_ACCOUNT": "",
   "EMAIL_PASSWORD": "",
   "SITE_URL": "",
-  "VALIDATE_SALT": ""
+  "VALIDATE_SALT": "",
+  "USE_MAIL_VALIDATE": false
 }

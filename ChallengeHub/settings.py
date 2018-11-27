@@ -34,7 +34,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "submit"),
 ]
 
-
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Quick-start development settings - unsuitable for production
@@ -95,7 +94,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ChallengeHub.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
@@ -109,7 +107,6 @@ DATABASES = {
         'PORT': CONFIGS['DB_PORT']
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -129,7 +126,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
@@ -143,7 +139,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
@@ -154,6 +149,8 @@ AUTH_USER_MODEL = 'useraction.User'
 SITE_URL = CONFIGS['SITE_URL']
 
 VALIDATE_SALT = CONFIGS['VALIDATE_SALT']
+
+USE_MAIL_VALIDATE = CONFIGS['USE_MAIL_VALIDATE']
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
