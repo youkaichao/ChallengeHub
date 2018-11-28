@@ -113,6 +113,7 @@ class Group(models.Model):
         User, related_name='joint_groups')
     rank = models.TextField()
     current_stage = models.IntegerField(default=1)
+    locked = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.name

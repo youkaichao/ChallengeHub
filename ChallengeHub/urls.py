@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 import basic.urls
 import useraction.urls
+import match.urls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(basic.urls)),
     url(r'^auth/', include(useraction.urls)),
+    url(r'^match/', include(match.urls)),
     url(r'^$', TemplateView.as_view(template_name="index.html")),
 ]

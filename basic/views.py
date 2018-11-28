@@ -391,11 +391,13 @@ class JudgeReviewView(View):
         stage = request.data.get('stage', competition.current_stage)
         stage = int(stage)
         if stage == -1:
-            return {'contest': competition.to_dict(), 'task': None, 'submissions': []}  # contest ended
+            # contest ended
+            return {'contest': competition.to_dict(), 'task': None, 'submissions': []}
         stage = stage if stage % 2 == 1 else stage - 1
         data = {}
         data['contest'] = competition.to_dict()
-        data['contest']['standard'] = competition.stage_list.get(stage=stage).criterion
+        data['contest']['standard'] = competition.stage_list.get(
+            stage=stage).criterion
         reviews = request.user.review_list.filter(
             stage__group__competition=competition, stage__stage=stage)
         data['task'] = {
