@@ -5,6 +5,7 @@ from django.core import serializers
 from django.utils import timezone
 from basic.models import Competition, Group, CStage, GStage, ReviewMeta, Notice, Vote
 from useraction.models import User
+from match.models import Invitation
 from typing import Dict, Any, Callable, List
 from ChallengeHub.utils import BaseView as View, require_logged_in, make_errors
 from ChallengeHub.settings import MONGO_CLIENT, BASE_DIR
@@ -256,6 +257,9 @@ class ContestEnrollView(View):
                 username=request.data.get('leaderName'))
         )
         group.save()
+        # save first to have an ``id``
+        group.members.add(group.leader)
+        group.save()
         stage = GStage(stage=1, score=0, group=group)
         stage.save()
 
@@ -264,8 +268,12 @@ class ContestEnrollView(View):
             {'id': group.id, 'enrollForm': request.data['form']})
         members = request.data['members']
         for member in members:
-            group.members.add(User.objects.get(username=member))
-        return
+            if member == request.data.get('leaderName'):
+                continue
+            user = User.objects.get(username=member)
+            message = Invitation(group=group, invitee=user)
+            message.save()
+        return {'id':group.id}
 
 
 class ContestSubmissionView(View):

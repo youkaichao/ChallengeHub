@@ -54,7 +54,11 @@ class MatchQuitView(View):
         if group.locked:
             raise Exception('group already locked')
         if request.user == group.leader:
+            group.members.remove(request.user)
             if len(group.members.all()) == 0:
+                # delete foreign key first
+                for stage in group.stage_list.all():
+                    stage.delete()
                 group.delete()
             else:
                 member = group.members.first()
@@ -84,10 +88,13 @@ class MatchResponseView(View):
     @require_logged_in
     def post(self, request, contest_id: str, group_id: str)->Any:
         user = request.user
-        self.check_input(['accepted'])
+        self.check_input(['accept'])
         group = Group.objects.get(id=int(group_id))
         invitation = group.sent_invitations.get(invitee=user)
-        accepted = request.data.get('accepted')
+        accepted = request.data.get('accept')
+        if accepted:
+            group.members.add(user)
+            group.save()
         invitation.status = InivationStatus.ACCEPTED if accepted else InivationStatus.REJECTED
         invitation.save()
         content = user.username + ('接受' if accepted else '拒绝') + '了你的邀请'

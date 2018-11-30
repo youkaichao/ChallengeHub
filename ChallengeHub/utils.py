@@ -10,11 +10,11 @@ def make_errors(msg: str) -> Dict[str, Any]:
 
 
 def require_logged_in(func: Callable[..., Any]) -> Callable[..., Any]:
-    def new_func(self, request) -> Any:
+    def new_func(self, request, *args, **kwargs) -> Any:
         if not request.user.is_authenticated():
             raise Exception('not logged in')
         else:
-            return func(self, request)
+            return func(self, request, *args, **kwargs)
 
     return new_func
 
@@ -26,7 +26,8 @@ class BaseView(View):
         if request.method == 'GET':
             request.data = request.GET.dict()
         elif request.content_type == 'application/json':
-            request.data = json.loads(request.body or '{}')
+            request.data = request.body.replace(b"'", b'"')
+            request.data = json.loads(request.data or '{}')
         elif request.content_type == 'multipart/form-data':
             request.data = request.POST.dict()
             request.data['file'] = request.FILES['file']
