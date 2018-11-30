@@ -16,7 +16,8 @@ export default new Vuex.Store({
     introduction: null,
     school: null,
     individual: null,
-    login: false
+    login: false,
+    unreadCount: 0
   },
   mutations: {
     login(state, payload) {
@@ -27,13 +28,19 @@ export default new Vuex.Store({
       state.individual = payload.individual
       state.login = true
     },
-    logout(state, payload) {
+    logout(state) {
       state.username = null
       state.email = null
       state.introduction = null
       state.school = null
       state.individual = null
       state.login = false
+    },
+    setUnreadCount(state, payload) {
+      state.unreadCount = payload.count
+    },
+    decreaseUnreadCount(state) {
+      state.unreadCount = state.unreadCount - 1
     }
   },
   plugins: [vuexLocal.plugin]

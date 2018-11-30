@@ -23,6 +23,8 @@ import ManageReview from '@/components/organizer/ManageReview'
 import NoticeDetail from '@/components/organizer/NoticeDetail'
 import NewNotice from '@/components/organizer/NewNotice'
 import UserValidation from '@/components/UserValidation'
+import MessageCenter from '@/components/messaging/MessageCenter'
+import NewMessage from '@/components/messaging/NewMessage'
 
 Vue.use(VueCookies)
 Vue.use(VueResource)
@@ -38,7 +40,23 @@ export default new Router({
       children: [
         {
           path: 'validate/:token',
+          name: '/validate/:token',
           component: UserValidation
+        },
+        {
+          path: 'message',
+          name: '/message',
+          component: MessageCenter
+        },
+        {
+          path: 'message/new',
+          name: '/message/new',
+          component: NewMessage
+        },
+        {
+          path: 'message/new/:peer',
+          name: '/message/new/:peer',
+          component: NewMessage
         },
         {
           path: 'contest/create',
@@ -57,6 +75,7 @@ export default new Router({
         },
         {
           path: 'contest/notice/:id',
+          name: '/contest/notice/:id',
           component: ContestNoticeList
         },
         {
@@ -131,7 +150,8 @@ export default new Router({
           ]
         },
         {
-          path: 'judge/workspace/:id/',
+          path: 'judge/workspace/:id',
+          name: '/judge/workspace/:id',
           component: JudgeWorkspace
         }
       ]
