@@ -3,15 +3,26 @@
     <contest-banner :contestInfo="contestInfo" />
 
     <h2 class="title">比赛流程</h2>
-    <el-table :data="humanReadableProcedure" stripe style="width: 100%;">
-      <el-table-column prop="name" label="名称"></el-table-column>
-      <el-table-column prop="startTime" label="开始日期" width="400"></el-table-column>
-      <el-table-column prop="endTime" label="结束日期" width="400"></el-table-column>
+    <el-table
+      :data="humanReadableProcedure"
+      stripe
+      style="width: 100%;"
+    >
+      <el-table-column
+        prop="name"
+        label="名称"
+      ></el-table-column>
+      <el-table-column
+        prop="startTime"
+        label="开始日期"
+        width="400"
+      ></el-table-column>
+      <el-table-column
+        prop="endTime"
+        label="结束日期"
+        width="400"
+      ></el-table-column>
     </el-table>
-
-    <h2 class="title">比赛详情</h2>
-    <mavon-editor v-model="contestInfo.detail" :editable="false" :defaultOpen="'preview'" :subfield="false" :toolbarsFlag="false" />
-    <el-button type="primary" style="margin-top: 20px;" @click="$router.push(`/contest/notice/${contestInfo.id}`)">比赛公告</el-button>
 
     <h2 class="title">报名信息</h2>
     <div style="font-size: 20px;">
@@ -23,8 +34,33 @@
     <div style="margin-top: 20px;">
       <div v-if="beforeEnrollment">报名尚未开始</div>
       <div v-else-if="afterEnrollment">报名已经结束</div>
-      <el-button v-else type="primary" @click="handleEnroll">点击此处报名</el-button>
+      <el-button
+        v-else
+        type="primary"
+        @click="handleEnroll"
+      >点击此处以组长身份报名</el-button>
     </div>
+
+    <el-button
+      type="primary"
+      style="margin-top: 20px;"
+      @click="$router.push(`/contest/notice/${contestInfo.id}`)"
+    >比赛公告</el-button>
+    <el-button
+      type="primary"
+      @click="gotoGroupList"
+    >
+      查看已报名的队伍
+    </el-button>
+
+    <h2 class="title">比赛详情</h2>
+    <mavon-editor
+      v-model="contestInfo.detail"
+      :editable="false"
+      :defaultOpen="'preview'"
+      :subfield="false"
+      :toolbarsFlag="false"
+    />
   </div>
 </template>
 
@@ -43,6 +79,14 @@ export default {
     this.contestInfo = response.body.data
   },
   methods: {
+    gotoGroupList() {
+      this.$router.push({
+        name: 'grouplist',
+        params: {
+          id: this.contestInfo.id
+        }
+      })
+    },
     todoHandler() {
       alert('todo')
     },

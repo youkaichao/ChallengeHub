@@ -13,7 +13,7 @@ import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import 'element-ui/lib/theme-chalk/index.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faThumbsUp as stu, faThumbsDown as std } from '@fortawesome/free-solid-svg-icons'
+import { faThumbsUp as stu, faThumbsDown as std, faLock, faLockOpen, faUser } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp as rtu, faThumbsDown as rtd } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -23,7 +23,7 @@ Vue.use(VueResource)
 Vue.use(mavonEditor)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-library.add(stu, std, rtu, rtd)
+library.add(stu, std, rtu, rtd, faLock, faLockOpen, faUser)
 
 // if (process.env.NODE_ENV !== 'production') {
 //   Vue.use(VueResourceMock, MockData)

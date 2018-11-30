@@ -25,7 +25,8 @@ import NewNotice from '@/components/organizer/NewNotice'
 import UserValidation from '@/components/UserValidation'
 import MessageCenter from '@/components/messaging/MessageCenter'
 import NewMessage from '@/components/messaging/NewMessage'
-
+import GroupDashboard from '@/components/dashboard/GroupDashboard'
+import GroupList from '@/components/dashboard/GroupList'
 Vue.use(VueCookies)
 Vue.use(VueResource)
 Vue.use(Router)
@@ -82,6 +83,16 @@ export default new Router({
           path: 'contest/enroll/:id',
           name: '/contest/enroll/:id',
           component: ContestEnroll
+        },
+        {
+          path: 'contest/:id/mygroup',
+          name: 'mygroup',
+          component: GroupDashboard
+        },
+        {
+          path: 'contest/:id/grouplist',
+          name: 'grouplist',
+          component: GroupList
         },
         {
           path: 'index',
