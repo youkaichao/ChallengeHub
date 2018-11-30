@@ -315,6 +315,16 @@ class ContestSubmissionView(View):
         }
 
 
+class UserCollectionView(View):
+    @require_logged_in
+    def get(self, request) -> Any:
+        users = User.objects.all()
+        if 'prefix' in request.data:
+            users = users.filter(
+                username__startswith=request.data.get('prefix'))
+        return [{'username': user.username} for user in users]
+
+
 class UserCreatedView(View):
     @require_logged_in
     def get(self, request) -> Any:

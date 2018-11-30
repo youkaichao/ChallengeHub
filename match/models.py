@@ -1,14 +1,9 @@
 from django.db import models
 from django.utils import timezone
 from useraction.models import User
+from basic.models import Group, Competition
 from typing import Dict, Any
 # Create your models here.
-
-
-class MessageType:
-    DEFAULT = 0
-    SYSTEM = 1
-    INVITATION = 2
 
 
 class InivationStatus:
@@ -26,8 +21,6 @@ class Message(models.Model):
     content = models.TextField(blank=False)
     send_time = models.DateTimeField(default=timezone.now)
     is_read = models.BooleanField(default=False)
-    category = models.IntegerField(default=MessageType.DEFAULT)
-    status = models.IntegerField(default=InivationStatus.DEFAULT)
 
     def __str__(self) -> str:
         return f'to {self.receiver.username}: {self.content}'
@@ -40,7 +33,25 @@ class Message(models.Model):
             'content': self.content,
             'isRead': self.is_read,
             'sendTime': self.send_time.strftime('%Y-%m-%d'),
-            'category': self.category,
-            'status': self.status,
+        }
+        return data
+
+
+class Invitation(models.Model):
+    group = models.ForeignKey(
+        Group, on_delete=models.CASCADE, related_name="sent_invitations")
+    invitee = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="received_invitations")
+    send_time = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
+    status = models.IntegerField(default=InivationStatus.DEFAULT)
+
+    def to_dict(self, detail: bool = False) -> Dict[str, Any]:
+        data = {
+            'id': self.id,
+            'sender': self.group.leader.username,
+            'receiver': self.invitee.username,
+            'isRead': self.is_read,
+            'sendTime': self.send_time.strftime('%Y-%m-%d')
         }
         return data

@@ -30,6 +30,8 @@ urlpatterns = [
         views.ContestVoteView.as_view()),
     url(r'contests/(?P<contest_id>[0-9]+)/notices/(?P<notice_id>[0-9]+)$',
         views.NoticeDetailView.as_view()),
+    url(r'users$',
+        views.UserCollectionView.as_view()),
     url(r'users/enrolled$',
         views.UserEnrolledView.as_view()),
     url(r'users/judged$',

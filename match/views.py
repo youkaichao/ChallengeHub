@@ -1,21 +1,11 @@
 from django.shortcuts import render
 from ChallengeHub.utils import BaseView as View, require_logged_in
 from useraction.models import User
-from match.models import Message, MessageType
+from match.models import Message, Invitation, InivationStatus
 from basic.models import Competition, Group
 from typing import Any
 import json
 # Create your views here.
-
-
-class MatchUserView(View):
-    @require_logged_in
-    def get(self, request) -> Any:
-        users = User.objects.all()
-        if 'prefix' in request.data:
-            users = users.filter(
-                username__startswith=request.data.get('prefix'))
-        return [{'username': user.username} for user in users]
 
 
 class MatchGroupView(View):
@@ -38,7 +28,7 @@ class MatchGroupView(View):
             'teamName': group.name,
             'leader': group.leader.username,
             'members': [member.username for member in group.members],
-            'invitees': [m.receiver.username for m in Message.objects.filter(sender__username=group.leader.username, category=MessageType.INVITATION)],
+            'invitees': [i.invitee.username for i in Invitation.objects.filter(group=group)],
             'locked': group.locked,
         } for group in groups]
 
@@ -49,13 +39,11 @@ class MatchInviteView(View):
         group = Group.objects.get(id=int(group_id))
         if request.user != group.leader:
             raise Exception('no authority to invite')
+        if group.locked:
+            raise Exception('group already locked')
         self.check_input(['username'])
         user = User.objects.get(username=request.data.get('username'))
-        message = Message(category=MessageType.INVITATION, sender=request.user, receiver=user, content=json.dumps({
-            'leaderName': request.user.username,
-            'groupName': group.name,
-            'contestName': group.competition.name
-        }))
+        message = Invitation(group=group, invitee=user)
         message.save()
 
 
@@ -66,10 +54,13 @@ class MatchQuitView(View):
         if group.locked:
             raise Exception('group already locked')
         if request.user == group.leader:
-            member = group.members.first()
-            group.members.remove(member)
-            group.leader = member
-            group.save()
+            if len(group.members.all()) == 0:
+                group.delete()
+            else:
+                member = group.members.first()
+                group.members.remove(member)
+                group.leader = member
+                group.save()
         elif request.user in group.members:
             group.members.remove(request.user)
             group.save()
@@ -87,3 +78,107 @@ class MatchLockView(View):
             raise Exception('no authority to lock group')
         group.locked = True
         group.save()
+
+
+class MatchResponseView(View):
+    @require_logged_in
+    def post(self, request, contest_id: str, group_id: str)->Any:
+        user = request.user
+        self.check_input(['accepted'])
+        group = Group.objects.get(id=int(group_id))
+        invitation = group.sent_invitations.get(invitee=user)
+        accepted = request.data.get('accepted')
+        invitation.status = InivationStatus.ACCEPTED if accepted else InivationStatus.REJECTED
+        invitation.save()
+        content = user.username + ('接受' if accepted else '拒绝') + '了你的邀请'
+        message = Message(sender=User.objects.get(
+            username='admin'), receiver=group.leader, content=content)
+        message.save()
+
+
+class MatchCancelView(View):
+    @require_logged_in
+    def post(self, request, contest_id: str, group_id: str)->Any:
+        self.check_input(['username'])
+        group = Group.objects.get(id=int(group_id))
+        if group.leader != request.user:
+            raise Exception('no authority to cancel invitation')
+        user = User.objects.get(username=request.data.get('username'))
+        invitation = group.sent_invitations.get(invitee=user)
+        invitation.status = InivationStatus.CANCELLED
+        invitation.save()
+
+
+class MessageCollectionView(View):
+    def get(self, request) -> Any:
+        user = request.user
+        self.check_input(['isRead'])
+        is_read = int(request.data.get('isRead'))
+        messages = user.received_messages.filter(is_read=is_read)
+        invitations = user.received_invitations.filter(is_read=is_read)
+        messageList = [{
+            'id': m.id,
+            'sender': m.sender.username,
+            'content': m.content,
+            'sendTime': m.send_time,
+            'type': 'letter'
+        } for m in messages]
+        invitationList = [{
+            'id': i.id,
+            'sender': i.group.leader.username,
+            'content': {
+                'leaderName': i.group.leader.username,
+                'groupName': i.group.name,
+                'contestName': i.group.competition.name,
+                'groupId': i.group.id,
+                'contestId': i.group.competition.id,
+                'status': i.status},
+            'sendTime': i.send_time,
+            'type': 'invitation',
+        }for i in invitations]
+        return messageList+invitationList
+
+    def put(self, request) -> Any:
+        self.check_input(['id', 'type'])
+        category = request.data.get('type')
+        if category == 'letter':
+            message = Message.objects.get(id=request.data.get('id'))
+            if request.user != message.receiver:
+                raise Exception('no authority')
+        elif category == 'invitation':
+            message = Invitation.objects.get(id=request.data.get('id'))
+            if request.user != message.invitee:
+                raise Exception('no authority')
+        if message.is_read:
+            raise Exception('message already read')
+        message.is_read = True
+        message.save()
+
+    def delete(self, request) -> Any:
+        self.check_input(['id'])
+        category = request.data.get('type')
+        if category == 'letter':
+            message = Message.objects.get(id=request.data.get('id'))
+            if request.user != message.receiver:
+                raise Exception('no authority')
+        elif category == 'invitation':
+            message = Invitation.objects.get(id=request.data.get('id'))
+            if request.user != message.invitee:
+                raise Exception('no authority')
+        message.delete()
+
+    def post(self, request) -> Any:
+        self.check_input(['peer', 'content'])
+        message = Message(
+            sender=request.user,
+            receiver=User.objects.get(username=request.data.get('peer')),
+            content=request.data.get('content')
+        )
+        message.save()
+
+
+class MessageUnreadView(View):
+    def get(self, request) -> Any:
+        lenM = len(request.user.received_messages.filter(is_read=False))
+        lenI = len(request.user.received_invitations.filter(is_read=False))
+        return {'count': lenM+lenI}
