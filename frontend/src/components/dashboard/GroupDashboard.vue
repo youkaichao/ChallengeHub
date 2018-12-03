@@ -185,7 +185,9 @@ export default {
     removeInvitation(username) {
       this.$confirm('真的要移除这个邀请吗？').then(() => {
         this.$http
-          .post(`/api/contests/${this.contestId}/groups/${this.teamInfo.teamId}/removeinvitation`)
+          .post(`/apiv2/contests/${this.contestId}/groups/${this.teamInfo.teamId}/cancel`, {
+            username
+          })
           .then(resp => {
             if (resp.body.code !== 0) {
               throw new Error(resp.body.error)

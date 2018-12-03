@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from ChallengeHub.utils import BaseView as View, require_logged_in
 from useraction.models import User
-from match.models import Message, Invitation, InivationStatus
+from match.models import Message, Invitation, InvitationStatus
 from basic.models import Competition, Group
 from typing import Any
 import json
+
+
 # Create your views here.
 
 
@@ -27,15 +29,16 @@ class MatchGroupView(View):
             'teamId': group.id,
             'teamName': group.name,
             'leader': group.leader.username,
-            'members': [member.username for member in group.members],
-            'invitees': [i.invitee.username for i in Invitation.objects.filter(group=group)],
+            'members': [member.username for member in group.members.all()],
+            'invitees': [i.invitee.username for i in
+                         Invitation.objects.filter(group=group, status=InvitationStatus.DEFAULT)],
             'locked': group.locked,
         } for group in groups]
 
 
 class MatchInviteView(View):
     @require_logged_in
-    def post(self, request, contest_id: str, group_id: str)->Any:
+    def post(self, request, contest_id: str, group_id: str) -> Any:
         group = Group.objects.get(id=int(group_id))
         if request.user != group.leader:
             raise Exception('no authority to invite')
@@ -49,7 +52,7 @@ class MatchInviteView(View):
 
 class MatchQuitView(View):
     @require_logged_in
-    def post(self, request, contest_id: str, group_id: str)->Any:
+    def post(self, request, contest_id: str, group_id: str) -> Any:
         group = Group.objects.get(id=int(group_id))
         if group.locked:
             raise Exception('group already locked')
@@ -74,7 +77,7 @@ class MatchQuitView(View):
 
 class MatchLockView(View):
     @require_logged_in
-    def post(self, request, contest_id: str, group_id: str)->Any:
+    def post(self, request, contest_id: str, group_id: str) -> Any:
         group = Group.objects.get(id=int(group_id))
         if group.locked:
             raise Exception('group already locked')
@@ -86,16 +89,16 @@ class MatchLockView(View):
 
 class MatchResponseView(View):
     @require_logged_in
-    def post(self, request, contest_id: str, group_id: str)->Any:
+    def post(self, request, contest_id: str, group_id: str) -> Any:
         user = request.user
         self.check_input(['accept'])
         group = Group.objects.get(id=int(group_id))
-        invitation = group.sent_invitations.get(invitee=user)
+        invitation = group.sent_invitations.get(invitee=user, status=InvitationStatus.DEFAULT)
         accepted = request.data.get('accept')
         if accepted:
             group.members.add(user)
             group.save()
-        invitation.status = InivationStatus.ACCEPTED if accepted else InivationStatus.REJECTED
+        invitation.status = InvitationStatus.ACCEPTED if accepted else InvitationStatus.REJECTED
         invitation.save()
         content = user.username + ('接受' if accepted else '拒绝') + '了你的邀请'
         message = Message(sender=User.objects.get(
@@ -105,14 +108,14 @@ class MatchResponseView(View):
 
 class MatchCancelView(View):
     @require_logged_in
-    def post(self, request, contest_id: str, group_id: str)->Any:
+    def post(self, request, contest_id: str, group_id: str) -> Any:
         self.check_input(['username'])
         group = Group.objects.get(id=int(group_id))
         if group.leader != request.user:
             raise Exception('no authority to cancel invitation')
         user = User.objects.get(username=request.data.get('username'))
-        invitation = group.sent_invitations.get(invitee=user)
-        invitation.status = InivationStatus.CANCELLED
+        invitation = group.sent_invitations.get(invitee=user, status=InvitationStatus.DEFAULT)
+        invitation.status = InvitationStatus.CANCELLED
         invitation.save()
 
 
@@ -142,8 +145,8 @@ class MessageCollectionView(View):
                 'status': i.status},
             'sendTime': i.send_time,
             'type': 'invitation',
-        }for i in invitations]
-        return messageList+invitationList
+        } for i in invitations]
+        return messageList + invitationList
 
     def put(self, request) -> Any:
         self.check_input(['id', 'type'])
@@ -188,4 +191,4 @@ class MessageUnreadView(View):
     def get(self, request) -> Any:
         lenM = len(request.user.received_messages.filter(is_read=False))
         lenI = len(request.user.received_invitations.filter(is_read=False))
-        return {'count': lenM+lenI}
+        return {'count': lenM + lenI}

@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     async markAsRead({ id, type }) {
-      let response = await this.$http.put('/apiv2/messages', { params: { id: id, type: type } })
+      let response = await this.$http.put('/apiv2/messages', { id: id, type: type })
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return
@@ -93,7 +93,7 @@ export default {
       this.$router.push(`/message/new/${peerName}`)
     },
     async acceptInvitation({ contestId, groupId }) {
-      let response = await this.$http.post(`/api/contests/${contestId}/groups/${groupId}/invitation`, { accept: true })
+      let response = await this.$http.post(`/apiv2/contests/${contestId}/groups/${groupId}/invitation`, { accept: true })
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return
@@ -106,7 +106,7 @@ export default {
       }
     },
     async rejectInvitation({ contestId, groupId }) {
-      let response = await this.$http.post(`/api/contests/${contestId}/groups/${groupId}/invitation`, { accept: false })
+      let response = await this.$http.post(`/apiv2/contests/${contestId}/groups/${groupId}/invitation`, { accept: false })
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return

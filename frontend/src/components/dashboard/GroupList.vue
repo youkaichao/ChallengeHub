@@ -3,16 +3,14 @@
     <el-row>
       <el-col :span="12">
         <group-card
-          v-for="(group,index) in groups"
-          v-if="index%2==0"
+          v-for="(group,index) in evenGroups"
           :group="group"
           :key="index"
         />
       </el-col>
       <el-col :span="12">
         <group-card
-          v-if="index%2==1"
-          v-for="(group,index) in groups"
+          v-for="(group,index) in oddGroups"
           :group="group"
           :key="index"
         />
@@ -51,6 +49,12 @@ export default {
   computed: {
     contestId() {
       return this.$route.params.id
+    },
+    oddGroups() {
+      return this.groups.filter((_, index) => index % 2 === 1)
+    },
+    evenGroups() {
+      return this.groups.filter((_, index) => index % 2 === 0)
     }
   },
   created() {

@@ -95,12 +95,12 @@
 
           <el-button
             type="success"
-            @click="emit('acccept-invitation', {contestId: message.contestId, groupId: message.groupId})"
+            @click="$emit('accept-invitation', {contestId: message.content.contestId, groupId: message.content.groupId})"
             v-if="message.content.status === 0"
           >接受邀请</el-button>
           <el-button
             type="danger"
-            @click="emit('reject-invitation', {contestId: message.contestId, groupId: message.groupId})"
+            @click="$emit('reject-invitation', {contestId: message.content.contestId, groupId: message.content.groupId})"
             v-if="message.content.status === 0"
           >拒绝邀请</el-button>
         </el-card>

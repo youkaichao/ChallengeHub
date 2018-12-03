@@ -6,7 +6,7 @@ from typing import Dict, Any
 # Create your models here.
 
 
-class InivationStatus:
+class InvitationStatus:
     DEFAULT = 0
     ACCEPTED = 1
     REJECTED = 2
@@ -44,7 +44,7 @@ class Invitation(models.Model):
         User, on_delete=models.CASCADE, related_name="received_invitations")
     send_time = models.DateTimeField(default=timezone.now)
     is_read = models.BooleanField(default=False)
-    status = models.IntegerField(default=InivationStatus.DEFAULT)
+    status = models.IntegerField(default=InvitationStatus.DEFAULT)
 
     def to_dict(self, detail: bool = False) -> Dict[str, Any]:
         data = {
