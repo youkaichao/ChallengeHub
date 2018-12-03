@@ -3,8 +3,29 @@
     <div>
       <h2>基本比赛信息</h2>
       <el-form>
-        <el-form-item v-for="(formItem, idx) in enrollFormItems" :key="idx" :label="formItem.label">
-          <el-input :placeholder="formItem.description" v-model="formAnswers[idx]"></el-input>
+        <el-form-item
+          v-for="(formItem, idx) in enrollFormItems"
+          :key="idx"
+          :label="formItem.label"
+        >
+          <el-input
+            v-if="formItem.type==='文字题'"
+            :placeholder="formItem.description"
+            v-model="formAnswers[idx]"
+          ></el-input>
+          <el-select
+            v-if="formItem.type==='选择题'"
+            placeholder="请选择"
+            v-model="formAnswers[idx]"
+          >
+            <el-option
+              v-for="item of formItem.options"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
       </el-form>
     </div>
@@ -12,29 +33,54 @@
       <h2>队伍组成信息</h2>
       <el-form>
         <el-form-item label="队伍名称">
-          <el-input placeholder="输入队伍名称" v-model="groupName"></el-input>
+          <el-input
+            placeholder="输入队伍名称"
+            v-model="groupName"
+          ></el-input>
         </el-form-item>
       </el-form>
 
-      <el-alert title="请勿在下面的队伍成员中添加自己" type="warning" class="warning-box"></el-alert>
-      <el-alert title="作为填写者，你将自动成为该队伍的队长" type="warning" class="warning-box"></el-alert>
+      <el-alert
+        title="请勿在下面的队伍成员中添加自己"
+        type="warning"
+        class="warning-box"
+      ></el-alert>
+      <el-alert
+        title="作为填写者，你将自动成为该队伍的队长"
+        type="warning"
+        class="warning-box"
+      ></el-alert>
       <el-form>
 
         <el-card class="box-card">
-          <div slot="header" style="text-align: left;">
+          <div
+            slot="header"
+            style="text-align: left;"
+          >
             <b>队伍成员</b>
           </div>
-          <div v-for="(userId, idx) in groupMembersExcludeLeader" :key="idx" class="text item" style="text-align: left;">
+          <div
+            v-for="(userId, idx) in groupMembersExcludeLeader"
+            :key="idx"
+            class="text item"
+            style="text-align: left;"
+          >
             {{ userId }}
           </div>
         </el-card>
 
         <el-row>
           <el-col :span="20">
-            <el-input placeholder="希望添加的队员名称" v-model="newMemberId"></el-input>
+            <el-input
+              placeholder="希望添加的队员名称"
+              v-model="newMemberId"
+            ></el-input>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" @click="addNewMember">添加</el-button>
+            <el-button
+              type="primary"
+              @click="addNewMember"
+            >添加</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -42,7 +88,10 @@
 
     <div style="margin-top: 150px; margin-bottom: 50px;">
       <h2>完成报名</h2>
-      <el-button type="primary" @click="enrollSubmit">确认报名</el-button>
+      <el-button
+        type="primary"
+        @click="enrollSubmit"
+      >确认报名</el-button>
     </div>
   </div>
 </template>
@@ -50,12 +99,9 @@
 <script>
 export default {
   name: 'ContestEnroll',
-  created() {
-    // TODO created function here
-  },
   data() {
     return {
-      enrollForm: '{}',
+      enrollForm: '[]',
       formAnswers: [],
       newMemberId: null,
       groupName: null,
@@ -91,6 +137,7 @@ export default {
       if (response.body.code !== 0) {
         alert(response.body.error)
       } else {
+        console.warn(response.body.data)
         this.$router.push('/index')
       }
     }
@@ -99,8 +146,8 @@ export default {
     enrollFormItems: function() {
       let enrollForm = JSON.parse(this.enrollForm)
       let ret = []
-      for (let key in enrollForm) {
-        ret.push({ label: key, description: enrollForm[key] })
+      for (let item of enrollForm) {
+        ret.push({ label: item.label, description: item.description, type: item.formType, options: item.options })
       }
       return ret
     }

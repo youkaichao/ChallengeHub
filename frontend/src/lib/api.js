@@ -371,6 +371,24 @@ export default {
       statusText: 'OK'
     }
   },
+  ['GET */api/contests/1/enroll'](_1, _2, _3, _4) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          enrollForm: `[
+            { "label": "性取向", "description": "你的性取向", "formType": "文字题" },
+            { "label": "你喜欢吃垃圾吗", "formType": "选择题", "options": ["喜欢", "不喜欢"] },
+            { "label": "你吃过几次垃圾", "formType": "选择题", "options": ["1", "2", "3"] },
+            { "label": "你喜欢吃什么类型的垃圾", "description": "填写垃圾的名字", "formType": "文字题" }
+          ]`
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
   ['GET */api/judges/1&stage=4'](pathMatch, query, request, passThrough) {
     return {
       body: {
@@ -590,6 +608,17 @@ export default {
       body: {
         code: 1,
         error: JSON.stringify([request, passThrough])
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['POST */api/contests/1/enroll'](_1, _2, _3, _4) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: [_1, _2, _3, _4]
       },
       status: 200,
       statusText: 'OK'
