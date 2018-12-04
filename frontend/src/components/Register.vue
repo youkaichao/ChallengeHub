@@ -16,7 +16,7 @@
                 <el-form-item label="密码" prop="password">
                   <el-input v-model="user.password" type="password"></el-input>
                 </el-form-item>
-                <el-form-item label="重新输入密码" prop="passwordAgain">
+                <el-form-item label="确认密码" prop="passwordAgain">
                   <el-input v-model="passwordAgain" type="password"></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -111,7 +111,7 @@ export default {
           }
         ],
         password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
-        passwordAgain: [{ validator: validatePass, trigger: 'blur' }, { validator: validatePass, trigger: 'change' }],
+        passwordAgain: [{ required: true, validator: validatePass, trigger: 'blur' }, { validator: validatePass, trigger: 'change' }],
         email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }, { type: 'email', message: '邮箱必须合法', trigger: 'change' }]
       }
     }

@@ -47,6 +47,13 @@ export default {
   },
   methods: {
     async handleUpvote() {
+      if(!this.$store.state.login){
+        this.$message({
+          message: '登陆以评价比赛',
+          type: 'warning'
+        });
+        return
+      }
       let response = await this.$http.post(`/api/contests/${this.contestInfo.id}/vote`, { upvote: 1 })
       this.refreshVotes(response)
     },

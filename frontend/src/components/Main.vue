@@ -73,6 +73,7 @@ export default {
     }
   },
   created: async function() {
+    if (!this.$store.state.login) return
     let response = await this.$http.get('/apiv2/messages/unread_count')
     if (response.body.code !== 0) {
       this.$message({ type: 'error', message: response.body.error })
