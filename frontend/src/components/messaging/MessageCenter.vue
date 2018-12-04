@@ -1,5 +1,15 @@
 <template>
   <div>
+    <el-row>
+      <el-col :span="4">
+        <el-button
+          type="infor"
+          @click="gotoNewMessage"
+        >
+          发送新消息
+        </el-button>
+      </el-col>
+    </el-row>
     <el-tabs v-model="currentTab">
       <el-tab-pane
         label="未读消息"
@@ -70,6 +80,9 @@ export default {
     }
   },
   methods: {
+    gotoNewMessage() {
+      this.$router.push('message/new')
+    },
     async markAsRead({ id, type }) {
       let response = await this.$http.put('/apiv2/messages', { id: id, type: type })
       if (response.body.code !== 0) {

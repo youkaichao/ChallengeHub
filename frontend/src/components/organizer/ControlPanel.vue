@@ -15,23 +15,29 @@
           <el-tag>{{'举办方: '+contest.publisher}}</el-tag>
         </el-row>
       </el-card>
-      <el-menu :default-active="activeIndex" class="el-menu-vertical-demo">
-        <el-menu-item v-for="(item,index) in sidebarList" :key="index" :index="index.toString()" @click="pushRoute(item.name)">{{ item.label }}</el-menu-item>
+      <el-menu
+        :default-active="activeIndex"
+        class="el-menu-vertical-demo"
+      >
+        <el-menu-item
+          v-for="(item,index) in sidebarList"
+          :key="index"
+          :index="index.toString()"
+          @click="pushRoute(item.name)"
+        >{{ item.label }}</el-menu-item>
       </el-menu>
     </el-aside>
     <el-main>
-      <router-view :contest="contest" :contestId="contestId" @refreshContest="refreshContest"></router-view>
+      <router-view
+        :contest="contest"
+        :contestId="contestId"
+        @refreshContest="refreshContest"
+      ></router-view>
     </el-main>
   </el-container>
 </template>
 
 <script>
-import ManageGroup from '@/components/organizer/ManageGroup'
-import ManageJudge from '@/components/organizer/ManageJudge'
-import Overview from '@/components/organizer/Overview'
-import ManageSubmission from '@/components/organizer/ManageSubmission'
-import NoticeList from '@/components/organizer/NoticeList'
-import ManageReview from '@/components/organizer/ManageReview'
 export default {
   name: 'ControlPanel',
   created() {
@@ -53,7 +59,6 @@ export default {
         charge: 0,
         upvote: 0,
         downvote: 0,
-        publisher: '',
         stage: 0,
         detail: ''
       },

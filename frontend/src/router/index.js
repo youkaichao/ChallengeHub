@@ -1,32 +1,32 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Main from '@/components/Main'
-import Index from '@/components/Index'
-import Login from '@/components/Login'
-import Register from '@/components/Register'
-import ContestView from '@/components/contest/ContestView'
-import ContestCreate from '@/components/contest/ContestCreate'
-import ContestDetail from '@/components/contest/ContestDetail'
-import ContestEnroll from '@/components/contest/ContestEnroll'
-import ContestNoticeList from '@/components/contest/ContestNoticeList'
-import JudgeWorkspace from '@/components/workspace/JudgeWorkspace'
-import User from '@/components/User'
-import ControlPanel from '@/components/organizer/ControlPanel'
-import VueResource from 'vue-resource'
-import VueCookies from 'vue-cookies'
-import ManageGroup from '@/components/organizer/ManageGroup'
-import ManageJudge from '@/components/organizer/ManageJudge'
-import Overview from '@/components/organizer/Overview'
-import ManageSubmission from '@/components/organizer/ManageSubmission'
-import NoticeList from '@/components/organizer/NoticeList'
-import ManageReview from '@/components/organizer/ManageReview'
-import NoticeDetail from '@/components/organizer/NoticeDetail'
-import NewNotice from '@/components/organizer/NewNotice'
-import UserValidation from '@/components/UserValidation'
-import MessageCenter from '@/components/messaging/MessageCenter'
-import NewMessage from '@/components/messaging/NewMessage'
-import GroupDashboard from '@/components/dashboard/GroupDashboard'
-import GroupList from '@/components/dashboard/GroupList'
+const Main = () => import('@/components/Main')
+const Index = () => import('@/components/Index')
+const Login = () => import('@/components/Login')
+const Register = () => import('@/components/Register')
+const ContestView = () => import('@/components/contest/ContestView')
+const ContestCreate = () => import('@/components/contest/ContestCreate')
+const ContestDetail = () => import('@/components/contest/ContestDetail')
+const ContestEnroll = () => import('@/components/contest/ContestEnroll')
+const ContestNoticeList = () => import('@/components/contest/ContestNoticeList')
+const JudgeWorkspace = () => import('@/components/workspace/JudgeWorkspace')
+const User = () => import('@/components/User')
+const ControlPanel = () => import('@/components/organizer/ControlPanel')
+const VueResource = () => import('vue-resource')
+const VueCookies = () => import('vue-cookies')
+const ManageGroup = () => import('@/components/organizer/ManageGroup')
+const ManageJudge = () => import('@/components/organizer/ManageJudge')
+const Overview = () => import('@/components/organizer/Overview')
+const ManageSubmission = () => import('@/components/organizer/ManageSubmission')
+const NoticeList = () => import('@/components/organizer/NoticeList')
+const ManageReview = () => import('@/components/organizer/ManageReview')
+const NoticeDetail = () => import('@/components/organizer/NoticeDetail')
+const NewNotice = () => import('@/components/organizer/NewNotice')
+const UserValidation = () => import('@/components/UserValidation')
+const MessageCenter = () => import('@/components/messaging/MessageCenter')
+const NewMessage = () => import('@/components/messaging/NewMessage')
+const GroupDashboard = () => import('@/components/dashboard/GroupDashboard')
+const GroupList = () => import('@/components/dashboard/GroupList')
 Vue.use(VueCookies)
 Vue.use(VueResource)
 Vue.use(Router)

@@ -87,9 +87,6 @@ export default {
         }
       })
     },
-    todoHandler() {
-      alert('todo')
-    },
     handleEnroll() {
       if (this.contestInfo.enrollUrl !== '') {
         this.$router.push(this.contestInfo.enrollUrl)
@@ -100,7 +97,26 @@ export default {
   },
   data() {
     return {
-      contestInfo: null
+      contestInfo: {
+        id: -1,
+        name: '',
+        subject: '',
+        groupSize: 0,
+        enrollStart: '',
+        enrollEnd: '',
+        imgUrl: '',
+        enrollUrl: '',
+        charge: 0,
+        upvote: 0,
+        downvote: 0,
+        publisher: '',
+        stage: 0,
+        procedure: [],
+        detail: '',
+        userRelated: {
+          upvoteStatus: 0
+        }
+      }
     }
   },
   computed: {

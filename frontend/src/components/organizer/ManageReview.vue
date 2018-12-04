@@ -4,10 +4,16 @@
       当前阶段: {{ stageName }}
     </el-row>
     <div v-show="!isNull">
-      <mavon-editor v-model="criterion" placeholder="在这里输入评分标准" />
+      <mavon-editor
+        v-model="criterion"
+        placeholder="在这里输入评分标准"
+      />
       <el-row>
         <el-col :span="4">
-          <el-button type="infor" @click="modifyCriterion">
+          <el-button
+            type="infor"
+            @click="modifyCriterion"
+          >
             修改评分标准
           </el-button>
         </el-col>
@@ -15,10 +21,25 @@
     </div>
     <p v-show="tried">有{{groupNotFull}}个作品没有达到{{maxconn}}个评委评，有{{groupZero}}个作品没有人评</p>
     <el-table :data="reviewers">todo
-      <el-table-column width="160" label="评委用户名" prop="username"></el-table-column>
-      <el-table-column label="邮箱" prop="email"></el-table-column>
-      <el-table-column width="60" label="被分配数" prop="assigned"></el-table-column>
-      <el-table-column width="60" label="已完成数" prop="completed"></el-table-column>
+      <el-table-column
+        width="160"
+        label="评委用户名"
+        prop="username"
+      ></el-table-column>
+      <el-table-column
+        label="邮箱"
+        prop="email"
+      ></el-table-column>
+      <el-table-column
+        width="60"
+        label="被分配数"
+        prop="assigned"
+      ></el-table-column>
+      <el-table-column
+        width="60"
+        label="已完成数"
+        prop="completed"
+      ></el-table-column>
       <el-table-column label="评审进度">
         <template slot-scope="scope">
           <el-progress :percentage="getPercentage(scope.row.completed,scope.row.assigned)"></el-progress>
@@ -26,25 +47,44 @@
       </el-table-column>
       <el-table-column label="目标被分配数">
         <template slot-scope="scope">
-          <el-input-number controls-position="right" :min="0" v-model="scope.row.targetAssigned"></el-input-number>
+          <el-input-number
+            controls-position="right"
+            :min="0"
+            v-model="scope.row.targetAssigned"
+          ></el-input-number>
         </template>
       </el-table-column>
     </el-table>
     <el-row align="middle">
       <el-col :span="6">每个作品最多评委数</el-col>
       <el-col :span="8">
-        <el-input-number v-model="maxconn" :min="0" controls-position="right"></el-input-number>
+        <el-input-number
+          v-model="maxconn"
+          :min="0"
+          controls-position="right"
+        ></el-input-number>
       </el-col>
     </el-row>
     <el-row>
       <el-col :span="5">
-        <el-button type="infor" @click="evenlyDistribute">一键平均分配提交</el-button>
+        <el-button
+          type="infor"
+          @click="evenlyDistribute"
+        >一键平均分配提交</el-button>
+      </el-col>
+      <el-col :span="6">
+        <el-button
+          :disabled="stat.isAssigned||!isJudge"
+          type="primary"
+          @click="calcAssign(false)"
+        >{{isJudge?'计算分配方案':'只有在评审阶段能分配任务'}}</el-button>
       </el-col>
       <el-col :span="4">
-        <el-button :disabled="stat.isAssigned||!isJudge" type="primary" @click="calcAssign(false)">{{isJudge?'计算分配方案':'只有在评审阶段能分配任务'}}</el-button>
-      </el-col>
-      <el-col :span="4">
-        <el-button :disabled="stat.isAssigned||!tried||!isJudge" type="warning" @click="calcAssign(true)">应用分配方案</el-button>
+        <el-button
+          :disabled="stat.isAssigned||!tried||!isJudge"
+          type="warning"
+          @click="calcAssign(true)"
+        >应用分配方案</el-button>
       </el-col>
     </el-row>
   </div>

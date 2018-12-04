@@ -446,7 +446,7 @@ export default {
     },
     showInput() {
       this.fieldOptionInputVisible = true
-      this.$nextTick(_ => {
+      this.$nextTick(() => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },

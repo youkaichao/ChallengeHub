@@ -34,7 +34,7 @@ function getContestStage(procedure, stage) {
 }
 
 function isJudgeStage(stage) {
-  return stage > 0 && stage % 2 == 0
+  return stage > 0 && stage % 2 === 0
 }
 
 function getPercentage(completed, all) {
@@ -65,7 +65,7 @@ function downloadFile(doc, src, filename = null) {
 function guid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
-      v = c == 'x' ? r : (r & 0x3) | 0x8
+      v = c === 'x' ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
 }

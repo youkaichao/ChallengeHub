@@ -1,14 +1,33 @@
 <template>
   <el-row>
     <el-row>
-      <el-input placeholder="请输入比赛名" v-model="searchInput" style="width: 500px;">
-        <el-button slot="append" icon="el-icon-search"></el-button>
+      <el-input
+        placeholder="请输入比赛名"
+        v-model="searchInput"
+        style="width: 500px;"
+      >
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+        ></el-button>
       </el-input>
     </el-row>
     <el-row>
-      <el-alert title="暂无比赛" type="warning" center show-icon v-if="contestListEmpty">
+      <el-alert
+        title="暂无比赛"
+        type="warning"
+        center
+        show-icon
+        v-if="contestListEmpty"
+      >
       </el-alert>
-      <contest-burge style="margin-top: 20px;" v-on:detail-on-click="routeToDetail" v-for="contestInfo in allContestInfo" v-bind:contestInfo="contestInfo" v-bind:key="contestInfo.contestId"></contest-burge>
+      <contest-burge
+        style="margin-top: 20px;"
+        v-on:detail-on-click="routeToDetail"
+        v-for="contestInfo in allContestInfo"
+        v-bind:contestInfo="contestInfo"
+        v-bind:key="contestInfo.contestId"
+      ></contest-burge>
     </el-row>
   </el-row>
 </template>
@@ -43,7 +62,7 @@ export default {
   },
   computed: {
     contestListEmpty() {
-      return this.allContestInfo.length == 0
+      return this.allContestInfo.length === 0
     }
   }
 }

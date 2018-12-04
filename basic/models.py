@@ -27,7 +27,7 @@ class Competition(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
+    def to_dict(self, detail: bool = False) -> Dict[str, Any]:
         data = {
             'id': self.id,
             'name': self.name,
@@ -67,7 +67,7 @@ class CStage(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
+    def to_dict(self, detail: bool = False) -> Dict[str, Any]:
         data = {
             'name': self.name,
             'startTime': self.start_time.strftime('%Y-%m-%d'),
@@ -90,7 +90,7 @@ class Notice(models.Model):
     def __str__(self) -> str:
         return f'{self.competition}: {self.content}'
 
-    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
+    def to_dict(self, detail: bool = False) -> Dict[str, Any]:
         data = {
             'id': self.id,
             'competitionId': self.competition.id,
@@ -118,7 +118,7 @@ class Group(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
+    def to_dict(self, detail: bool = False) -> Dict[str, Any]:
         return {
             'id': self.id,
             'name': self.name,
@@ -146,7 +146,7 @@ class GStage(models.Model):
     group = models.ForeignKey(
         Group, related_name='stage_list', on_delete=models.PROTECT)
 
-    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
+    def to_dict(self, detail: bool = False) -> Dict[str, Any]:
         data = {
             'stage': self.stage,
             'commitPath': self.commit_path,
@@ -169,7 +169,7 @@ class ReviewMeta(models.Model):
         GStage, related_name='review_meta_list', on_delete=models.PROTECT)
     msg = models.CharField(max_length=256, blank=False)
 
-    def to_dict(self, detail: bool=False) -> Dict[str, Any]:
+    def to_dict(self, detail: bool = False) -> Dict[str, Any]:
         data = {
             'reviewer': self.reviewer.username,
             'score': self.score,

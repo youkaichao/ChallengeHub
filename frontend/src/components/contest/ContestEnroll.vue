@@ -39,51 +39,6 @@
           ></el-input>
         </el-form-item>
       </el-form>
-
-      <el-alert
-        title="请勿在下面的队伍成员中添加自己"
-        type="warning"
-        class="warning-box"
-      ></el-alert>
-      <el-alert
-        title="作为填写者，你将自动成为该队伍的队长"
-        type="warning"
-        class="warning-box"
-      ></el-alert>
-      <el-form>
-
-        <el-card class="box-card">
-          <div
-            slot="header"
-            style="text-align: left;"
-          >
-            <b>队伍成员</b>
-          </div>
-          <div
-            v-for="(userId, idx) in groupMembersExcludeLeader"
-            :key="idx"
-            class="text item"
-            style="text-align: left;"
-          >
-            {{ userId }}
-          </div>
-        </el-card>
-
-        <el-row>
-          <el-col :span="20">
-            <el-input
-              placeholder="希望添加的队员名称"
-              v-model="newMemberId"
-            ></el-input>
-          </el-col>
-          <el-col :span="4">
-            <el-button
-              type="primary"
-              @click="addNewMember"
-            >添加</el-button>
-          </el-col>
-        </el-row>
-      </el-form>
     </div>
 
     <div style="margin-top: 150px; margin-bottom: 50px;">
@@ -123,7 +78,15 @@ export default {
       let contestId = this.$route.params.id
       let form = {}
       for (let i = 0; i < this.enrollFormItems.length; i++) {
+        if (!this.formAnswers[i]) {
+          this.$message({ type: 'error', message: `请填写${this.enrollFormItems[i]['label']}` })
+          return
+        }
         form[this.enrollFormItems[i]['label']] = this.formAnswers[i]
+      }
+      if (!this.groupName) {
+        this.$message({ type: 'error', message: '请填写队名' })
+        return
       }
       var realMembers = this.groupMembersExcludeLeader.slice()
       realMembers.push(this.$store.state.username)
@@ -135,9 +98,8 @@ export default {
       }
       let response = await this.$http.post(`/api/contests/${contestId}/enroll`, postData)
       if (response.body.code !== 0) {
-        alert(response.body.error)
+        this.$alert(response.body.error)
       } else {
-        console.warn(response.body.data)
         this.$router.push('/index')
       }
     }
@@ -154,7 +116,7 @@ export default {
   },
   watch: {
     enrollFormItems: function(val) {
-      this.formAnswers = [...Array(val.length)].map((_, __) => '')
+      this.formAnswers = [...Array(val.length)].map(() => '')
     }
   }
 }

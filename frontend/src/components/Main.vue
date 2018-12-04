@@ -27,12 +27,16 @@
           style="margin-left: auto; margin-top: auto; margin-bottom: auto;"
           v-if="login && unreadCount !== 0"
         >
-          <el-button type="primary" @click="handleRoute('/message')">消息中心</el-button>
+          <el-button
+            type="primary"
+            @click="handleRoute('/message')"
+          >消息中心</el-button>
         </el-badge>
         <el-button
           type="primary"
           v-if="login && unreadCount === 0"
-          style="margin-left: auto; margin-top: auto; margin-bottom: auto;" @click="handleRoute('/message')"
+          style="margin-left: auto; margin-top: auto; margin-bottom: auto;"
+          @click="handleRoute('/message')"
         >消息中心</el-button>
         <el-button
           style="margin-top: auto; margin-bottom: auto; margin-left: 10px;"
