@@ -242,6 +242,19 @@ class GroupStageView(View):
         return data
 
 
+class GroupDetailView(View):
+    def get(self, request, contest_id: str) -> Any:
+        data = {}
+        competition = Competition.objects.get(id=int(contest_id))
+        collection = MONGO_CLIENT.competition.enrollForm
+        data['enrollForm'] = collection.find_one({'id': int(contest_id)})
+        groups = competition.enrolled_groups.all()
+        data['info'] = [{
+            'name': group.name,
+            'form': MONGO_CLIENT.group.enrollForm.find_one({'id': int(group.id)})['enrollForm']
+        } for group in groups]
+
+
 class ContestEnrollView(View):
     def get(self, request, contest_id: str) -> Any:
         collection = MONGO_CLIENT.competition.enrollForm
@@ -273,7 +286,7 @@ class ContestEnrollView(View):
             user = User.objects.get(username=member)
             message = Invitation(group=group, invitee=user)
             message.save()
-        return {'id':group.id}
+        return {'id': group.id}
 
 
 class ContestSubmissionView(View):

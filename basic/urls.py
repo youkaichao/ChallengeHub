@@ -10,6 +10,8 @@ urlpatterns = [
         views.ContestEnrollView.as_view()),
     url(r'contests/(?P<contest_id>[0-9]+)/groups$',
         views.GroupStageView.as_view()),
+    url(r'contests/(?P<contest_id>[0-9]+)/groups_detail$',
+        views.GroupDetailView.as_view()),
     url(r'contests/(?P<contest_id>[0-9]+)/submissions$',
         views.ContestSubmissionView.as_view()),
     url(r'contests/(?P<contest_id>[0-9]+)/taskstat$',
