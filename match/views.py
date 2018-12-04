@@ -3,6 +3,7 @@ from ChallengeHub.utils import BaseView as View, require_logged_in
 from useraction.models import User
 from match.models import Message, Invitation, InvitationStatus
 from basic.models import Competition, Group
+from django.db.models import Q
 from typing import Any
 import json
 
@@ -46,8 +47,14 @@ class MatchInviteView(View):
             raise Exception('group already locked')
         self.check_input(['username'])
         user = User.objects.get(username=request.data.get('username'))
-        message = Invitation(group=group, invitee=user)
-        message.save()
+        message = Invitation.objects.filter(group=group, invitee=user, status=InvitationStatus.DEFAULT)
+        if message:
+            raise Exception(f'{user.username} is already invited')
+        elif user in group.members.all():
+            raise Exception(f'{user.username} is already in your group')
+        else:
+            message = Invitation(group=group, invitee=user)
+            message.save()
 
 
 class MatchQuitView(View):
@@ -120,6 +127,7 @@ class MatchCancelView(View):
 
 
 class MessageCollectionView(View):
+    @require_logged_in
     def get(self, request) -> Any:
         user = request.user
         self.check_input(['isRead'])
@@ -148,6 +156,7 @@ class MessageCollectionView(View):
         } for i in invitations]
         return messageList + invitationList
 
+    @require_logged_in
     def put(self, request) -> Any:
         self.check_input(['id', 'type'])
         category = request.data.get('type')
@@ -164,6 +173,7 @@ class MessageCollectionView(View):
         message.is_read = True
         message.save()
 
+    @require_logged_in
     def delete(self, request) -> Any:
         self.check_input(['id'])
         category = request.data.get('type')
@@ -177,6 +187,7 @@ class MessageCollectionView(View):
                 raise Exception('no authority')
         message.delete()
 
+    @require_logged_in
     def post(self, request) -> Any:
         self.check_input(['peer', 'content'])
         message = Message(
@@ -188,6 +199,7 @@ class MessageCollectionView(View):
 
 
 class MessageUnreadView(View):
+    @require_logged_in
     def get(self, request) -> Any:
         lenM = len(request.user.received_messages.filter(is_read=False))
         lenI = len(request.user.received_invitations.filter(is_read=False))
