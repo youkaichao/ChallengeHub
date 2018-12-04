@@ -73,7 +73,7 @@ class BackendAPITest(TestCase):
         # 主办方创建比赛
         data = {
             "charge": 0,
-            "detail": "不存在的",
+            "detail": "nonsense",
             "enrollEnd": "2018-12-01T16:00:00.000Z",
             "enrollForm": '12',
             "enrollStart": "2018-11-29T16:00:00.000Z",
@@ -81,8 +81,8 @@ class BackendAPITest(TestCase):
             "groupSize": 1,
             "imgUrl": "url????",
             "name": "pwf",
-            "procedure": [{"name": "初赛", "startTime": "2018-12-1", "endTime": "2018-12-3"},
-                           {"name": "复赛", "startTime": "2018-12-4", "endTime": "2018-12-6"}],
+            "procedure": [{"name": "1st", "startTime": "2018-12-1", "endTime": "2018-12-3"},
+                           {"name": "2nd", "startTime": "2018-12-4", "endTime": "2018-12-6"}],
             "publisher": "organizer",
             "subject": "pwf"
         }
@@ -93,7 +93,7 @@ class BackendAPITest(TestCase):
 
         # 队长报名,并邀请student1参加
         data = leader.post(f'/api/contests/{contest_id}/enroll',
-                           {"name":"无名", "leaderName":"leader", "members":["student1"], "form":"1"})
+                           {"name":"nonsense", "leaderName":"leader", "members":["student1"], "form":"1"})
         self.assertEqual(data['code'], 0)
         group_id = data['data']['id']
 
@@ -156,7 +156,7 @@ class BackendAPITest(TestCase):
               "id": review_meta_id,
               "reviewed": True,
               "rating": 80,
-              "msg": "不错"}]})
+              "msg": "good"}]})
             self.assertEqual(data['code'], 0)
 
             # 主办方晋级队伍
@@ -165,3 +165,103 @@ class BackendAPITest(TestCase):
 
         # 比赛结束
         return
+        
+        
+    def test_vote(self):
+        # 测试比赛的点赞系统
+        
+        # 主办方创建比赛
+        data = {
+            "charge": 0,
+            "detail": "nonsense",
+            "enrollEnd": "2018-12-01T16:00:00.000Z",
+            "enrollForm": '12',
+            "enrollStart": "2018-11-29T16:00:00.000Z",
+            "enrollUrl": "",
+            "groupSize": 1,
+            "imgUrl": "url????",
+            "name": "pwf",
+            "procedure": [{"name": "1st", "startTime": "2018-12-1", "endTime": "2018-12-3"},
+                           {"name": "2nd", "startTime": "2018-12-4", "endTime": "2018-12-6"}],
+            "publisher": "organizer",
+            "subject": "pwf"
+        }
+        
+        data = organizer.post('/api/contests', data)
+        self.assertEqual(data['code'], 0)
+        contest_id = data['data']['id']
+
+        # 每个人点赞+取消
+        for x in ['organizer', 'leader', 'student1', 'student2', 'reviewer1', 'admin']:
+            tmp = globals()[x]
+            # 先点赞
+            data = tmp.post(f'/api/contests/{contest_id}/vote',
+                               {"upvote":1})
+            self.assertEqual(data['code'], 0)
+            self.assertEqual(data['data']['upvoteStatus'], 1)
+            # 再踩
+            data = tmp.post(f'/api/contests/{contest_id}/vote',
+                               {"upvote":-1})
+            self.assertEqual(data['code'], 0)
+            self.assertEqual(data['data']['upvoteStatus'], -1)
+            # 再取消踩
+            data = tmp.post(f'/api/contests/{contest_id}/vote',
+                               {"upvote":-1})
+            self.assertEqual(data['code'], 0)
+            self.assertEqual(data['data']['upvoteStatus'], 0)
+        
+        for x in ['organizer', 'leader', 'student1', 'student2', 'reviewer1', 'admin']:
+            tmp = globals()[x]
+            data = tmp.get(f'/api/contests/{contest_id}')
+            self.assertEqual(data['data']['userRelated']['upvoteStatus'], 0)
+            self.assertEqual(data['data']['upvote'], 0)
+            self.assertEqual(data['data']['downvote'], 0)
+            
+            
+    def test_notice(self):
+        # 测试比赛的公告系统
+        
+        # 主办方创建比赛
+        data = {
+            "charge": 0,
+            "detail": "nonsense",
+            "enrollEnd": "2018-12-01T16:00:00.000Z",
+            "enrollForm": '12',
+            "enrollStart": "2018-11-29T16:00:00.000Z",
+            "enrollUrl": "",
+            "groupSize": 1,
+            "imgUrl": "url????",
+            "name": "pwf",
+            "procedure": [{"name": "1st", "startTime": "2018-12-1", "endTime": "2018-12-3"},
+                           {"name": "2nd", "startTime": "2018-12-4", "endTime": "2018-12-6"}],
+            "publisher": "organizer",
+            "subject": "pwf"
+        }
+        
+        data = organizer.post('/api/contests', data)
+        self.assertEqual(data['code'], 0)
+        contest_id = data['data']['id']
+
+        # 主办方创建公告
+        data = organizer.post(f'/api/contests/{contest_id}/notices',
+                           {"title":"what?", "content":"what?"})
+        self.assertEqual(data['code'], 0)
+        
+        # 查看所有公告
+        data = organizer.get(f'/api/contests/{contest_id}/notices')
+        self.assertEqual(data['code'], 0)
+        notice_id = data['data']['notices'][0]['id']
+        
+        # 修改一个公告
+        data = organizer.put(f'/api/contests/{contest_id}/notices/{notice_id}', data={"title":"what?", "content":"what?"})
+        self.assertEqual(data['code'], 0)
+
+        # 查看一个公告
+        data = leader.get(f'/api/contests/{contest_id}/notices/{notice_id}')
+        self.assertEqual(data['code'], 0)
+        self.assertEqual(data['data']['content'], "what?")
+        self.assertEqual(data['data']['title'], "what?")
+        
+        # 删除一个公告
+        data = organizer.delete(f'/api/contests/{contest_id}/notices/{notice_id}')
+        self.assertEqual(data['code'], 0)
