@@ -7,7 +7,7 @@ from basic.models import Competition, Group, CStage, GStage, ReviewMeta, Notice,
 from useraction.models import User
 from match.models import Invitation
 from typing import Dict, Any, Callable, List
-from ChallengeHub.utils import BaseView as View, require_logged_in, make_errors
+from ChallengeHub.utils import BaseView as View, require_logged_in, make_errors, require_to_be_organization, require_to_be_individual, require_to_be_publisher
 from ChallengeHub.settings import MONGO_CLIENT, BASE_DIR
 import os
 import json
@@ -24,6 +24,8 @@ class ContestCollectionView(View):
                 competitions = competitions.order_by('-upvote')
         return [competition.to_dict() for competition in competitions]
 
+    @require_logged_in
+    @require_to_be_organization
     def post(self, request) -> Any:
         self.check_input([
             'name', 'subject', 'groupSize', 'enrollStart', 'enrollEnd',
@@ -61,17 +63,19 @@ class ContestDetailView(View):
         c = Competition.objects.get(id=int(contest_id))
         info = c.to_dict(detail=True)
         info['userRelated'] = {}
-        vote = request.user.user_votes.filter(competition=c).first()
-        if vote:
-            info['userRelated']['upvoteStatus'] = vote.status
+        if request.user.is_authenticated():
+            vote = request.user.user_votes.filter(competition=c).first()
+            info['userRelated']['upvoteStatus'] = vote.status if vote else 0
+        else:
+            info['userRelated']['upvoteStatus'] = 0
         return info
-
+        
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['stage'])
-        user = request.user
         competition = Competition.objects.get(id=int(contest_id))
-        if (competition.publisher != user):
-            raise Exception('no authority to change stage')
         stage = int(request.data.get('stage'))
 
         if stage > 0 and stage % 2 == 0:  # when enter judge stage, update all qualified group to that stage
@@ -85,6 +89,9 @@ class ContestDetailView(View):
 
 
 class TaskStatView(View):
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def get(self, request, contest_id: str) -> Any:
         self.check_input(['stage'])
         c = Competition.objects.get(id=int(contest_id))
@@ -114,6 +121,9 @@ class TaskStatView(View):
 
 
 class ContestReviewTaskView(View):
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def get(self, request, contest_id: str) -> Any:
         self.check_input(['stage'])
         stage = int(request.data['stage'])
@@ -138,6 +148,9 @@ class ContestReviewTaskView(View):
 
 
 class ContestAutoAssignView(View):
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['stage', 'serious', 'maxconn', 'judges'])
         c = Competition.objects.get(id=int(contest_id))
@@ -190,6 +203,9 @@ class ContestAutoAssignView(View):
 
 
 class ContestReviewerView(View):
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['username'])
         c = Competition.objects.get(id=int(contest_id))
@@ -200,6 +216,9 @@ class ContestReviewerView(View):
             c.save()
         return
 
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def get(self, request, contest_id: str) -> Any:
         c = Competition.objects.get(id=int(contest_id))
         judges = c.judges.all()
@@ -220,6 +239,9 @@ class ContestVoteView(View):
 
 
 class GroupStageView(View):
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['group_ids', 'stage'])
         stage = int(request.data['stage'])
@@ -235,6 +257,9 @@ class GroupStageView(View):
                 gstage.save()
         return
 
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def get(self, request, contest_id: str) -> Any:
         c = Competition.objects.get(id=int(contest_id))
         groups = c.enrolled_groups.all()
@@ -243,6 +268,9 @@ class GroupStageView(View):
 
 
 class GroupDetailView(View):
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def get(self, request, contest_id: str) -> Any:
         data = {}
         competition = Competition.objects.get(id=int(contest_id))
@@ -260,7 +288,9 @@ class ContestEnrollView(View):
         collection = MONGO_CLIENT.competition.enrollForm
         data = collection.find_one({'id': int(contest_id)})
         return {'enrollForm': data['enrollForm']}
-
+    
+    @require_logged_in
+    @require_to_be_individual
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['name', 'leaderName', 'members', 'form'])
         group = Group(
@@ -290,6 +320,8 @@ class ContestEnrollView(View):
 
 
 class ContestSubmissionView(View):
+    @require_logged_in
+    @require_to_be_individual
     def post(self, request, contest_id: str) -> Any:
         user = request.user
         group = user.joint_groups.get(competition__id=int(contest_id))
@@ -316,6 +348,8 @@ class ContestSubmissionView(View):
         group_stage.save()
         return
 
+    @require_logged_in
+    @require_to_be_individual
     def get(self, request, contest_id: str) -> Any:
         user = request.user
         group = user.joint_groups.get(competition__id=int(contest_id))
@@ -348,6 +382,7 @@ class UserCollectionView(View):
 
 class UserCreatedView(View):
     @require_logged_in
+    @require_to_be_organization
     def get(self, request) -> Any:
         user = request.user
         competitions = user.published_competitions.all()
@@ -356,6 +391,7 @@ class UserCreatedView(View):
 
 class UserJudgedView(View):
     @require_logged_in
+    @require_to_be_individual
     def get(self, request) -> Any:
         user = request.user
         competitions = [
@@ -378,6 +414,7 @@ class UserJudgedView(View):
 
 class UserEnrolledView(View):
     @require_logged_in
+    @require_to_be_individual
     def get(self, request) -> Any:
         user = request.user
         return [{
@@ -386,31 +423,9 @@ class UserEnrolledView(View):
         } for group in user.joint_groups.all()]
 
 
-class GroupCollectionView(View):
-    def post(self, request) -> Any:
-        self.check_input([
-            'name', 'competitionId', 'leaderName', 'membersName'
-        ])
-        g = Group(
-            name=request.data['name'],
-            competition=Competition.objects.get(
-                id=request.data['competitionId']),
-            leader=User.objects.get(username=request.data['leaderName'])
-        )
-        g.save()
-        for member_name in request.data['membersName']:
-            g.members.add(User.objects.get(username=member_name))
-        g.save()
-        return
-
-
-class GroupDetailView(View):
-    def get(self, request, group_id: str) -> Any:
-        g = Group.objects.get(id=int(group_id))
-        return g.to_dict()
-
-
 class JudgeReviewView(View):
+    @require_logged_in
+    @require_to_be_individual
     def get(self, request, contest_id: str) -> Any:
         def get_extension(pathname: str) -> str:
             _, extension = os.path.splitext(pathname)
@@ -445,6 +460,8 @@ class JudgeReviewView(View):
             'extension': get_extension(review.stage.commit_path)} for review in reviews]
         return data
 
+    @require_logged_in
+    @require_to_be_individual
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['reviews'])
         competition = Competition.objects.get(id=int(contest_id))
@@ -465,6 +482,7 @@ class JudgeReviewView(View):
 
 
 class CriterionView(View):
+    @require_logged_in
     def get(self, request, contest_id: str) -> Any:
         self.check_input(['stage'])
         contest_id = int(contest_id)
@@ -475,16 +493,19 @@ class CriterionView(View):
         cstage = CStage.objects.get(stage=stage, competition=contest)
         return {'criterion': cstage.criterion}
 
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def post(self, request, contest_id: str) -> Any:
         self.check_input([
             'stage', 'criterion'
         ])
         contest_id = int(contest_id)
+        contest = Competition.objects.get(id=contest_id)
         stage = int(request.data['stage'])
         if stage % 2 == 0:
             stage -= 1
         criterion = request.data['criterion']
-        contest = Competition.objects.get(id=contest_id)
         cstage = CStage.objects.get(stage=stage, competition=contest)
         cstage.criterion = criterion
         cstage.save()
@@ -492,6 +513,9 @@ class CriterionView(View):
 
 
 class SubmissionAllView(View):
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def get(self, request, contest_id: str) -> Any:
         self.check_input(['stage'])
         contest_id = int(contest_id)
@@ -531,10 +555,11 @@ class NoticeCollectionView(View):
             'contest': competition.to_dict(),
         }
 
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def post(self, request, contest_id: str) -> Any:
         competition = Competition.objects.get(id=int(contest_id))
-        if request.user != competition.publisher:
-            raise Exception('no authority to publish notice')
         self.check_input(['title', 'content'])
         notice = Notice(
             competition=competition,
@@ -551,18 +576,20 @@ class NoticeDetailView(View):
         notice = Notice.objects.get(id=int(notice_id))
         return notice.to_dict(detail=True)
 
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def delete(self, request, contest_id: str, notice_id: str) -> Any:
         competition = Competition.objects.get(id=int(contest_id))
-        if request.user != competition.publisher:
-            raise Exception('no authority to delete notice')
         notice = Notice.objects.get(id=int(notice_id))
         notice.delete()
         return
 
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
     def put(self, request, contest_id: str, notice_id: str) -> Any:
         competition = Competition.objects.get(id=int(contest_id))
-        if request.user != competition.publisher:
-            raise Exception('no authority to modify notice')
         notice = Notice.objects.get(id=int(notice_id))
         self.check_input(['title', 'content'])
         notice.title = request.data.get('title')
