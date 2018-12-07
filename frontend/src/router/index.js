@@ -19,6 +19,7 @@ const ManageJudge = () => import('@/components/organizer/ManageJudge')
 const Overview = () => import('@/components/organizer/Overview')
 const ManageSubmission = () => import('@/components/organizer/ManageSubmission')
 const NoticeList = () => import('@/components/organizer/NoticeList')
+const GroupInfo = () => import('@/components/organizer/GroupInfo')
 const ManageReview = () => import('@/components/organizer/ManageReview')
 const NoticeDetail = () => import('@/components/organizer/NoticeDetail')
 const NewNotice = () => import('@/components/organizer/NewNotice')
@@ -157,6 +158,11 @@ export default new Router({
               path: 'notices/newnotice',
               name: 'newnotice',
               component: NewNotice
+            },
+            {
+              path: 'groupinfo',
+              name: 'groupinfo',
+              component: GroupInfo
             }
           ]
         },

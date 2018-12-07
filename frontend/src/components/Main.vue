@@ -1,13 +1,11 @@
 <template>
   <el-container class="main-container">
     <el-header height="100">
-      <el-row
-        type="flex"
-        :gutter="10"
-      >
-        <router-link to='/'>
+      <el-row type="flex" :gutter="10">
+        <router-link to="/">
           <span class="logo">
-            <span style="font-weight: 800">Challenge</span><span style="font-weight: 100">Hub</span>
+            <span style="font-weight: 800">Challenge</span>
+            <span style="font-weight: 100">Hub</span>
           </span>
         </router-link>
         <el-button
@@ -27,10 +25,7 @@
           style="margin-left: auto; margin-top: auto; margin-bottom: auto;"
           v-if="login && unreadCount !== 0"
         >
-          <el-button
-            type="primary"
-            @click="handleRoute('/message')"
-          >消息中心</el-button>
+          <el-button type="primary" @click="handleRoute('/message')">消息中心</el-button>
         </el-badge>
         <el-button
           type="primary"
@@ -54,14 +49,8 @@
     </el-header>
     <router-view></router-view>
     <el-row align="middle">
-      <el-button
-        type="text"
-        @click="handleRoute('/about')"
-      >关于我们</el-button>
-      <el-button
-        type="text"
-        @click="handleRoute('/help')"
-      >帮助中心</el-button>
+      <el-button type="text" @click="handleRoute('/about')">关于我们</el-button>
+      <el-button type="text" @click="handleRoute('/help')">帮助中心</el-button>
     </el-row>
   </el-container>
 </template>
@@ -104,8 +93,17 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css?family=Titillium+Web:extra-light');
-@import url('https://fonts.googleapis.com/css?family=Titillium+Web:semi-bold');
+@font-face {
+  font-family: 'Titillium Web';
+  src: url('../../fonts/TitilliumWeb-ExtraLight.ttf') format('truetype');
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: 'Titillium Web';
+  src: url('../../fonts/TitilliumWeb-SemiBold.ttf') format('truetype');
+  font-weight: 800;
+}
 
 .logo {
   font-family: 'Titillium Web';

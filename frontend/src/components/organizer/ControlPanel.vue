@@ -86,6 +86,10 @@ export default {
         {
           name: 'notices',
           label: '管理公告'
+        },
+        {
+          name: 'groupinfo',
+          label: '队伍信息'
         }
       ]
     }

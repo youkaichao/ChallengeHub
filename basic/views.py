@@ -69,7 +69,7 @@ class ContestDetailView(View):
         else:
             info['userRelated']['upvoteStatus'] = 0
         return info
-        
+
     @require_logged_in
     @require_to_be_organization
     @require_to_be_publisher
@@ -275,12 +275,13 @@ class GroupDetailView(View):
         data = {}
         competition = Competition.objects.get(id=int(contest_id))
         collection = MONGO_CLIENT.competition.enrollForm
-        data['enrollForm'] = collection.find_one({'id': int(contest_id)})
+        data['enrollForm'] = collection.find_one({'id': int(contest_id)})['enrollForm']
         groups = competition.enrolled_groups.all()
         data['info'] = [{
             'name': group.name,
             'form': MONGO_CLIENT.group.enrollForm.find_one({'id': int(group.id)})['enrollForm']
         } for group in groups]
+        return data
 
 
 class ContestEnrollView(View):
@@ -288,7 +289,7 @@ class ContestEnrollView(View):
         collection = MONGO_CLIENT.competition.enrollForm
         data = collection.find_one({'id': int(contest_id)})
         return {'enrollForm': data['enrollForm']}
-    
+
     @require_logged_in
     @require_to_be_individual
     def post(self, request, contest_id: str) -> Any:

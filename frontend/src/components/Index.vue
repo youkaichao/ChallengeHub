@@ -8,6 +8,15 @@
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css?family=Titillium+Web:extra-light');
-@import url('https://fonts.googleapis.com/css?family=Titillium+Web:semi-bold');
+@font-face {
+  font-family: 'Titillium Web';
+  src: url('../../fonts/TitilliumWeb-ExtraLight.ttf') format('truetype');
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: 'Titillium Web';
+  src: url('../../fonts/TitilliumWeb-SemiBold.ttf') format('truetype');
+  font-weight: 800;
+}
 </style>
