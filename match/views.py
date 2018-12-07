@@ -174,8 +174,21 @@ class MessageCollectionView(View):
         message.save()
 
     @require_logged_in
-    def delete(self, request) -> Any:
-        self.check_input(['id'])
+    def post(self, request) -> Any:
+        self.check_input(['peer', 'content'])
+        message = Message(
+            sender=request.user,
+            receiver=User.objects.get(username=request.data.get('peer')),
+            content=request.data.get('content')
+        )
+        message.save()
+
+
+class MessageDeleteView(View):
+    @require_logged_in
+    def post(self, request) -> Any:
+        print(request.data)
+        self.check_input(['id', 'type'])
         category = request.data.get('type')
         if category == 'letter':
             message = Message.objects.get(id=request.data.get('id'))
@@ -186,17 +199,6 @@ class MessageCollectionView(View):
             if request.user != message.invitee:
                 raise Exception('no authority')
         message.delete()
-
-    @require_logged_in
-    def post(self, request) -> Any:
-        self.check_input(['peer', 'content'])
-        message = Message(
-            sender=request.user,
-            receiver=User.objects.get(username=request.data.get('peer')),
-            content=request.data.get('content')
-        )
-        message.save()
-
 
 class MessageUnreadView(View):
     @require_logged_in

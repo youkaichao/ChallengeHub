@@ -2,19 +2,11 @@
   <div>
     <el-row>
       <el-col :span="4">
-        <el-button
-          type="infor"
-          @click="gotoNewMessage"
-        >
-          发送新消息
-        </el-button>
+        <el-button type="infor" @click="gotoNewMessage">发送新消息</el-button>
       </el-col>
     </el-row>
     <el-tabs v-model="currentTab">
-      <el-tab-pane
-        label="未读消息"
-        name="unread"
-      >
+      <el-tab-pane label="未读消息" name="unread">
         <single-message
           v-for="message of unreadMessages"
           :key="message.id"
@@ -25,14 +17,9 @@
           @reply-message="replyMessage"
           @accept-invitation="acceptInvitation"
           @reject-invitation="rejectInvitation"
-        >
-          {{message.content}}
-        </single-message>
+        >{{message.content}}</single-message>
       </el-tab-pane>
-      <el-tab-pane
-        label="已读消息"
-        name="read"
-      >
+      <el-tab-pane label="已读消息" name="read">
         <single-message
           v-for="message of readMessages"
           :key="message.id"
@@ -43,12 +30,9 @@
           @reply-message="replyMessage"
           @accept-invitation="acceptInvitation"
           @reject-invitation="rejectInvitation"
-        >
-          {{message.content}}
-        </single-message>
+        >{{message.content}}</single-message>
       </el-tab-pane>
     </el-tabs>
-
   </div>
 </template>
 
@@ -132,7 +116,7 @@ export default {
       }
     },
     async deleteMessage({ id, type }) {
-      let response = await this.$http.delete('/apiv2/messages', { params: { id: id, type: type } })
+      let response = await this.$http.post('/apiv2/messages/delete', { id: id, type: type })
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return
@@ -156,6 +140,7 @@ export default {
         return
       }
       this.unreadMessages = response.body.data
+      await this.updateUnreadCount()
     },
     async updateReadMessages() {
       let response = await this.$http.get('/apiv2/messages', { params: { isRead: 1 } })
@@ -164,6 +149,15 @@ export default {
         return
       }
       this.readMessages = response.body.data
+      await this.updateUnreadCount()
+    },
+    async updateUnreadCount() {
+      let response = await this.$http.get('/apiv2/messages/unread_count')
+      if (response.body.code !== 0) {
+        this.$message({ type: 'error', message: response.body.error })
+        return
+      }
+      this.$store.commit('setUnreadCount', response.body.data)
     }
   }
 }

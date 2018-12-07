@@ -4,6 +4,8 @@ from match import views
 urlpatterns = [
     url(r'messages$',
         views.MessageCollectionView.as_view()),
+    url(r'messages/delete$',
+        views.MessageDeleteView.as_view()),
     url(r'messages/unread_count$',
         views.MessageUnreadView.as_view()),
     url(r'contests/(?P<contest_id>[0-9]+)/groups$',
