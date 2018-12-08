@@ -294,11 +294,13 @@ class ContestEnrollView(View):
     @require_to_be_individual
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['name', 'leaderName', 'members', 'form'])
+        leader = User.objects.get(username=request.data.get('leaderName'))
+        if leader.joint_groups.all():
+            raise Exception(f"you are already in group {leader.joint_groups.first().name}")
         group = Group(
             name=request.data.get('name'),
             competition=Competition.objects.get(id=int(contest_id)),
-            leader=User.objects.get(
-                username=request.data.get('leaderName'))
+            leader=leader
         )
         group.save()
         # save first to have an ``id``

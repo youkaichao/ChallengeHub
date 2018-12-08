@@ -32,8 +32,8 @@ class UserInfoView(View):
 
     @require_logged_in
     def post(self, request) -> Any:
-        for name in ['email', 'introduction', 'school']:
-            if request.data.get(name) != None:
+        for name in ['introduction', 'school']:
+            if request.data.get(name) is not None:
                 setattr(request.user, name, request.data.get(name))
         request.user.save()
         return request.user.to_dict()

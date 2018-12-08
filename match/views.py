@@ -182,12 +182,12 @@ class MessageCollectionView(View):
             content=request.data.get('content')
         )
         message.save()
+        return message.to_dict()
 
 
 class MessageDeleteView(View):
     @require_logged_in
     def post(self, request) -> Any:
-        print(request.data)
         self.check_input(['id', 'type'])
         category = request.data.get('type')
         if category == 'letter':
@@ -199,6 +199,7 @@ class MessageDeleteView(View):
             if request.user != message.invitee:
                 raise Exception('no authority')
         message.delete()
+
 
 class MessageUnreadView(View):
     @require_logged_in

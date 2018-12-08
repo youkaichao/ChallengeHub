@@ -1,38 +1,8 @@
 import json
 from useraction.models import User
-from django.test import TestCase, Client
+from django.test import TestCase
 from basic.models import Competition, CStage, Notice, Group, GStage, ReviewMeta, Vote
-
-
-class MyClient(Client):
-
-    def get(self, *args, **kwargs):
-        response = super(MyClient, self).get(*args, **kwargs)
-        return json.loads(response.content.decode())
-        
-    def post(self, *args, **kwargs):
-        # 对于post来说，默认类型要是json
-        if 'content_type' not in kwargs:
-            kwargs['content_type'] = 'application/json'
-        if 'data' in kwargs and kwargs.get('content_type') == 'application/json':
-            kwargs['data'] = json.dumps(kwargs['data'])
-        response = super(MyClient, self).post(*args, **kwargs)
-        return json.loads(response.content.decode())
-        
-    def put(self, *args, **kwargs):
-        kwargs['content_type'] = 'application/json'
-        response = super(MyClient, self).put(*args, **kwargs)
-        return json.loads(response.content.decode())
-        
-    def patch(self, *args, **kwargs):
-        kwargs['content_type'] = 'application/json'
-        response = super(MyClient, self).patch(*args, **kwargs)
-        return json.loads(response.content.decode())
-        
-    def delete(self, *args, **kwargs):
-        kwargs['content_type'] = 'application/json'
-        response = super(MyClient, self).delete(*args, **kwargs)
-        return json.loads(response.content.decode())
+from ChallengeHub.utils import MyClient, delete_table
 
 
 models = [User, Competition, CStage, Notice, Group, GStage, ReviewMeta, Vote]
@@ -47,7 +17,7 @@ def create_user(name):
     tmp.save()
     globals()[name] = tmp
     return tmp
-    
+
 
 class BackendAPITest(TestCase):
 
@@ -65,7 +35,12 @@ class BackendAPITest(TestCase):
             globals()[name] = tmp
 
     def tearDown(self):
-        pass
+        for x in [ReviewMeta, CStage, GStage]:
+            delete_table(x)
+        for x in [Notice, Vote, Group]:
+            delete_table(x)
+        delete_table(Competition)
+        delete_table(User)
                 
     def test_procedure(self):
         # 模拟一场比赛的流程

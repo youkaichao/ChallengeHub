@@ -1,9 +1,49 @@
 import json
+import typing
 import traceback
 from django.views.generic import View
 from django.http import JsonResponse
 from typing import Dict, Any, Callable, List
 from basic.models import Competition
+from django.test import Client
+from useraction.models import User
+from django.db.models import Model
+
+
+def delete_table(model : typing.Type[Model]):
+    for q in model.objects.all():
+        q.delete()
+
+
+class MyClient(Client):
+
+    def get(self, *args, **kwargs):
+        response = super(MyClient, self).get(*args, **kwargs)
+        return json.loads(response.content.decode())
+
+    def post(self, *args, **kwargs):
+        # 对于post来说，默认类型要是json
+        if 'content_type' not in kwargs:
+            kwargs['content_type'] = 'application/json'
+        if 'data' in kwargs and kwargs.get('content_type') == 'application/json':
+            kwargs['data'] = json.dumps(kwargs['data'])
+        response = super(MyClient, self).post(*args, **kwargs)
+        return json.loads(response.content.decode())
+
+    def put(self, *args, **kwargs):
+        kwargs['content_type'] = 'application/json'
+        response = super(MyClient, self).put(*args, **kwargs)
+        return json.loads(response.content.decode())
+
+    def patch(self, *args, **kwargs):
+        kwargs['content_type'] = 'application/json'
+        response = super(MyClient, self).patch(*args, **kwargs)
+        return json.loads(response.content.decode())
+
+    def delete(self, *args, **kwargs):
+        kwargs['content_type'] = 'application/json'
+        response = super(MyClient, self).delete(*args, **kwargs)
+        return json.loads(response.content.decode())
 
 
 def make_errors(msg: str) -> Dict[str, Any]:
