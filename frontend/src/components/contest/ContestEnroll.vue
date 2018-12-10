@@ -66,6 +66,10 @@ export default {
   created: async function() {
     let contestId = this.$route.params.id
     let response = await this.$http.get(`/api/contests/${contestId}/enroll`)
+    if (response.body.code !== 0) {
+        this.$message({ type: 'error', message: response.body.error })
+        return
+    }
     this.enrollForm = response.body.data.enrollForm
   },
   methods: {

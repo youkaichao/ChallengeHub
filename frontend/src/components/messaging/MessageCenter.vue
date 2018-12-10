@@ -1,12 +1,18 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="4">
-        <el-button type="infor" @click="gotoNewMessage">发送新消息</el-button>
-      </el-col>
+    <el-row type="flex" justify="end">
+      <el-button type="primary" @click="gotoNewMessage">给他人写私信</el-button>
     </el-row>
     <el-tabs v-model="currentTab">
       <el-tab-pane label="未读消息" name="unread">
+        <el-alert
+          v-if="unreadMessages.length === 0"
+          title="然而并没有数据"
+          type="warning"
+          center
+          style="width: 600px; margin: auto;"
+          show-icon
+        ></el-alert>
         <single-message
           v-for="message of unreadMessages"
           :key="message.id"
@@ -20,6 +26,14 @@
         >{{message.content}}</single-message>
       </el-tab-pane>
       <el-tab-pane label="已读消息" name="read">
+        <el-alert
+          v-if="readMessages.length === 0"
+          title="然而并没有数据"
+          type="warning"
+          center
+          style="width: 600px; margin: auto;"
+          show-icon
+        ></el-alert>
         <single-message
           v-for="message of readMessages"
           :key="message.id"

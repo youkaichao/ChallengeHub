@@ -1,9 +1,26 @@
 <template>
   <div>
-    <contest-banner :contestInfo="contestInfo" />
-    <h1 style="font-size: 40px;"><span style="margin-right: 20px; font-weight: bold;">{{contestInfo.name}}</span><span style="color: #409eff">公告列表</span></h1>
+    <contest-banner :contestInfo="contestInfo"/>
+    <h1 style="font-size: 40px;">
+      <span style="margin-right: 20px; font-weight: bold;">{{contestInfo.name}}</span>
+      <span style="color: #409eff">公告列表</span>
+    </h1>
 
-    <notice-burger style="margin-top: 10px; width: 800px; margin-left: auto; margin-right: auto;" v-for="(notice, index) of notices" :key="index" :notice="notice" :competitionId="contestId" />
+    <el-alert
+      v-if="notices.length === 0"
+      title="然而并没有数据"
+      type="warning"
+      center
+      style="width: 600px; margin: auto;"
+      show-icon
+    ></el-alert>
+    <notice-burger
+      style="margin-top: 10px; width: 800px; margin-left: auto; margin-right: auto;"
+      v-for="(notice, index) of notices"
+      :key="index"
+      :notice="notice"
+      :competitionId="contestId"
+    />
   </div>
 </template>
 

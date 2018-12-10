@@ -1,5 +1,13 @@
 <template>
   <div>
+    <el-alert
+      v-if="contestsInfo.length === 0"
+      title="然而并没有数据"
+      type="warning"
+      center
+      style="width: 600px; margin: auto;"
+      show-icon
+    ></el-alert>
     <el-row :gutter="20">
       <el-col :span="6">
         <contest-card

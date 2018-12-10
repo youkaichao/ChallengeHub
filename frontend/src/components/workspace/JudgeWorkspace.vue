@@ -38,6 +38,14 @@
             <el-button :disabled="readonly" type="primary" @click="downloadUnreviewed()">下载未评审作品</el-button>
           </span>
         </el-row>
+        <el-alert
+          v-if="wrappedSubmissions.length === 0"
+          title="然而并没有数据"
+          type="warning"
+          center
+          style="width: 600px; margin: auto;"
+          show-icon
+        ></el-alert>
         <judge-submission v-for="(item, index) in wrappedSubmissions" :key="item.guid" :title="item.submission.submissionName" :number="index + 1" :reviewed="item.submission.reviewed" :rating="item.submission.rating" style="margin-bottom: 10px" :readonly="readonly" v-on:rate="handleRate" v-on:remark="handleRemark" v-on:download="downloadOne" v-on:check="handleCheck" />
         <el-row type="flex" style="justify-content: space-between; margin-top: 20px;">
           <el-button :disabled="readonly" type="primary" @click="commitReviews">保存评审</el-button>

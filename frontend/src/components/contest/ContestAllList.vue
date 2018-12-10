@@ -14,9 +14,10 @@
     </el-row>
     <el-row>
       <el-alert
-        title="暂无比赛"
+        title="然而并没有数据"
         type="warning"
         center
+        style="width: 600px; margin: auto; margin-top: 30px;"
         show-icon
         v-if="contestListEmpty"
       >

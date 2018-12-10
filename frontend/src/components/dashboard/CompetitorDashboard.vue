@@ -20,9 +20,25 @@
     </div>
     <el-tabs>
       <el-tab-pane label="未结束的比赛">
+        <el-alert
+          v-if="enrolledUnfinished.length === 0"
+          title="然而并没有数据"
+          type="warning"
+          center
+          style="width: 600px; margin: auto;"
+          show-icon
+        ></el-alert>
         <enrolled-contest-unfinished style="margin-top: 10px;" v-for="info of enrolledUnfinished" :contest="info.contest" :group="info.group" :key="info.contest.id" />
       </el-tab-pane>
       <el-tab-pane label="已结束的比赛">
+        <el-alert
+          v-if="enrolledFinished.length === 0"
+          title="然而并没有数据"
+          type="warning"
+          center
+          style="width: 600px; margin: auto;"
+          show-icon
+        ></el-alert>
         <enrolled-contest-finished style="margin-top: 10px;" v-for="info of enrolledFinished" :contest="info.contest" :group="info.group" :key="info.contest.id" />
       </el-tab-pane>
     </el-tabs>

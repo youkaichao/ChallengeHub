@@ -63,17 +63,12 @@ export default {
   },
   methods: {
     async handleUpvote() {
-      if (!this.$store.state.login) {
-        this.$message({
-          message: '登陆以评价比赛',
-          type: 'warning'
-        })
-        return
-      }
+      if(this.loginCheck() === false) return;
       let response = await this.$http.post(`/api/contests/${this.contestInfo.id}/vote`, { upvote: 1 })
       this.refreshVotes(response)
     },
     async handleDownvote() {
+      if(this.loginCheck() === false) return;
       let response = await this.$http.post(`/api/contests/${this.contestInfo.id}/vote`, { upvote: -1 })
       this.refreshVotes(response)
     },
@@ -86,6 +81,16 @@ export default {
       this.contestInfo.upvote = response.body.data.upvote
       this.contestInfo.downvote = response.body.data.downvote
       this.contestInfo.userRelated.upvoteStatus = response.body.data.upvoteStatus
+    },
+    loginCheck() {
+      if (!this.$store.state.login) {
+        this.$message({
+          message: '登录以评价比赛',
+          type: 'warning'
+        })
+        return false
+      }
+      return true
     }
   },
   computed: {
