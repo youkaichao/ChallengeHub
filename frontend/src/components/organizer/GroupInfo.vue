@@ -1,5 +1,5 @@
 <template>
-  <div style="margin: 0; height: 100%; overflow: hidden;">
+  <div>
     <el-alert
       title="你可以选择不同的选项对队伍进行筛选，只有满足条件的队伍会在表格中出现。"
       type="success"
