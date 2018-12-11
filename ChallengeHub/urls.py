@@ -22,6 +22,7 @@ import match.urls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^api/', include(basic.urls)),
     url(r'^auth/', include(useraction.urls)),
     url(r'^apiv2/', include(match.urls)),

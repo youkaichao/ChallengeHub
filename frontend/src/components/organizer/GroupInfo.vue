@@ -32,7 +32,7 @@
       style="width: 400px; margin-top: 30px;"
     ></el-input>
     <el-alert
-      title="你可以点击每列的标题对这些数据进行排序（可在顺序、逆序和不排序中切换）。"
+      title="你可以点击每列的标题对这些数据进行排序（可在顺序、逆序和不排序中切换）。你也可以选择部分单元格并单击右键选择复制。"
       style="margin-top: 30px;"
       type="success"
     ></el-alert>
@@ -81,7 +81,8 @@ export default {
         manualRowMove: true,
         stretchH: 'all',
         columnSorting: true,
-        search: true
+        search: true,
+        contextMenu: ['copy']
       }
     }
   },

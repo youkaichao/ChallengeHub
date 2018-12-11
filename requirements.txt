@@ -18,3 +18,4 @@ six==1.11.0
 typed-ast==1.1.0
 wrapt==1.10.11
 pymongo==3.7.1
+django-grappelli==2.12.1

@@ -15,7 +15,10 @@
           <el-tag>{{'举办方: '+contest.publisher}}</el-tag>
         </el-row>
       </el-card>
-      <el-menu :default-active="activeIndex" class="el-menu-vertical-demo">
+      <el-menu
+        :default-active="activeIndex"
+        class="el-menu-vertical-demo"
+      >
         <el-menu-item
           v-for="(item,index) in sidebarList"
           :key="index"
@@ -24,9 +27,16 @@
         >{{ item.label }}</el-menu-item>
       </el-menu>
     </el-aside>
-    <el-main>
-      <transition name="component-fade" mode="out-in">
-        <router-view :contest="contest" :contestId="contestId" @refreshContest="refreshContest"></router-view>
+    <el-main style="height:auto;">
+      <transition
+        name="component-fade"
+        mode="out-in"
+      >
+        <router-view
+          :contest="contest"
+          :contestId="contestId"
+          @refreshContest="refreshContest"
+        ></router-view>
       </transition>
     </el-main>
   </el-container>
@@ -134,9 +144,9 @@ export default {
   margin: 5px;
 }
 
-
-.component-fade-enter-active, .component-fade-leave-active {
-  transition: opacity .3s ease;
+.component-fade-enter-active,
+.component-fade-leave-active {
+  transition: opacity 0.3s ease;
 }
 .component-fade-enter, .component-fade-leave-to
 /* .component-fade-leave-active below version 2.1.8 */ {

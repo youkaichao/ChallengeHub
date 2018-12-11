@@ -23,6 +23,7 @@ yarn-error.log*
 # Django
 __pycache__/
 /submit
+/static
 
 # Config file
 config.json
