@@ -1,12 +1,13 @@
 <template>
   <div>
     <h1>收信者名称</h1>
-    <el-input
+    <el-autocomplete
       style="width: 50%;"
       placeholder="请输入名称"
       v-model="peer"
+      :fetch-suggestions="querySearchAsync"
       :disabled="peerDisabled"
-    ></el-input>
+    ></el-autocomplete>
     <h1>私信正文</h1>
     <el-input
       type="textarea"

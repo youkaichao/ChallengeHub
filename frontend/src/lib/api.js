@@ -1029,10 +1029,10 @@ export default {
         error: '',
         data: {
           username: 'abc',
-          email: `${request.body.username}@ts.com`,
-          selfDescription: `I am a ${request.body.username}`,
-          sourceSchool: `${request.body.username} school`,
-          isIndividual: request.body.username === 'organizer'
+          email: `fuck@bornhub.com`,
+          introduction: `I am a bornhuber.`,
+          school: `BB school`,
+          individual: 1
         }
       },
       status: 200,
@@ -2036,6 +2036,34 @@ export default {
               form: '{"性取向":"草狗","你喜欢吃垃圾吗":"喜欢","你吃过几次垃圾":"3","你喜欢吃什么类型的垃圾":"骨头垃圾"}'
             },
           ]
+        }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['POST */auth/reset_password'](_1, _2, _3, _4) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: [_1, _2, _3, _4]
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/users/profile/yousheng'](_1, _2, _3, _4) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          username: 'yousheng',
+          email: 'thu@yousheng.com',
+          introduction: '游神牛逼得很啊',
+          school: '清华软院',
+          individual: 1
         }
       },
       status: 200,

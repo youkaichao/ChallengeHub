@@ -28,6 +28,8 @@ const MessageCenter = () => import('@/components/messaging/MessageCenter')
 const NewMessage = () => import('@/components/messaging/NewMessage')
 const GroupDashboard = () => import('@/components/dashboard/GroupDashboard')
 const GroupList = () => import('@/components/dashboard/GroupList')
+const ProfileManagement = () => import('@/components/profile/ProfileManagement')
+const ProfileView = () => import('@/components/profile/ProfileView')
 Vue.use(VueCookies)
 Vue.use(VueResource)
 Vue.use(Router)
@@ -114,6 +116,16 @@ export default new Router({
           path: 'user',
           name: '/user',
           component: User
+        },
+        {
+          path: 'profile/:username',
+          name: '/profile/:username',
+          component: ProfileView
+        },
+        {
+          path: 'profile_management',
+          name: '/profile_management',
+          component: ProfileManagement
         },
         {
           path: 'organizer/:id',
