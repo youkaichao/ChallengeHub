@@ -40,6 +40,8 @@ urlpatterns = [
         views.UserJudgedView.as_view()),
     url(r'users/created$',
         views.UserCreatedView.as_view()),
+    url(r'users/profile/(?P<username>.*)$',
+        views.UserProfileView.as_view()),
     url(r'judges/(?P<contest_id>[0-9]+)$',
         views.JudgeReviewView.as_view()),
 ]

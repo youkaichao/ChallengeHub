@@ -93,3 +93,17 @@ class UserValidateView(View):
             user.save()
             return
         raise Exception('email validation failed')
+
+        
+class UserResetPasswdView(View):
+    @require_logged_in
+    def post(self, request) -> Any:
+        self.check_input(['old', 'new'])
+        old = request.data.get('old')
+        new = request.data.get('new')
+        user = authenticate(username=request.user.username, password=old)
+        if not user:
+            raise Exception('wrong password!')
+        user.set_password(new)
+        user.save()
+        login(request, user)

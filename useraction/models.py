@@ -17,5 +17,5 @@ class User(AbstractUser):
             'email': self.email,
             'introduction': self.introduction,
             'school': self.school,
-            'individual': self.individual
+            'individual': int(self.individual)
         }

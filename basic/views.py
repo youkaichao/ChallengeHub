@@ -600,3 +600,9 @@ class NoticeDetailView(View):
         notice.modified_time = timezone.now()
         notice.save()
         return
+
+        
+class UserProfileView(View):
+    def get(self, request, username) -> Any:
+        user = User.objects.get(username=username)
+        return user.to_dict()

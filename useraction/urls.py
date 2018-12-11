@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'register$', views.UserRegisterView.as_view()),
     url(r'info$', views.UserInfoView.as_view()),
     url(r'validate$', views.UserValidateView.as_view()),
+    url(r'reset_password$', views.UserResetPasswdView.as_view()),
 ]
