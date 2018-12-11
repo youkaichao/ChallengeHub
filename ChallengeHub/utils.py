@@ -10,7 +10,7 @@ from useraction.models import User
 from django.db.models import Model
 
 
-def delete_table(model : typing.Type[Model]):
+def delete_table(model: typing.Type[Model]):
     for q in model.objects.all():
         q.delete()
 
@@ -58,8 +58,8 @@ def require_logged_in(func: Callable[..., Any]) -> Callable[..., Any]:
             return func(self, request, *args, **kwargs)
 
     return new_func
-    
-    
+
+
 def require_to_be_organization(func: Callable[..., Any]) -> Callable[..., Any]:
     def new_func(self, request, *args, **kwargs) -> Any:
         if request.user.individual:
@@ -68,8 +68,8 @@ def require_to_be_organization(func: Callable[..., Any]) -> Callable[..., Any]:
             return func(self, request, *args, **kwargs)
 
     return new_func
-    
-    
+
+
 def require_to_be_individual(func: Callable[..., Any]) -> Callable[..., Any]:
     def new_func(self, request, *args, **kwargs) -> Any:
         if not request.user.individual:
@@ -78,14 +78,14 @@ def require_to_be_individual(func: Callable[..., Any]) -> Callable[..., Any]:
             return func(self, request, *args, **kwargs)
 
     return new_func
-    
-    
+
+
 def require_to_be_publisher(func: Callable[..., Any]) -> Callable[..., Any]:
     def new_func(self, request, *args, **kwargs) -> Any:
         if 'contest_id' in kwargs:
             contest_id = kwargs['contest_id']
             contest = Competition.objects.get(id=int(contest_id))
-            if (contest.publisher != request.user):
+            if contest.publisher != request.user:
                 raise Exception('no authority to change stage')
         return func(self, request, *args, **kwargs)
 

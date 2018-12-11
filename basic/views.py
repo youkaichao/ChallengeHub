@@ -7,7 +7,8 @@ from basic.models import Competition, Group, CStage, GStage, ReviewMeta, Notice,
 from useraction.models import User
 from match.models import Invitation
 from typing import Dict, Any, Callable, List
-from ChallengeHub.utils import BaseView as View, require_logged_in, make_errors, require_to_be_organization, require_to_be_individual, require_to_be_publisher
+from ChallengeHub.utils import BaseView as View, require_logged_in, make_errors, require_to_be_organization, \
+    require_to_be_individual, require_to_be_publisher
 from ChallengeHub.settings import MONGO_CLIENT, BASE_DIR
 import os
 import json
@@ -31,8 +32,10 @@ class ContestCollectionView(View):
             'name', 'subject', 'groupSize', 'enrollStart', 'enrollEnd',
             'detail', 'procedure', 'enrollUrl', 'charge', 'enrollForm', 'imgUrl',
         ])
+        contest_name = request.data.get('name')
+
         c = Competition(
-            name=request.data.get('name'),
+            name=contest_name,
             subject=request.data.get('subject'),
             group_size=request.data.get('groupSize'),
             enroll_start=request.data.get('enrollStart'),
@@ -77,6 +80,9 @@ class ContestDetailView(View):
         self.check_input(['stage'])
         competition = Competition.objects.get(id=int(contest_id))
         stage = int(request.data.get('stage'))
+
+        if stage < competition.current_stage:
+            raise Exception('Cannot proceed to previous stage')
 
         if stage > 0 and stage % 2 == 0:  # when enter judge stage, update all qualified group to that stage
             qualified_groups = Group.objects.filter(
@@ -171,9 +177,6 @@ class ContestAutoAssignView(View):
 
         judge_count = {x.username: 0 for x in judges}
         group_count = {x.id: 0 for x in submitted_gstages}
-
-        if cstage.is_assigned and serious:
-            raise Exception("already assigned")
 
         # assign assignment
         index = 0
@@ -330,7 +333,7 @@ class ContestSubmissionView(View):
         group = user.joint_groups.get(competition__id=int(contest_id))
         submit = request.data.get('file')
         stage = group.current_stage
-        if (stage != group.competition.current_stage or stage % 2 != 1):
+        if stage != group.competition.current_stage or stage % 2 != 1:
             raise Exception('no authority to submit now')
         _, extension = os.path.splitext(submit.name)
 
@@ -397,8 +400,13 @@ class UserJudgedView(View):
     @require_to_be_individual
     def get(self, request) -> Any:
         user = request.user
-        competitions = [
-            r.stage.group.competition for r in user.review_list.all()]
+        competitions = []
+        contest_id_set = set()
+        for r in user.review_list.all():
+            tmp = r.stage.group.competition
+            if tmp.id not in contest_id_set:
+                contest_id_set.add(tmp.id)
+                competitions.append(tmp)
         data = []
         for competition in competitions:
             stage = competition.current_stage
@@ -467,12 +475,11 @@ class JudgeReviewView(View):
     @require_to_be_individual
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['reviews'])
-        competition = Competition.objects.get(id=int(contest_id))
         reviews = request.data.get('reviews')
         for r in reviews:
             meta = ReviewMeta.objects.get(id=r['id'])
             meta.reviewed = meta.reviewed or r['reviewed']
-            meta.score = r['rating']
+            meta.score = r['rating']  # todo range test: what if score < 0 or score > 100?
             meta.msg = r.get('msg', '')
             meta.save()
             reviews = meta.stage.review_meta_list.all()
@@ -592,7 +599,6 @@ class NoticeDetailView(View):
     @require_to_be_organization
     @require_to_be_publisher
     def put(self, request, contest_id: str, notice_id: str) -> Any:
-        competition = Competition.objects.get(id=int(contest_id))
         notice = Notice.objects.get(id=int(notice_id))
         self.check_input(['title', 'content'])
         notice.title = request.data.get('title')
