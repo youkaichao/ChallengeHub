@@ -30,6 +30,8 @@ const GroupDashboard = () => import('@/components/dashboard/GroupDashboard')
 const GroupList = () => import('@/components/dashboard/GroupList')
 const ProfileManagement = () => import('@/components/profile/ProfileManagement')
 const ProfileView = () => import('@/components/profile/ProfileView')
+const HelpCenter = () => import('@/components/HelpCenter')
+const AboutUs = () => import('@/components/AboutUs')
 Vue.use(VueCookies)
 Vue.use(VueResource)
 Vue.use(Router)
@@ -42,6 +44,16 @@ export default new Router({
       component: Main,
       redirect: '/index',
       children: [
+        {
+          path: 'help',
+          name: '/help',
+          component: HelpCenter
+        },
+        {
+          path: 'about',
+          name: '/about',
+          component: AboutUs
+        },
         {
           path: 'validate/:token',
           name: '/validate/:token',
@@ -128,6 +140,11 @@ export default new Router({
           component: ProfileManagement
         },
         {
+          path: 'judge/workspace/:id',
+          name: '/judge/workspace/:id',
+          component: JudgeWorkspace
+        },
+        {
           path: 'organizer/:id',
           component: ControlPanel,
           children: [
@@ -177,11 +194,6 @@ export default new Router({
               component: GroupInfo
             }
           ]
-        },
-        {
-          path: 'judge/workspace/:id',
-          name: '/judge/workspace/:id',
-          component: JudgeWorkspace
         }
       ]
     }
