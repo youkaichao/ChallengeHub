@@ -78,9 +78,6 @@ export default {
       if (!value) {
         callback(new Error('请输入新密码'))
       } else {
-        if (this.newPasswordRetyped !== '') {
-          this.$refs.ruleForm2.validateField('repeatNewPassword')
-        }
         callback()
       }
     }
@@ -116,26 +113,19 @@ export default {
   },
   methods: {
     async repasswordConfirm() {
-      this.$refs['form'].validate(async valid => {
-        if (valid) {
-          let response = await this.$http.post(`/auth/reset_password`, {
-            old: this.oldPassword,
-            new: this.newPassword
-          })
-          if (response.body.code !== 0) {
-            this.$message({ type: 'error', message: response.body.error })
-            return
-          } else {
-            this.$message({ type: 'success', message: '修改密码成功' })
-          }
-
-          this.oldPassword = ''
-          this.newPassword = ''
-          this.newPasswordRetyped = ''
-        } else {
-          this.$message.error('表单有误，请修改后提交')
-        }
+      let response = await this.$http.post(`/auth/reset_password`, {
+        old: this.oldPassword,
+        new: this.newPassword
       })
+      if (response.body.code !== 0) {
+        this.$message({ type: 'error', message: response.body.error })
+        return
+      } else {
+        this.$message({ type: 'success', message: '修改密码成功' })
+        this.oldPassword = ''
+        this.newPassword = ''
+        this.newPasswordRetyped = ''
+      }
     },
     async modSchoolConfim() {
       let response = await this.$http.post(`/auth/info`, {

@@ -6,7 +6,7 @@
         <el-col :span="6" style="text-align: left; margin: auto;"> <span class="info-tag">学校</span> {{ this.$store.state.school }} </el-col>
         <el-col :span="6" style="text-align: left; margin: auto;"> <span class="info-tag">邮箱</span> {{ this.$store.state.email }} </el-col>
         <el-col :span="6" style="text-align: right;">
-          <el-button type="text" @click="$router.push('/user')">修改个人信息</el-button>
+          <el-button type="text" @click="$router.push('/profile_management')">修改个人信息</el-button>
         </el-col>
       </el-row>
       <el-row type="flex" align-items="center">
