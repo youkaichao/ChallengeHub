@@ -23,6 +23,8 @@
           @reply-message="replyMessage"
           @accept-invitation="acceptInvitation"
           @reject-invitation="rejectInvitation"
+          @accept-reviewer-invitation="acceptReviewerInvitation"
+          @reject-reviewer-invitation="rejectReviewerInvitation"
         >{{message.content}}</single-message>
       </el-tab-pane>
       <el-tab-pane label="已读消息" name="read">
@@ -44,6 +46,8 @@
           @reply-message="replyMessage"
           @accept-invitation="acceptInvitation"
           @reject-invitation="rejectInvitation"
+          @accept-reviewer-invitation="acceptReviewerInvitation"
+          @reject-reviewer-invitation="rejectReviewerInvitation"
         >{{message.content}}</single-message>
       </el-tab-pane>
     </el-tabs>
@@ -118,6 +122,32 @@ export default {
     },
     async rejectInvitation({ contestId, groupId }) {
       let response = await this.$http.post(`/apiv2/contests/${contestId}/groups/${groupId}/invitation`, { accept: false })
+      if (response.body.code !== 0) {
+        this.$message({ type: 'error', message: response.body.error })
+        return
+      }
+      this.$message({ type: 'success', message: '邀请已拒绝' })
+      if (this.currentTab === 'unread') {
+        await this.updateUnreadMessages()
+      } else {
+        await this.updateReadMessages()
+      }
+    },
+    async acceptReviewerInvitation({ contestId }) {
+      let response = await this.$http.post(`/apiv2/contests/${contestId}/reviewers/response`, { accept: true })
+      if (response.body.code !== 0) {
+        this.$message({ type: 'error', message: response.body.error })
+        return
+      }
+      this.$message({ type: 'success', message: '邀请已接受' })
+      if (this.currentTab === 'unread') {
+        await this.updateUnreadMessages()
+      } else {
+        await this.updateReadMessages()
+      }
+    },
+    async rejectReviewerInvitation({ contestId }) {
+      let response = await this.$http.post(`/apiv2/contests/${contestId}/reviewers/response`, { accept: false })
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return

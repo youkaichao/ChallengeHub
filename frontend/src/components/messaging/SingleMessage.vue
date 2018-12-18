@@ -1,22 +1,17 @@
 <template>
-  <el-card
-    style="text-align: left;"
-    body-style="padding: 10px;"
-  >
+  <el-card style="text-align: left;" body-style="padding: 10px;">
     <div v-if="message.type === 'letter'">
       <div class="title">
         <div>
-          <span>来自</span><span class="theme">{{message.sender}}</span><span>的消息</span>
+          <span>来自</span>
+          <span class="theme">{{message.sender}}</span>
+          <span>的消息</span>
         </div>
         <div class="send-date">
-          <span>
-            发送于 {{sendTime}}
-          </span>
+          <span>发送于 {{sendTime}}</span>
         </div>
       </div>
-      <div class="content">
-        {{message.content}}
-      </div>
+      <div class="content">{{message.content}}</div>
       <el-button
         v-if="!read"
         type="primary"
@@ -29,10 +24,7 @@
         plain
         @click="$emit('delete-message', {id: message.id, type: message.type})"
       >删除消息</el-button>
-      <el-button
-        type="primary"
-        @click="$emit('reply-message', message.sender)"
-      >回复消息</el-button>
+      <el-button type="primary" @click="$emit('reply-message', message.sender)">回复消息</el-button>
     </div>
 
     <div v-if="message.type === 'system'">
@@ -41,14 +33,10 @@
           <span class="theme">系统通知</span>
         </div>
         <div class="send-date">
-          <span>
-            发送于 {{sendTime}}
-          </span>
+          <span>发送于 {{sendTime}}</span>
         </div>
       </div>
-      <div class="content">
-        {{message.content}}
-      </div>
+      <div class="content">{{message.content}}</div>
       <el-button
         v-if="!read"
         type="primary"
@@ -69,22 +57,15 @@
           <span class="theme">比赛组队邀请</span>
         </div>
         <div class="send-date">
-          <span>
-            发送于 {{sendTime}}
-          </span>
+          <span>发送于 {{sendTime}}</span>
         </div>
       </div>
-      <div
-        class="content"
-        style="text-align: center;"
-      >
-
-        <el-card
-          shadow="never"
-          style="width: 600px; margin-left: auto; margin-right: auto;"
-        >
+      <div class="content" style="text-align: center;">
+        <el-card shadow="never" style="width: 600px; margin-left: auto; margin-right: auto;">
           <div>
-            <span class="theme bold">{{message.content.leaderName}}</span>邀请你加入<span class="theme bold">{{message.content.groupName}}</span>参加比赛<span class="theme bold">{{message.content.contestName}}</span>
+            <span class="theme bold">{{message.content.leaderName}}</span>邀请你加入
+            <span class="theme bold">{{message.content.groupName}}</span>参加比赛
+            <span class="theme bold">{{message.content.contestName}}</span>
           </div>
           <div style="margin-top: 20px; color: gray; font-size: 12px; margin-bottom: 10px;">
             <span v-if="message.content.status === 0">在接收邀请后，组长确认组队前，你依然可以退出</span>
@@ -104,7 +85,6 @@
             v-if="message.content.status === 0"
           >拒绝邀请</el-button>
         </el-card>
-
       </div>
       <el-button
         v-if="!read"
@@ -123,6 +103,55 @@
         plain
         @click="$emit('reply-message', message.content.leaderName)"
       >向组长发消息</el-button>
+    </div>
+
+    <div v-if="message.type === 'reviewer_invitation'">
+      <div class="title">
+        <div>
+          <span class="theme">比赛评审邀请</span>
+        </div>
+
+        <div class="send-data">
+          <span>发送于 {{sendTime}}</span>
+        </div>
+      </div>
+
+      <div class="content" style="text-align: center;">
+        <el-card shadow="never" style="width: 600px; margin-left: auto; margin-right: auto;">
+          <div>
+            <span class="theme bold">{{message.content.contestName}}</span>的主办方<span class="theme bold">{{message.sender}}</span>邀请你进行评审
+          </div>
+          <div style="margin-top: 20px; color: gray; font-size: 12px; margin-bottom: 10px;">
+            <span v-if="message.content.status === 0">请及时做出选择</span>
+            <span v-if="message.content.status === 1">你已接受这次邀请</span>
+            <span v-if="message.content.status === 2">你已拒绝这次邀请</span>
+            <span v-if="message.content.status === 3">这个邀请已经过期或取消</span>
+          </div>
+
+          <el-button
+            type="success"
+            @click="$emit('accept-reviewer-invitation', {contestId: message.content.contestId})"
+            v-if="message.content.status === 0"
+          >接受邀请</el-button>
+          <el-button
+            type="danger"
+            @click="$emit('reject-reviewer-invitation', {contestId: message.content.contestId})"
+            v-if="message.content.status === 0"
+          >拒绝邀请</el-button>
+        </el-card>
+      </div>
+      <el-button
+        v-if="!read"
+        type="primary"
+        plain
+        @click="$emit('mark-as-read', {id: message.id, type: message.type})"
+      >标记为已读</el-button>
+      <el-button
+        v-if="read"
+        type="primary"
+        plain
+        @click="$emit('delete-message', {id: message.id, type: message.type})"
+      >删除消息</el-button>
     </div>
   </el-card>
 </template>

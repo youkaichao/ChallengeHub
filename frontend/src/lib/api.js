@@ -84,6 +84,17 @@ export default {
               content: '弱渣和我组队不？',
               sendTime: '2018-03-25T06:26:01.927Z',
               type: 'letter'
+            },
+            {
+              id: 8,
+              sender: '刘强',
+              content: {
+                contestName: '微信小程序大赛',
+                contestId: 10086,
+                status: 0
+              },
+              sendTime: '2018-03-25T06:26:01.927Z',
+              type: 'reviewer_invitation'
             }
           ]
         },
@@ -115,6 +126,18 @@ export default {
         status: 200,
         statusText: 'OK'
       }
+    }
+  },
+  ['POST */apiv2/contests/10086/reviewers/response'](_1, _2, _3, _4){
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {
+          }
+      },
+      status: 200,
+      statusText: 'OK'
     }
   },
   ['GET */api/contests/1'](pathMatch, query, request, passThrough) {
@@ -2034,7 +2057,7 @@ export default {
             {
               name: '捡一下垃圾组',
               form: '{"性取向":"草狗","你喜欢吃垃圾吗":"喜欢","你吃过几次垃圾":"3","你喜欢吃什么类型的垃圾":"骨头垃圾"}'
-            },
+            }
           ]
         }
       },
