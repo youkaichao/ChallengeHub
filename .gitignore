@@ -28,6 +28,7 @@ __pycache__/
 # Config file
 config.json
 .prettierrc
+docker-compose.yml
 
 # virtual env
 env

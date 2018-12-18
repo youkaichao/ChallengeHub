@@ -27,7 +27,10 @@ if travis:
 else:
     configFileName = 'config.json'
 
-CONFIGS = json.loads(open(os.path.join(BASE_DIR, configFileName)).read())
+configFilePath = os.getenv(
+    'DJANGO_CONFIG_PATH', os.path.join(BASE_DIR, configFileName))
+
+CONFIGS = json.loads(open(configFilePath).read())
 
 MONGO_CLIENT = pymongo.MongoClient(
     CONFIGS['MONGO_HOST'], CONFIGS['MONGO_PORT'])

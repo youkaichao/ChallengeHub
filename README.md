@@ -19,3 +19,12 @@ ChallengeHub 是一个面向大学生的竞赛平台.
 ## 后端构建
 
 在根目录执行命令 `python manage.py runserver` 启动 Django 服务器.
+
+## 部署方法
+
+执行 `npm run build` 后
+
+`docker build -t challenge .`
+`docker-compose up -d`
+
+需要 `docker-compose.yml` 文件
