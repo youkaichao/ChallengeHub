@@ -3,6 +3,7 @@ from useraction.models import User
 from django.test import TestCase
 from basic.models import Competition, CStage, Notice, Group, GStage, ReviewMeta, Vote
 from ChallengeHub.utils import MyClient, delete_table
+from ChallengeHub.settings import MONGO_CLIENT
 
 models = [User, Competition, CStage, Notice, Group, GStage, ReviewMeta, Vote]
 
@@ -25,6 +26,8 @@ def teardown_all():
         delete_table(x)
     delete_table(Competition)
     delete_table(User)
+    MONGO_CLIENT.db.groupEnrollForm.remove({})
+    MONGO_CLIENT.db.competitionEnrollForm.remove({})
 
 
 class BackendAPITest(TestCase):
@@ -43,12 +46,7 @@ class BackendAPITest(TestCase):
             globals()[name] = tmp
 
     def tearDown(self):
-        for x in [ReviewMeta, CStage, GStage]:
-            delete_table(x)
-        for x in [Notice, Vote, Group]:
-            delete_table(x)
-        delete_table(Competition)
-        delete_table(User)
+        teardown_all()
 
     def test_procedure(self):
         # 模拟一场比赛的流程

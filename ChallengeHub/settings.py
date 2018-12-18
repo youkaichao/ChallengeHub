@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 import json
 import pymongo
+import sys
+
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 
 travis = os.getenv('BUILD_ON_TRAVIS', None)
 
@@ -28,6 +31,8 @@ CONFIGS = json.loads(open(os.path.join(BASE_DIR, configFileName)).read())
 
 MONGO_CLIENT = pymongo.MongoClient(
     CONFIGS['MONGO_HOST'], CONFIGS['MONGO_PORT'])
+    
+MONGO_CLIENT.db = MONGO_CLIENT.test if TESTING else MONGO_CLIENT.normal
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend", "dist", "static"),

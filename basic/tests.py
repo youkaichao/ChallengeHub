@@ -19,9 +19,12 @@ class BasicTest(TestCase):
         if type not in ['publisher', 'individual', 'judge']:
             raise Exception('invalid user type')
         is_individual = type != 'publisher'
-        user = User(username=username, individual=is_individual)
-        user.set_password(username)
-        user.save()
+        user = User.objects.filter(username=username, individual=is_individual)
+        if not user:
+            user = User.objects.create_user(username=username, password=username, individual=is_individual)
+            user.save()
+        else:
+            user = user.first()
         client = MyClient()
         res = client.login(username=username, password=username)
         self.assertTrue(res)

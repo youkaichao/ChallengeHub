@@ -3,6 +3,7 @@ from ChallengeHub.utils import MyClient, delete_table
 from basic.models import Competition, CStage, Notice, Group, GStage, ReviewMeta, Vote
 from useraction.models import User
 from match.models import Message, Invitation, InvitationStatus
+from ChallengeHub.tests import teardown_all
 
 
 def create_user(name):
@@ -47,12 +48,7 @@ class MessageAPITest(TestCase):
             globals()[name] = tmp
 
     def tearDown(self):
-        for x in [ReviewMeta, CStage, GStage]:
-            delete_table(x)
-        for x in [Notice, Vote, Group]:
-            delete_table(x)
-        delete_table(Competition)
-        delete_table(User)
+        teardown_all()
 
 
 class GroupAPITest(TestCase):
@@ -114,12 +110,7 @@ class GroupAPITest(TestCase):
             globals()[name] = tmp
 
     def tearDown(self):
-        for x in [ReviewMeta, CStage, GStage]:
-            delete_table(x)
-        for x in [Notice, Vote, Group]:
-            delete_table(x)
-        delete_table(Competition)
-        delete_table(User)
+        teardown_all()
 
 
 class GetAPITest(MessageAPITest):

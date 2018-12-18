@@ -53,8 +53,7 @@ class ContestCollectionView(View):
             stage = CStage(name=prod["name"], start_time=prod["startTime"],
                            end_time=prod["endTime"], stage=2 * i + 1, competition=c)
             stage.save()
-        collection = MONGO_CLIENT.competition.enrollForm
-        print(request.data.get('enrollForm'))
+        collection = MONGO_CLIENT.db.competitionEnrollForm
         collection.insert_one(
             {'id': c.id, 'enrollForm': request.data.get('enrollForm')})
         if (not c.enroll_url):
@@ -279,19 +278,19 @@ class GroupDetailView(View):
     def get(self, request, contest_id: str) -> Any:
         data = {}
         competition = Competition.objects.get(id=int(contest_id))
-        collection = MONGO_CLIENT.competition.enrollForm
+        collection = MONGO_CLIENT.db.competitionEnrollForm
         data['enrollForm'] = collection.find_one({'id': int(contest_id)})['enrollForm']
         groups = competition.enrolled_groups.all()
         data['info'] = [{
             'name': group.name,
-            'form': MONGO_CLIENT.group.enrollForm.find_one({'user_id': int(group.leader.id), 'contest_id':int(contest_id)})['enrollForm']
+            'form': MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(group.leader.id), 'contest_id':int(contest_id)})['enrollForm']
         } for group in groups]
         return data
 
 
 class ContestEnrollView(View):
     def get(self, request, contest_id: str) -> Any:
-        collection = MONGO_CLIENT.competition.enrollForm
+        collection = MONGO_CLIENT.db.competitionEnrollForm
         data = collection.find_one({'id': int(contest_id)})
         return {'enrollForm': data['enrollForm']}
 
@@ -314,7 +313,7 @@ class ContestEnrollView(View):
         stage = GStage(stage=1, score=0, group=group)
         stage.save()
 
-        collection = MONGO_CLIENT.group.enrollForm
+        collection = MONGO_CLIENT.db.groupEnrollForm
         collection.insert_one({'user_id': int(group.leader.id), 'contest_id':int(contest_id), 'enrollForm': request.data['form']})
         members = request.data['members']
         for member in members:

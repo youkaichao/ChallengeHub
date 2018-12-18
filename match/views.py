@@ -66,7 +66,7 @@ class MatchQuitView(View):
             raise Exception('group already locked')
         if request.user == group.leader:
             group.members.remove(request.user)
-            collection = MONGO_CLIENT.group.enrollForm
+            collection = MONGO_CLIENT.db.groupEnrollForm
             collection.delete_one({'user_id': request.user.id, 'contest_id':int(contest_id)})
             if len(group.members.all()) == 0:
                 # delete foreign key first
@@ -107,7 +107,7 @@ class MatchResponseView(View):
         accepted = request.data.get('accept')
         if accepted:
             group.members.add(user)
-            collection = MONGO_CLIENT.group.enrollForm
+            collection = MONGO_CLIENT.db.groupEnrollForm
             collection.insert_one(
                 {'user_id': int(user.id), 'contest_id':int(contest_id), 'enrollForm': request.data['form']})
             group.save()
@@ -128,7 +128,7 @@ class ReviewersResponseView(View):
         accepted = request.data.get('accept')
         if accepted:
             c.judges.add(user)
-            collection = MONGO_CLIENT.group.enrollForm
+            collection = MONGO_CLIENT.db.groupEnrollForm
             collection.insert_one({'user_id': int(user.id), 'contest_id':int(contest_id), 'enrollForm': request.data['form']})
             c.save()
         invitation.status = InvitationStatus.ACCEPTED if accepted else InvitationStatus.REJECTED
