@@ -1,15 +1,20 @@
 <template>
   <div>
     <el-table :data="judges" stripe style="width: 100%">
-      <el-table-column prop="username" label="用户名">
-      </el-table-column>
-      <el-table-column prop="email" label="邮箱">
-      </el-table-column>
-      <el-table-column prop="school" label="学校">
+      <el-table-column prop="username" label="用户名"></el-table-column>
+      <el-table-column prop="email" label="邮箱"></el-table-column>
+      <el-table-column prop="school" label="学校"></el-table-column>
+      <el-table-column label="状态">
+        <template slot-scope="scope">{{scope.row.accepted === 1 ? "已接受": "未接受"}}</template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="text" @click="removeJudge(scope.row.username)">移除</el-button>
+          <el-button
+            v-if="scope.row.accepted === 0"
+            el-button
+            type="text"
+            @click="removeJudge(scope.row.username)"
+          >取消邀请</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -60,7 +65,7 @@ export default {
     },
     refreshJudge() {
       this.$http
-        .get(`/api/contests/${this.contestId}/reviewer`)
+        .get(`/api/contests/${this.contestId}/reviewer`, { params: { all: 1 } })
         .then(resp => {
           if (resp.body.code !== 0) {
             throw new Error(resp.body.error)
@@ -88,8 +93,16 @@ export default {
           this.$alert(err.toString())
         })
     },
-    removeJudge(username) {
-      this.$alert('todo ' + username)
+    async removeJudge(username) {
+      let response = await this.$http.post(`/apiv2/contests/${this.contestId}/reviewers/cancel`, {
+        username: username
+      })
+      if (response.body.code !== 0) {
+        this.$message({ type: 'error', message: response.body.error })
+        return
+      }
+
+      this.$message({ type: 'success', message: `成功撤销邀请` })
     }
   },
   created() {

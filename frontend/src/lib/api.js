@@ -128,13 +128,12 @@ export default {
       }
     }
   },
-  ['POST */apiv2/contests/10086/reviewers/response'](_1, _2, _3, _4){
+  ['POST */apiv2/contests/10086/reviewers/response'](_1, _2, _3, _4) {
     return {
       body: {
         code: 0,
         error: '',
-        data: {
-          }
+        data: {}
       },
       status: 200,
       statusText: 'OK'
@@ -461,7 +460,7 @@ export default {
               extension: 'html',
               msg: '牛逼',
               groupName: '群主牛逼组'
-            },
+            }
           ]
         }
       },
@@ -1151,6 +1150,36 @@ export default {
     }
   },
   ['GET */api/contests/1/reviewer'](pathMatch, query, request, passThrough) {
+    if(request.params.all) {
+      return {
+        body: {
+          code: 0,
+          error: '',
+          data: [
+            {
+              username: 'ykc',
+              email: 'ykc@abc.com',
+              school: 'THU',
+              accepted: 1
+            },
+            {
+              username: 'ykc',
+              email: 'ykc@abc.com',
+              school: 'THU',
+              accepted: 1
+            },
+            {
+              username: 'ykc',
+              email: 'ykc@abc.com',
+              school: 'THU',
+              accepted: 0
+            }
+          ]
+        },
+        status: 200,
+        statusText: 'OK'
+      }
+    }
     return {
       body: {
         code: 0,
