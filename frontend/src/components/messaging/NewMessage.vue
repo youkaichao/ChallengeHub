@@ -45,6 +45,25 @@ export default {
     }
   },
   methods: {
+    querySearchAsync(queryString, callback) {
+      if (queryString) {
+        this.$http
+          .get('/api/users', {
+            params: {
+              prefix: queryString
+            }
+          })
+          .then(resp => {
+            if (resp.body.code !== 0) {
+              throw new Error(resp.body.error)
+            }
+            let values = resp.body.data
+            values = values.map(x => ({ value: x.username }))
+            callback(values)
+          })
+          .catch(() => {})
+      }
+    },
     async sendMessage() {
       let response = await this.$http.post(`/apiv2/messages`, { peer: this.peer, content: this.content })
       if (response.body.code !== 0) {

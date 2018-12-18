@@ -86,11 +86,11 @@ class BackendAPITest(TestCase):
         self.assertEqual(data['code'], 0)
 
         # student2同意了
-        data = student2.post(f'/apiv2/contests/{contest_id}/groups/{group_id}/invitation', data={"accept": True})
+        data = student2.post(f'/apiv2/contests/{contest_id}/groups/{group_id}/invitation', data={"accept": True, "form":{}})
         self.assertEqual(data['code'], 0)
 
         # student1拒绝了
-        data = student1.post(f'/apiv2/contests/{contest_id}/groups/{group_id}/invitation', data={"accept": False})
+        data = student1.post(f'/apiv2/contests/{contest_id}/groups/{group_id}/invitation', data={"accept": False, "form":{}})
         self.assertEqual(data['code'], 0)
 
         # 组长退出了
@@ -105,6 +105,10 @@ class BackendAPITest(TestCase):
         data = organizer.post(f'/api/contests/{contest_id}/reviewer', {'username': ['reviewer1']})
         self.assertEqual(data['code'], 0)
 
+        # 评委同意
+        data = reviewer1.post(f'/apiv2/contests/{contest_id}/reviewers/response', data={'accept': True, "form":{}})
+        self.assertEqual(data['code'], 0)
+        
         # 两个阶段
         for stage in range(1, 3):
             # 主办方宣布进入下一个阶段

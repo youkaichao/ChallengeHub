@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from ChallengeHub.utils import BaseView as View, require_logged_in
 from useraction.models import User
-from match.models import Message, Invitation, InvitationStatus
+from match.models import Message, Invitation, InvitationStatus, ReviewerInvitation, MessageType, SystemMessage
 from basic.models import Competition, Group
+from ChallengeHub.settings import MONGO_CLIENT
 from django.db.models import Q
 from typing import Any
 import json
@@ -65,6 +66,8 @@ class MatchQuitView(View):
             raise Exception('group already locked')
         if request.user == group.leader:
             group.members.remove(request.user)
+            collection = MONGO_CLIENT.group.enrollForm
+            collection.delete_one({'user_id': request.user.id, 'contest_id':int(contest_id)})
             if len(group.members.all()) == 0:
                 # delete foreign key first
                 for stage in group.stage_list.all():
@@ -98,20 +101,42 @@ class MatchResponseView(View):
     @require_logged_in
     def post(self, request, contest_id: str, group_id: str) -> Any:
         user = request.user
-        self.check_input(['accept'])
+        self.check_input(['accept', 'form'])
         group = Group.objects.get(id=int(group_id))
         invitation = group.sent_invitations.get(invitee=user, status=InvitationStatus.DEFAULT)
         accepted = request.data.get('accept')
         if accepted:
             group.members.add(user)
+            collection = MONGO_CLIENT.group.enrollForm
+            collection.insert_one(
+                {'user_id': int(user.id), 'contest_id':int(contest_id), 'enrollForm': request.data['form']})
             group.save()
         invitation.status = InvitationStatus.ACCEPTED if accepted else InvitationStatus.REJECTED
         invitation.save()
         content = user.username + ('接受' if accepted else '拒绝') + '了你的邀请'
-        message = Message(sender=User.objects.get(
-            username='admin'), receiver=group.leader, content=content)
+        message = SystemMessage(receiver=group.leader, content=content)
         message.save()
 
+        
+class ReviewersResponseView(View):
+    @require_logged_in
+    def post(self, request, contest_id: str) -> Any:
+        user = request.user
+        self.check_input(['accept', 'form'])
+        c = Competition.objects.get(id=int(contest_id))
+        invitation = c.sent_invitations.get(invitee=user, status=InvitationStatus.DEFAULT)
+        accepted = request.data.get('accept')
+        if accepted:
+            c.judges.add(user)
+            collection = MONGO_CLIENT.group.enrollForm
+            collection.insert_one({'user_id': int(user.id), 'contest_id':int(contest_id), 'enrollForm': request.data['form']})
+            c.save()
+        invitation.status = InvitationStatus.ACCEPTED if accepted else InvitationStatus.REJECTED
+        invitation.save()
+        content = user.username + ('接受' if accepted else '拒绝') + '了你的邀请'
+        message = SystemMessage(receiver=c.publisher, content=content)
+        message.save()
+        
 
 class MatchCancelView(View):
     @require_logged_in
@@ -125,6 +150,19 @@ class MatchCancelView(View):
         invitation.status = InvitationStatus.CANCELLED
         invitation.save()
 
+        
+class ReviewersCancelView(View):
+    @require_logged_in
+    def post(self, request, contest_id: str) -> Any:
+        self.check_input(['username'])
+        c = Competition.objects.get(id=int(contest_id))
+        if c.publisher != request.user:
+            raise Exception('no authority to cancel invitation')
+        user = User.objects.get(username=request.data.get('username'))
+        invitation = c.sent_invitations.get(invitee=user, status=InvitationStatus.DEFAULT)
+        invitation.status = InvitationStatus.CANCELLED
+        invitation.save()
+        
 
 class MessageCollectionView(View):
     @require_logged_in
@@ -134,12 +172,14 @@ class MessageCollectionView(View):
         is_read = int(request.data.get('isRead'))
         messages = user.received_messages.filter(is_read=is_read)
         invitations = user.received_invitations.filter(is_read=is_read)
+        reviewer_invitations = user.received_reviewer_invitations.filter(is_read=is_read)
+        system_messages = user.received_system_messages.filter(is_read=is_read)
         messageList = [{
             'id': m.id,
             'sender': m.sender.username,
             'content': m.content,
             'sendTime': m.send_time,
-            'type': 'letter'
+            'type': MessageType.letter
         } for m in messages]
         invitationList = [{
             'id': i.id,
@@ -152,20 +192,44 @@ class MessageCollectionView(View):
                 'contestId': i.group.competition.id,
                 'status': i.status},
             'sendTime': i.send_time,
-            'type': 'invitation',
+            'type': MessageType.invitation,
         } for i in invitations]
-        return messageList + invitationList
+        reviewer_invitations_list = [{
+            'id': i.id,
+            'sender': i.competition.publisher.username,
+            'content': {
+                'contestName': i.competition.name,
+                'contestId': i.competition.id,
+                'status': i.status},
+            'sendTime': i.send_time,
+            'type': MessageType.reviewer_invitation,
+        } for i in reviewer_invitations]
+        system_messages_list = [{
+            'id': i.id,
+            'content': i.content,
+            'sendTime': i.send_time,
+            'type': MessageType.system,
+        } for i in system_messages]
+        return messageList + invitationList + reviewer_invitations_list + system_messages_list
 
     @require_logged_in
     def put(self, request) -> Any:
         self.check_input(['id', 'type'])
         category = request.data.get('type')
-        if category == 'letter':
+        if category == MessageType.letter:
             message = Message.objects.get(id=request.data.get('id'))
             if request.user != message.receiver:
                 raise Exception('no authority')
-        elif category == 'invitation':
+        elif category == MessageType.system:
+            message = SystemMessage.objects.get(id=request.data.get('id'))
+            if request.user != message.receiver:
+                raise Exception('no authority')
+        elif category == MessageType.invitation:
             message = Invitation.objects.get(id=request.data.get('id'))
+            if request.user != message.invitee:
+                raise Exception('no authority')
+        elif category == MessageType.reviewer_invitation:
+            message = ReviewerInvitation.objects.get(id=request.data.get('id'))
             if request.user != message.invitee:
                 raise Exception('no authority')
         if message.is_read:
@@ -190,13 +254,21 @@ class MessageDeleteView(View):
     def post(self, request) -> Any:
         self.check_input(['id', 'type'])
         category = request.data.get('type')
-        if category == 'letter':
+        if category == MessageType.letter:
             message = Message.objects.get(id=request.data.get('id'))
             if request.user != message.receiver:
                 raise Exception('no authority')
-        elif category == 'invitation':
+        elif category == MessageType.system:
+            message = SystemMessage.objects.get(id=request.data.get('id'))
+            if request.user != message.receiver:
+                raise Exception('no authority')
+        elif category == MessageType.invitation:
             message = Invitation.objects.get(id=request.data.get('id'))
             if request.user != message.invitee:
+                raise Exception('no authority')
+        elif category == MessageType.reviewer_invitation:
+            message = ReviewerInvitation.objects.get(id=request.data.get('id'))
+            if request.user != message.competition.publisher:
                 raise Exception('no authority')
         message.delete()
 
@@ -206,4 +278,6 @@ class MessageUnreadView(View):
     def get(self, request) -> Any:
         lenM = len(request.user.received_messages.filter(is_read=False))
         lenI = len(request.user.received_invitations.filter(is_read=False))
-        return {'count': lenM + lenI}
+        lenR = len(request.user.received_reviewer_invitations.filter(is_read=False))
+        lenS = len(request.user.received_system_messages.filter(is_read=False))
+        return {'count': lenM + lenI + lenR + lenS}

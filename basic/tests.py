@@ -183,7 +183,7 @@ class SubmissionTimeTest(BasicTest):
                                                     {'username': 'd'})
         self.assertEqual(resp['code'], 0)
         resp = self.individuals['d']['client'].post(f'/apiv2/contests/{a_c.id}/groups/{c_id}/invitation',
-                                                    data={'accept': True})
+                                                    data={'accept': True, "form":{}})
         self.assertEqual(resp['code'], 0)
 
         resp = self.individuals['e']['client'].post(f'/api/contests/{a_c.id}/enroll', {
@@ -198,7 +198,7 @@ class SubmissionTimeTest(BasicTest):
                                                     {'username': 'f'})
         self.assertEqual(resp['code'], 0)
         resp = self.individuals['f']['client'].post(f'/apiv2/contests/{a_c.id}/groups/{e_id}/invitation',
-                                                    data={'accept': True})
+                                                    data={'accept': True, "form":{}})
         self.assertEqual(resp['code'], 0)
 
     def setUp(self):
@@ -282,6 +282,9 @@ class SubmittedTimeTest(SubmissionTimeTest):
         contest = Competition.objects.get(name=contest_name)
         resp = self.publishers[publisher_username]['client'].post(f'/api/contests/{contest.id}/reviewer', data={
             'username': [judge_username]
+        })
+        resp = self.judges[judge_username]['client'].post(f'/apiv2/contests/{contest.id}/reviewers/response', data={
+            'accept': True, "form":{}
         })
         self.assertEqual(resp['code'], 0)
 

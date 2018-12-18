@@ -20,4 +20,8 @@ urlpatterns = [
         views.MatchResponseView.as_view()),
     url(r'contests/(?P<contest_id>[0-9]+)/groups/(?P<group_id>[0-9]+)/cancel',
         views.MatchCancelView.as_view()),
+    url(r'contests/(?P<contest_id>[0-9]+)/reviewers/response',
+        views.ReviewersResponseView.as_view()),
+    url(r'contests/(?P<contest_id>[0-9]+)/reviewers/cancel',
+        views.ReviewersCancelView.as_view()),
 ]

@@ -7,7 +7,9 @@ const Register = () => import('@/components/Register')
 const ContestView = () => import('@/components/contest/ContestView')
 const ContestCreate = () => import('@/components/contest/ContestCreate')
 const ContestDetail = () => import('@/components/contest/ContestDetail')
-const ContestEnroll = () => import('@/components/contest/ContestEnroll')
+const ContestLeaderEnroll = () => import('@/components/contest/ContestLeaderEnroll')
+const ContestMemberEnroll = () => import('@/components/contest/ContestMemberEnroll')
+const ContestJudgeEnroll = () => import('@/components/contest/ContestJudgeEnroll')
 const ContestNoticeList = () => import('@/components/contest/ContestNoticeList')
 const JudgeWorkspace = () => import('@/components/workspace/JudgeWorkspace')
 const User = () => import('@/components/User')
@@ -97,7 +99,17 @@ export default new Router({
         {
           path: 'contest/enroll/:id',
           name: '/contest/enroll/:id',
-          component: ContestEnroll
+          component: ContestLeaderEnroll
+        },
+        {
+          path: 'contest/member_enroll/:contest_id/:team_id',
+          name: '/contest/member_enroll/:contest_id/:team_id',
+          component: ContestMemberEnroll
+        },
+        {
+          path: 'contest/judge_enroll/:id',
+          name: '/contest/judge_enroll/:id',
+          component: ContestJudgeEnroll
         },
         {
           path: 'contest/:id/mygroup',

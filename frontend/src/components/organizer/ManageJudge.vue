@@ -15,7 +15,11 @@
     </el-table>
     <el-row>
       <el-col :span="5">
-        <el-input v-model="input" placeholder="请输入评委用户名"></el-input>
+        <el-autocomplete
+          v-model="input"
+          :fetch-suggestions="querySearchAsync"
+          placeholder="请输入评委用户名"
+        ></el-autocomplete>
       </el-col>
       <el-col :span="4" :offset="1">
         <el-button type="primary" @click="addJudge">添加新评委</el-button>
@@ -35,6 +39,25 @@ export default {
     }
   },
   methods: {
+    querySearchAsync(queryString, callback) {
+      if (queryString) {
+        this.$http
+          .get('/api/users', {
+            params: {
+              prefix: queryString
+            }
+          })
+          .then(resp => {
+            if (resp.body.code !== 0) {
+              throw new Error(resp.body.error)
+            }
+            let values = resp.body.data
+            values = values.map(x => ({ value: x.username }))
+            callback(values)
+          })
+          .catch(() => {})
+      }
+    },
     refreshJudge() {
       this.$http
         .get(`/api/contests/${this.contestId}/reviewer`)

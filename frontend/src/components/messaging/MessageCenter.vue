@@ -108,20 +108,13 @@ export default {
       this.$router.push(`/message/new/${peerName}`)
     },
     async acceptInvitation({ contestId, groupId }) {
-      let response = await this.$http.post(`/apiv2/contests/${contestId}/groups/${groupId}/invitation`, { accept: true })
-      if (response.body.code !== 0) {
-        this.$message({ type: 'error', message: response.body.error })
-        return
-      }
-      this.$message({ type: 'success', message: '邀请已接受' })
-      if (this.currentTab === 'unread') {
-        await this.updateUnreadMessages()
-      } else {
-        await this.updateReadMessages()
-      }
+      this.$router.push(`/contest/member_enroll/${contestId}/${groupId}`)
     },
     async rejectInvitation({ contestId, groupId }) {
-      let response = await this.$http.post(`/apiv2/contests/${contestId}/groups/${groupId}/invitation`, { accept: false })
+      let response = await this.$http.post(`/apiv2/contests/${contestId}/groups/${groupId}/invitation`, {
+        accept: false,
+        form: ''
+      })
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return
@@ -134,20 +127,13 @@ export default {
       }
     },
     async acceptReviewerInvitation({ contestId }) {
-      let response = await this.$http.post(`/apiv2/contests/${contestId}/reviewers/response`, { accept: true })
-      if (response.body.code !== 0) {
-        this.$message({ type: 'error', message: response.body.error })
-        return
-      }
-      this.$message({ type: 'success', message: '邀请已接受' })
-      if (this.currentTab === 'unread') {
-        await this.updateUnreadMessages()
-      } else {
-        await this.updateReadMessages()
-      }
+      this.$router.push(`/contest/judge_enroll/${contestId}`)
     },
     async rejectReviewerInvitation({ contestId }) {
-      let response = await this.$http.post(`/apiv2/contests/${contestId}/reviewers/response`, { accept: false })
+      let response = await this.$http.post(`/apiv2/contests/${contestId}/reviewers/response`, {
+        accept: false,
+        form: ''
+      })
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return

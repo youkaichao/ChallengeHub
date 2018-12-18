@@ -10,6 +10,7 @@ from typing import Dict, Any, Callable, List
 from ChallengeHub.utils import BaseView as View, require_logged_in, make_errors, require_to_be_organization, \
     require_to_be_individual, require_to_be_publisher
 from ChallengeHub.settings import MONGO_CLIENT, BASE_DIR
+from match.models import Message, Invitation, InvitationStatus, ReviewerInvitation
 import os
 import json
 
@@ -53,6 +54,7 @@ class ContestCollectionView(View):
                            end_time=prod["endTime"], stage=2 * i + 1, competition=c)
             stage.save()
         collection = MONGO_CLIENT.competition.enrollForm
+        print(request.data.get('enrollForm'))
         collection.insert_one(
             {'id': c.id, 'enrollForm': request.data.get('enrollForm')})
         if (not c.enroll_url):
@@ -215,8 +217,8 @@ class ContestReviewerView(View):
         with transaction.atomic():
             for username in request.data['username']:
                 user = User.objects.get(username=username)
-                c.judges.add(user)
-            c.save()
+                invitation = ReviewerInvitation(competition=c, invitee=user)
+                invitation.save()
         return
 
     @require_logged_in
@@ -282,7 +284,7 @@ class GroupDetailView(View):
         groups = competition.enrolled_groups.all()
         data['info'] = [{
             'name': group.name,
-            'form': MONGO_CLIENT.group.enrollForm.find_one({'id': int(group.id)})['enrollForm']
+            'form': MONGO_CLIENT.group.enrollForm.find_one({'user_id': int(group.leader.id), 'contest_id':int(contest_id)})['enrollForm']
         } for group in groups]
         return data
 
@@ -313,8 +315,7 @@ class ContestEnrollView(View):
         stage.save()
 
         collection = MONGO_CLIENT.group.enrollForm
-        collection.insert_one(
-            {'id': group.id, 'enrollForm': request.data['form']})
+        collection.insert_one({'user_id': int(group.leader.id), 'contest_id':int(contest_id), 'enrollForm': request.data['form']})
         members = request.data['members']
         for member in members:
             if member == request.data.get('leaderName'):
@@ -468,6 +469,7 @@ class JudgeReviewView(View):
             'rating': review.score,
             'url': review.stage.commit_path,
             'msg': review.msg,
+            'groupName': review.stage.group.name,
             'extension': get_extension(review.stage.commit_path)} for review in reviews]
         return data
 

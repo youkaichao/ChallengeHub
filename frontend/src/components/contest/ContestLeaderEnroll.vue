@@ -1,59 +1,39 @@
 <template>
   <div style="width: 600px; margin: auto;">
     <div>
-      <h2>基本比赛信息</h2>
+      <h2>填写个人信息</h2>
       <el-form>
-        <el-form-item
-          v-for="(formItem, idx) in enrollFormItems"
-          :key="idx"
-          :label="formItem.label"
-        >
+        <el-form-item v-for="(formItem, idx) in enrollFormItems" :key="idx" :label="formItem.label">
           <el-input
             v-if="formItem.type==='文字题'"
             :placeholder="formItem.description"
             v-model="formAnswers[idx]"
           ></el-input>
-          <el-select
-            v-if="formItem.type==='选择题'"
-            placeholder="请选择"
-            v-model="formAnswers[idx]"
-          >
-            <el-option
-              v-for="item of formItem.options"
-              :key="item"
-              :label="item"
-              :value="item"
-            >
-            </el-option>
+          <el-select v-if="formItem.type==='选择题'" placeholder="请选择" v-model="formAnswers[idx]">
+            <el-option v-for="item of formItem.options" :key="item" :label="item" :value="item"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
     </div>
-    <div style="margin-top: 150px;">
-      <h2>队伍组成信息</h2>
+    <div style="margin-top: 50px;">
+      <h2>填写队伍组成信息</h2>
       <el-form>
         <el-form-item label="队伍名称">
-          <el-input
-            placeholder="输入队伍名称"
-            v-model="groupName"
-          ></el-input>
+          <el-input placeholder="输入队伍名称" v-model="groupName"></el-input>
         </el-form-item>
       </el-form>
     </div>
 
     <div style="margin-top: 150px; margin-bottom: 50px;">
       <h2>完成报名</h2>
-      <el-button
-        type="primary"
-        @click="enrollSubmit"
-      >确认报名</el-button>
+      <el-button type="primary" @click="enrollSubmit">确认报名</el-button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ContestEnroll',
+  name: 'ContestLeaderEnroll',
   data() {
     return {
       enrollForm: '[]',
@@ -67,8 +47,8 @@ export default {
     let contestId = this.$route.params.id
     let response = await this.$http.get(`/api/contests/${contestId}/enroll`)
     if (response.body.code !== 0) {
-        this.$message({ type: 'error', message: response.body.error })
-        return
+      this.$message({ type: 'error', message: response.body.error })
+      return
     }
     this.enrollForm = response.body.data.enrollForm
   },

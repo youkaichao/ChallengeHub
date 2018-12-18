@@ -208,7 +208,7 @@ class LockGroupsTest(GroupAPITest):
 
 class ReplyGroupsTest(GroupAPITest):
     def test_reply_groups(self):
-        data = student1.post(f'/apiv2/contests/{self.competition_id}/groups/{self.group_id}/invitation', data={'accept':True})
+        data = student1.post(f'/apiv2/contests/{self.competition_id}/groups/{self.group_id}/invitation', data={'accept':True, "form":{}})
         self.assertEqual(data['code'], 0)
 
         ans = Group.objects.get(id=self.group_id)
