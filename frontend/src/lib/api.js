@@ -343,50 +343,125 @@ export default {
           },
           submissions: [
             {
-              title: '网络优化器',
+              id: 19998,
+              submissionName: '网络又忽起',
               reviewed: true,
-              rating: 83
+              rating: 12,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
             },
             {
-              title: '网络优化器',
+              id: 19998,
+              submissionName: '网络又忽起',
               reviewed: true,
-              rating: 78
+              rating: 38,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
             },
             {
-              title: '网络优化器',
+              id: 19998,
+              submissionName: '网络又忽起',
               reviewed: true,
-              rating: 94
+              rating: 80,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
             },
             {
-              title: '网络优化器',
+              id: 19998,
+              submissionName: '网络又忽起',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
             },
             {
-              title: '网络优化器',
+              id: 19998,
+              submissionName: '网络又忽起',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
             },
             {
-              title: '网络优化器',
+              id: 19998,
+              submissionName: '网络又忽起',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
             },
             {
-              title: '网络优化器',
+              id: 19998,
+              submissionName: '网络又忽起',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
             },
             {
-              title: '网络优化器',
+              id: 19998,
+              submissionName: '网络又忽起',
               reviewed: false,
-              rating: 0
+              rating: 0,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
             },
             {
-              title: '网络优化器',
+              id: 19998,
+              submissionName: '网络又忽起',
               reviewed: false,
-              rating: 0
-            }
+              rating: 0,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
+            },
+            {
+              id: 19998,
+              submissionName: '网络又忽起',
+              reviewed: false,
+              rating: 0,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
+            },
+            {
+              id: 19998,
+              submissionName: '网络又忽起',
+              reviewed: false,
+              rating: 0,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
+            },
+            {
+              id: 19998,
+              submissionName: '网络又忽起',
+              reviewed: false,
+              rating: 0,
+              url: 'http://www.baidu.com',
+              extension: 'html',
+              msg: '牛逼',
+              groupName: '群主牛逼组'
+            },
           ]
         }
       },
@@ -440,12 +515,14 @@ export default {
               title: '网络优化器',
               reviewed: true,
               rating: 83,
+              groupName: '群神小组',
               msg: '群主牛逼！'
             },
             {
               id: 2,
               title: '网络优化器',
               reviewed: true,
+              groupName: '群神小组',
               rating: 78,
               msg: '群主太强了！'
             },
@@ -453,18 +530,21 @@ export default {
               id: 2,
               title: '网络优化器',
               reviewed: true,
+              groupName: '群神小组',
               rating: 94,
               msg: '群主好厉害！'
             },
             {
               id: 2,
               title: '网络优化器',
+              groupName: '群神小组',
               reviewed: false,
               rating: 0,
               msg: ''
             },
             {
               id: 2,
+              groupName: '群神小组',
               title: '网络优化器',
               reviewed: false,
               rating: 0,
@@ -474,6 +554,7 @@ export default {
               id: 2,
               title: '网络优化器',
               reviewed: false,
+              groupName: '群神小组',
               rating: 0,
               msg: ''
             },
@@ -481,6 +562,7 @@ export default {
               id: 2,
               title: '网络优化器',
               reviewed: false,
+              groupName: '群神小组',
               rating: 0,
               msg: ''
             },
@@ -488,6 +570,7 @@ export default {
               id: 2,
               title: '网络优化器',
               reviewed: false,
+              groupName: '群神小组',
               rating: 0,
               msg: ''
             },
@@ -495,6 +578,7 @@ export default {
               id: 2,
               title: '网络优化器',
               reviewed: false,
+              groupName: '群神小组',
               rating: 0,
               msg: ''
             }
@@ -528,6 +612,7 @@ export default {
           },
           submissions: [
             {
+              groupName: '群神小组',
               title: '吃垃圾教程',
               reviewed: true,
               rating: 83,
@@ -537,16 +622,19 @@ export default {
               title: '吃垃圾教程',
               reviewed: true,
               rating: 78,
+              groupName: '群神小组',
               msg: '要不怎么说你巨呢？'
             },
             {
               title: '吃垃圾教程',
+              groupName: '群神小组',
               reviewed: true,
               rating: 94,
               msg: '要不怎么说你强呢？'
             },
             {
               title: '吃垃圾教程',
+              groupName: '群神小组',
               reviewed: false,
               rating: 0,
               msg: '要不怎么说你牛逼呢？'
