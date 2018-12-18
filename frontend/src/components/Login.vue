@@ -38,15 +38,22 @@ export default {
     }
   },
   methods: {
-    handleLogin() {
-      this.$http.post('/auth/login', this.account).then(function(response) {
-        if (response.body.code > 0) {
-          this.$message.error('Login failed with error: ' + response.body.error)
-          return
-        }
-        this.$store.commit('login', response.body.data)
-        this.$router.push('/user')
-      })
+    async handleLogin() {
+      let response = await this.$http.post('/auth/login', this.account)
+      if (response.body.code > 0) {
+        this.$message.error('Login failed with error: ' + response.body.error)
+        return
+      }
+      this.$store.commit('login', response.body.data)
+
+      response = await this.$http.get('/apiv2/messages/unread_count')
+      if (response.body.code !== 0) {
+        this.$message({ type: 'error', message: response.body.error })
+        return
+      }
+      this.$store.commit('setUnreadCount', response.body.data)
+
+      this.$router.push('/user')
     },
     handleRegister() {
       this.$router.push('/register')
