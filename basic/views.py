@@ -213,9 +213,17 @@ class ContestReviewerView(View):
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['username'])
         c = Competition.objects.get(id=int(contest_id))
+        invitations = c.sent_invitations.all()
+        judges = c.judges.all()
+        if len(set(request.data['username'])) != len(request.data['username']):
+            raise Exception("duplicate username!")
         with transaction.atomic():
             for username in request.data['username']:
                 user = User.objects.get(username=username)
+                if user in judges:
+                    raise Exception(f"{user.username} is already a judge of this competition!")
+                if invitations.filter(status=InvitationStatus.DEFAULT, invitee=user):
+                    raise Exception(f"{user.username} is already invited!")
                 invitation = ReviewerInvitation(competition=c, invitee=user)
                 invitation.save()
         return
@@ -227,6 +235,14 @@ class ContestReviewerView(View):
         c = Competition.objects.get(id=int(contest_id))
         judges = c.judges.all()
         data = [judge.to_dict() for judge in judges]
+        for x in data:
+            x['accepted'] = 1
+        if request.data.get('all'):
+            invited = c.sent_invitations.all().filter(status=InvitationStatus.DEFAULT)
+            for x in invited:
+                tmp = x.invitee.to_dict()
+                tmp['accepted'] = 0
+                data.append(tmp)
         return data
 
 
@@ -404,6 +420,10 @@ class UserJudgedView(View):
         contest_id_set = set()
         for r in user.review_list.all():
             tmp = r.stage.group.competition
+            if tmp.id not in contest_id_set:
+                contest_id_set.add(tmp.id)
+                competitions.append(tmp)
+        for tmp in user.judged_competitions.all():
             if tmp.id not in contest_id_set:
                 contest_id_set.add(tmp.id)
                 competitions.append(tmp)
