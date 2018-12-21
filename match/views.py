@@ -268,7 +268,7 @@ class MessageDeleteView(View):
                 raise Exception('no authority')
         elif category == MessageType.reviewer_invitation:
             message = ReviewerInvitation.objects.get(id=request.data.get('id'))
-            if request.user != message.competition.publisher:
+            if request.user != message.invitee:
                 raise Exception('no authority')
         message.delete()
 

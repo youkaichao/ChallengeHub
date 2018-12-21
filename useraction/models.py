@@ -13,6 +13,7 @@ class User(AbstractUser):
 
     def to_dict(self, detail: bool=False) -> Dict[str, Any]:
         return {
+            'id': self.id,
             'username': self.username,
             'email': self.email,
             'introduction': self.introduction,

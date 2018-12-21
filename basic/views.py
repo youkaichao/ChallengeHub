@@ -169,7 +169,7 @@ class ContestAutoAssignView(View):
         judge_workloads = request.data['judges']
         judge_workloads = {x['username']: x['assign'] for x in judge_workloads}
 
-        enroll_forms = MONGO_CLIENT.group.enrollForm
+        enroll_forms = MONGO_CLIENT.db.groupEnrollForm
         answer_map = {}
         answer_count = 0
 
@@ -285,6 +285,8 @@ class ContestReviewerView(View):
                 tmp = x.invitee.to_dict()
                 tmp['accepted'] = 0
                 data.append(tmp)
+        for x in data:
+            x['enrollForm'] = MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(x['id']), 'contest_id':int(contest_id)})['enrollForm']
         return data
 
 
@@ -340,9 +342,10 @@ class GroupDetailView(View):
         data['enrollForm'] = collection.find_one({'id': int(contest_id)})['enrollForm']
         groups = competition.enrolled_groups.all()
         data['info'] = [{
-            'name': group.name,
-            'form': MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(group.leader.id), 'contest_id':int(contest_id)})['enrollForm']
-        } for group in groups]
+            'groupName': group.name,
+            'name': user.username,
+            'form': MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(user.id), 'contest_id':int(contest_id)})['enrollForm']
+        } for group in groups for user in group.members.all()]
         return data
 
 
@@ -357,11 +360,13 @@ class ContestEnrollView(View):
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['name', 'leaderName', 'members', 'form'])
         leader = User.objects.get(username=request.data.get('leaderName'))
-        if leader.joint_groups.filter(competition_id=int(contest_id)):
-            raise Exception(f"you are already in group {leader.joint_groups.first().name}")
+        c = Competition.objects.get(id=int(contest_id))
+        joint_groups = leader.joint_groups.all().filter(competition=c)
+        if joint_groups:
+            raise Exception(f"you are already in group {joint_groups.first().name}")
         group = Group(
             name=request.data.get('name'),
-            competition=Competition.objects.get(id=int(contest_id)),
+            competition=c,
             leader=leader
         )
         group.save()

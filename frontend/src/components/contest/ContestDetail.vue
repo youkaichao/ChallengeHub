@@ -91,7 +91,8 @@ export default {
     },
     handleEnroll() {
       if (this.contestInfo.enrollUrl !== '') {
-        this.$router.push(this.contestInfo.enrollUrl)
+        //this.$router.push(this.contestInfo.enrollUrl)
+        window.location = this.contestInfo.enrollUrl; // @author youkaichao
       } else {
         this.$router.push(`/contest/enroll/${this.contestInfo.id}`)
       }

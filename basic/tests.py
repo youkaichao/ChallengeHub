@@ -246,7 +246,7 @@ class EnrollTest(SubmissionTimeTest):
             self.assertEqual(group['stage'], 1)
         data = self.publishers['a']['client'].get(
             f'/api/contests/{a_c.id}/groups_detail')
-        self.assertEqual(len(data['data']['info']), 2)
+        self.assertEqual(len(data['data']['info']), 4)
         data = self.anonymous_client.get(f'/api/contests/{a_c.id}/enroll')
         self.assertEqual(data['data']['enrollForm'], '[]')
 
@@ -305,15 +305,15 @@ class SubmitListTest(SubmittedTimeTest):
         self.add_judge('a', 'g', 'a_c')
         self.add_judge('a', 'h', 'a_c')
         a_c = Competition.objects.get(name='a_c')
-        collection = MONGO_CLIENT.group.enrollForm
+        collection = MONGO_CLIENT.db.groupEnrollForm
         collection.remove()
-        MONGO_CLIENT.group.enrollForm.insert_one(
+        MONGO_CLIENT.db.groupEnrollForm.insert_one(
             {'user_id': self.individuals['c']['user'].id, 'contest_id': a_c.id, 'enrollForm': '{"a":"1"}'})
-        MONGO_CLIENT.group.enrollForm.insert_one(
+        MONGO_CLIENT.db.groupEnrollForm.insert_one(
             {'user_id': self.individuals['e']['user'].id, 'contest_id': a_c.id, 'enrollForm': '{"a":"2"}'})
-        MONGO_CLIENT.group.enrollForm.insert_one(
+        MONGO_CLIENT.db.groupEnrollForm.insert_one(
             {'user_id': self.judges['g']['user'].id, 'contest_id': a_c.id, 'enrollForm': '{"a":"1"}'})
-        MONGO_CLIENT.group.enrollForm.insert_one(
+        MONGO_CLIENT.db.groupEnrollForm.insert_one(
             {'user_id': self.judges['h']['user'].id, 'contest_id': a_c.id, 'enrollForm': '{"a":"2"}'})
         resp = self.publishers['a']['client'].post(f'/api/contests/{a_c.id}/auto_assign', data={
             'stage': a_c.current_stage,
