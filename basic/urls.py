@@ -44,4 +44,6 @@ urlpatterns = [
         views.UserProfileView.as_view()),
     url(r'judges/(?P<contest_id>[0-9]+)$',
         views.JudgeReviewView.as_view()),
+    url(r'contests/(?P<contest_id>[0-9]+)/delta_score/(?P<gstage_id>[0-9]+)$',
+        views.DeltaScoreView.as_view()),
 ]

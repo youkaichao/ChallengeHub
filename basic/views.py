@@ -57,9 +57,6 @@ class ContestCollectionView(View):
         collection = MONGO_CLIENT.db.competitionEnrollForm
         collection.insert_one(
             {'id': c.id, 'enrollForm': request.data.get('enrollForm')})
-        if (not c.enroll_url):
-            c.enroll_url = '/contest/enroll/{}'.format(c.id)
-            c.save()
         return c.to_dict()
 
 
@@ -286,7 +283,9 @@ class ContestReviewerView(View):
                 tmp['accepted'] = 0
                 data.append(tmp)
         for x in data:
-            x['enrollForm'] = MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(x['id']), 'contest_id':int(contest_id)})['enrollForm']
+            x['enrollForm'] = \
+                MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(x['id']), 'contest_id': int(contest_id)})[
+                    'enrollForm']
         return data
 
 
@@ -344,7 +343,8 @@ class GroupDetailView(View):
         data['info'] = [{
             'groupName': group.name,
             'name': user.username,
-            'form': MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(user.id), 'contest_id':int(contest_id)})['enrollForm']
+            'form': MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(user.id), 'contest_id': int(contest_id)})[
+                'enrollForm']
         } for group in groups for user in group.members.all()]
         return data
 
@@ -377,7 +377,8 @@ class ContestEnrollView(View):
         stage.save()
 
         collection = MONGO_CLIENT.db.groupEnrollForm
-        collection.insert_one({'user_id': int(group.leader.id), 'contest_id':int(contest_id), 'enrollForm': request.data['form']})
+        collection.insert_one(
+            {'user_id': int(group.leader.id), 'contest_id': int(contest_id), 'enrollForm': request.data['form']})
         members = request.data['members']
         for member in members:
             if member == request.data.get('leaderName'):
@@ -437,6 +438,30 @@ class ContestSubmissionView(View):
             'submissionName': group_stage.submission,
             'url': group_stage.commit_path
         }
+
+
+def compute_average_score(stage: GStage):
+    reviews = stage.review_meta_list.all()
+    sum = 0.0
+    for x in reviews:
+        sum += x.score
+    if not reviews.count():
+        stage.score = stage.deltaScore
+    else:
+        stage.score = sum / reviews.count() + stage.deltaScore
+    stage.save()
+
+
+class DeltaScoreView(View):
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
+    def post(self, request, contest_id, gstage_id):
+        self.check_input(['deltaScore', 'deltaMsg'])
+        stage = GStage.objects.get(id=gstage_id)
+        stage.deltaScore = float(request.data.get('deltaScore'))
+        stage.deltaMsg = request.data.get('deltaMsg')
+        compute_average_score(stage)
 
 
 class UserCollectionView(View):
@@ -554,7 +579,7 @@ class JudgeReviewView(View):
             sum = 0.0
             for x in reviews:
                 sum += x.score
-            meta.stage.score = sum / reviews.count()
+            meta.stage.score = sum / reviews.count() + meta.stage.deltaScore
             meta.stage.save()
         return
 
@@ -621,6 +646,9 @@ class SubmissionAllView(View):
                         'msg': review.msg,
                     })
                 obj['judges'] = judges
+                obj['deltaScore'] = submission.deltaScore
+                obj['deltaMsg'] = submission.deltaMsg
+                obj['id'] = submission.id
                 res.append(obj)
         return res
 
