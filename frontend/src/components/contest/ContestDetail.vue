@@ -41,6 +41,7 @@
       >点击此处以组长身份报名</el-button>
     </div>
 
+    <div v-if="this.contestInfo.enrollUrl === ''">
     <el-button
       type="primary"
       style="margin-top: 20px;"
@@ -52,6 +53,7 @@
     >
       查看已报名的队伍
     </el-button>
+    </div>
 
     <h2 class="title">比赛详情</h2>
     <mavon-editor

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-alert
-      title="你可以选择不同的选项对队伍进行筛选，只有满足条件的队伍会在表格中出现。"
+      title="你可以选择不同的选项对选手进行筛选，只有满足条件的选手会在表格中出现。"
       type="success"
     ></el-alert>
     <div style="text-align: left">
@@ -113,7 +113,7 @@ export default {
     },
     refreshGrid() {
       let form = JSON.parse(this.rawData.enrollForm)
-      let tableHeaders = ['组名']
+      let tableHeaders = ['用户名', '组名']
       for (let formItem of form) {
         tableHeaders.push(formItem.label)
       }
@@ -121,6 +121,7 @@ export default {
       let tableData = []
       for (let i of this.rawData.info) {
         let name = i.name
+        let groupName = i.groupName
         let answers = JSON.parse(i.form)
 
         // should this row be added?
@@ -142,8 +143,8 @@ export default {
           continue
         }
 
-        let row = [name]
-        for (let index = 1; index < tableHeaders.length; index++) {
+        let row = [name, groupName]
+        for (let index = 2; index < tableHeaders.length; index++) {
           let label = tableHeaders[index]
           row.push(answers[label])
         }

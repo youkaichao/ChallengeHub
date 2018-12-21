@@ -94,7 +94,7 @@ export default {
         },
         {
           name: 'groupinfo',
-          label: '队伍信息'
+          label: '选手信息'
         }
       ]
     }

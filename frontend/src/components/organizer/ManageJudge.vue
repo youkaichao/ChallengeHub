@@ -103,6 +103,7 @@ export default {
       }
 
       this.$message({ type: 'success', message: `成功撤销邀请` })
+      this.refreshJudge()
     }
   },
   created() {

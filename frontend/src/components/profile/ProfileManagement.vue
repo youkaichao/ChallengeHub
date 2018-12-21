@@ -125,6 +125,7 @@ export default {
         this.oldPassword = ''
         this.newPassword = ''
         this.newPasswordRetyped = ''
+        await this.refreshInfo()
       }
     },
     async modSchoolConfim() {
@@ -135,6 +136,7 @@ export default {
         this.$message({ type: 'error', message: response.body.error })
       } else {
         this.$message({ type: 'success', message: '修改学校成功' })
+        await this.refreshInfo()
       }
     },
     async modIntroductionConfim() {
@@ -145,6 +147,16 @@ export default {
         this.$message({ type: 'error', message: response.body.error })
       } else {
         this.$message({ type: 'success', message: '修改个人信息成功' })
+        await this.refreshInfo()
+      }
+    },
+    async refreshInfo() {
+      let response = await this.$http.get(`/auth/info`)
+      if (response.body.code !== 0) {
+          this.$message({ type: 'error', message: response.body.error })
+          return
+      } else {
+        this.$store.commit('login', response.body.data)
       }
     }
   }
