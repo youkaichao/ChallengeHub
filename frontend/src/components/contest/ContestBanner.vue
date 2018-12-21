@@ -7,7 +7,7 @@
       <el-col :span="4">
         <img
           :src="contestInfo.imgUrl"
-          style="width: 100%;"
+          class="fix-img"
         />
       </el-col>
       <el-col
@@ -119,5 +119,12 @@ export default {
 
 .title {
   font-size: 48px;
+}
+
+.fix-img {
+  max-width: 200px;
+  max-height: 152px;
+  width: auto;
+  height: auto;
 }
 </style>

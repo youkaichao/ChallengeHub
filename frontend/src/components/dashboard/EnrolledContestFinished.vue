@@ -174,7 +174,10 @@ export default {
 
 <style scoped>
 .single-card {
-  height: 150px;
+  max-width: 200px;
+  max-height: 152px;
+  width: auto;
+  height: auto;
 }
 
 .enrolled-contest-card {

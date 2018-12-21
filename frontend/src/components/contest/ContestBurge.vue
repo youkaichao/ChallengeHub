@@ -69,6 +69,9 @@ export default {
 }
 
 .img-in-burge {
-  width: 100%;
+  max-width: 193px;
+  max-height: 150px;
+  width: auto;
+  height: auto;
 }
 </style>

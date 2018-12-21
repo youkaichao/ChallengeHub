@@ -268,7 +268,10 @@ export default {
 }
 
 .enrolled-contest-card {
-  width: 100%;
+  max-width: 200px;
+  max-height: 152px;
+  width: auto;
+  height: auto;
 }
 
 .contest-name {

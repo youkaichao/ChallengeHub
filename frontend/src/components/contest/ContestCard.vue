@@ -1,6 +1,6 @@
 <template>
   <el-card :body-style="{ padding: '0px' }">
-    <img :src="contestInfo.imgUrl" style="width: 100%; display: block" />
+    <img :src="contestInfo.imgUrl"  class="img-in-card"/>
     <div style="padding 14px">
       <div class="left-align" style="padding-top: 5px;">
         {{ contestInfo.name }}
@@ -72,5 +72,12 @@ export default {
 
 .clearfix:after {
   clear: both;
+}
+
+.img-in-card {
+  max-height: 212px;
+  max-width: 283px;
+  width: auto;
+  height: auto;
 }
 </style>

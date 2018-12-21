@@ -327,7 +327,7 @@ export default {
           contest: {
             id: 1,
             name: '咸鱼划水大赛',
-            imgUrl: 'https://picsum.photos/400/300/?random&amp;k=2',
+            imgUrl: 'https://picsum.photos/20/20/?random&amp;k=2',
             publisher: '华清大学',
             standard: '# 评审标准\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持',
             procedure: [
@@ -1150,7 +1150,7 @@ export default {
     }
   },
   ['GET */api/contests/1/reviewer'](pathMatch, query, request, passThrough) {
-    if(request.params.all) {
+    if (request.params.all) {
       return {
         body: {
           code: 0,
@@ -2205,6 +2205,208 @@ export default {
           school: '清华软院',
           individual: 1
         }
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
+  ['GET */api/contests'](_1, _2, _3, _4) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: [
+          {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: 4,
+            enrollStart: '2015-03-25T06:26:01.927Z',
+            enrollEnd: '2019-03-25T06:26:01.927Z',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            imgUrl: 'https://picsum.photos/800/300/?random&amp;k=23rfewg',
+            enrollUrl: '',
+            charge: 100,
+            upvote: 200,
+            downvote: 300,
+            publisher: '华清大学',
+            detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+            userRelated: {
+              upvoteStatus: 0
+            }
+          }, {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: 4,
+            enrollStart: '2015-03-25T06:26:01.927Z',
+            enrollEnd: '2019-03-25T06:26:01.927Z',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            imgUrl: 'https://picsum.photos/200/300/?random&amp;k=23rfewg',
+            enrollUrl: '',
+            charge: 100,
+            upvote: 200,
+            downvote: 300,
+            publisher: '华清大学',
+            detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+            userRelated: {
+              upvoteStatus: 0
+            }
+          }, {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: 4,
+            enrollStart: '2015-03-25T06:26:01.927Z',
+            enrollEnd: '2019-03-25T06:26:01.927Z',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            imgUrl: 'https://picsum.photos/800/300/?random&amp;k=23rfewg',
+            enrollUrl: '',
+            charge: 100,
+            upvote: 200,
+            downvote: 300,
+            publisher: '华清大学',
+            detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+            userRelated: {
+              upvoteStatus: 0
+            }
+          }, {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: 4,
+            enrollStart: '2015-03-25T06:26:01.927Z',
+            enrollEnd: '2019-03-25T06:26:01.927Z',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            imgUrl: 'https://picsum.photos/800/300/?random&amp;k=23rfewg',
+            enrollUrl: '',
+            charge: 100,
+            upvote: 200,
+            downvote: 300,
+            publisher: '华清大学',
+            detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+            userRelated: {
+              upvoteStatus: 0
+            }
+          }, {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: 4,
+            enrollStart: '2015-03-25T06:26:01.927Z',
+            enrollEnd: '2019-03-25T06:26:01.927Z',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            imgUrl: 'https://picsum.photos/200/300/?random&amp;k=23rfewg',
+            enrollUrl: '',
+            charge: 100,
+            upvote: 200,
+            downvote: 300,
+            publisher: '华清大学',
+            detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+            userRelated: {
+              upvoteStatus: 0
+            }
+          }, {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: 4,
+            enrollStart: '2015-03-25T06:26:01.927Z',
+            enrollEnd: '2019-03-25T06:26:01.927Z',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            imgUrl: 'https://picsum.photos/800/300/?random&amp;k=23rfewg',
+            enrollUrl: '',
+            charge: 100,
+            upvote: 200,
+            downvote: 300,
+            publisher: '华清大学',
+            detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+            userRelated: {
+              upvoteStatus: 0
+            }
+          }, {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: 4,
+            enrollStart: '2015-03-25T06:26:01.927Z',
+            enrollEnd: '2019-03-25T06:26:01.927Z',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            imgUrl: 'https://picsum.photos/800/300/?random&amp;k=23rfewg',
+            enrollUrl: '',
+            charge: 100,
+            upvote: 200,
+            downvote: 300,
+            publisher: '华清大学',
+            detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+            userRelated: {
+              upvoteStatus: 0
+            }
+          }, {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: 4,
+            enrollStart: '2015-03-25T06:26:01.927Z',
+            enrollEnd: '2019-03-25T06:26:01.927Z',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            imgUrl: 'https://picsum.photos/800/300/?random&amp;k=23rfewg',
+            enrollUrl: '',
+            charge: 100,
+            upvote: 200,
+            downvote: 300,
+            publisher: '华清大学',
+            detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+            userRelated: {
+              upvoteStatus: 0
+            }
+          }, {
+            id: 1,
+            name: '咸鱼划水大赛',
+            subject: '体育',
+            groupSize: 4,
+            enrollStart: '2015-03-25T06:26:01.927Z',
+            enrollEnd: '2019-03-25T06:26:01.927Z',
+            procedure: [
+              { name: '初赛', startTime: '2014-03-25T06:26:01.927Z', endTime: '2018-03-25T06:26:01.927Z' },
+              { name: '复赛', startTime: '2018-06-25T06:26:01.927Z', endTime: '2019-03-25T06:26:01.927Z' }
+            ],
+            imgUrl: 'https://picsum.photos/800/300/?random&amp;k=23rfewg',
+            enrollUrl: '',
+            charge: 100,
+            upvote: 200,
+            downvote: 300,
+            publisher: '华清大学',
+            detail: '# 比赛简介\n\n- **测试**一下 *markdown*\n- 和 $\\KaTeX$ 支持\n\n## 测试成功',
+            userRelated: {
+              upvoteStatus: 0
+            }
+          }
+        ]
       },
       status: 200,
       statusText: 'OK'

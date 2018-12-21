@@ -6,7 +6,7 @@
         <!-- 比赛信息 -->
         <el-row style="height: 150px;" :gutter="0">
           <el-col :span="8">
-            <img :src="contest.imgUrl" style="width: 100%">
+            <img :src="contest.imgUrl" class="fix-img">
           </el-col>
           <el-col :span="16" style="text-align: left;">
             <div class="flex-box" style="height: 140px; margin-left: 20px;">
@@ -343,5 +343,12 @@ export default {
   color: gray;
   font-weight: bold;
   font-size: 24px;
+}
+
+.fix-img {
+  max-width: 190px;
+  max-height: 142px;
+  width: auto;
+  height: auto;
 }
 </style>
