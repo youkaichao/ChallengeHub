@@ -13,6 +13,7 @@ from ChallengeHub.settings import MONGO_CLIENT, BASE_DIR
 from match.models import Message, Invitation, InvitationStatus, ReviewerInvitation
 import os
 import json
+import libflow
 
 
 class ContestCollectionView(View):
@@ -164,32 +165,73 @@ class ContestAutoAssignView(View):
         stage = int(request.data['stage'])
         maxconn = request.data['maxconn']
         serious = request.data['serious']
+        avoidField = request.data.get('avoidField', '')
+        judge_workloads = request.data['judges']
+        judge_workloads = {x['username']: x['assign'] for x in judge_workloads}
+
+        enroll_forms = MONGO_CLIENT.group.enrollForm
+        answer_map = {}
+        answer_count = 0
+
+        def get_id(ans):
+            nonlocal answer_count, answer_map
+            if ans not in answer_map:
+                answer_map[ans] = answer_count
+                answer_count += 1
+            return answer_map[ans]
+
+        def get_label(user):
+            form = json.loads(enroll_forms.find_one({'user_id': user.id, 'contest_id': c.id})['enrollForm'])
+            return get_id(form[avoidField])
+
         cstage = c.stage_list.get(stage=stage if stage % 2 == 1 else stage - 1)
         if cstage.is_assigned:
             raise Exception("already auto-assigned!")
+
         qualified_groups = c.enrolled_groups.filter(current_stage=stage)
         submitted_gstages = []
+        group_token = {}
         for group in qualified_groups:
             gstage = group.stage_list.get(
                 stage=stage if stage % 2 == 1 else stage - 1)
             if gstage.has_commit:
                 submitted_gstages.append(gstage)
+                if avoidField:
+                    group_token[gstage.id] = get_label(group.leader)
+
         judges = list(c.judges.all())
 
         judge_count = {x.username: 0 for x in judges}
         group_count = {x.id: 0 for x in submitted_gstages}
 
-        # assign assignment
-        index = 0
-        for gstage in submitted_gstages:
-            for i in range(maxconn):
-                judge = judges[index % len(judges)]
-                index += 1
-                judge_count[judge.username] += 1
-                group_count[gstage.id] += 1
+        judge_token = {}
+        if avoidField:
+            for judge in judges:
+                label = get_label(judge)
+                judge_token[judge.username] = label
+
+        libflow.set_max_conn(maxconn)
+        libflow.set_use_token(not not avoidField)
+        libflow.set_team_size(len(submitted_gstages))
+        libflow.set_judge_size(len(judges))
+        if avoidField:
+            libflow.set_team_tokens([group_token[x.id] for x in submitted_gstages])
+            libflow.set_judge_tokens([judge_token[x.username] for x in judges])
+        judge_bottlenecks = []
+        for judge in judges:
+            work = judge_workloads.get(judge.username, 0)
+            judge_bottlenecks.append(work)
+        libflow.set_judge_bottlenecks(judge_bottlenecks)
+        result = libflow.network_flow()
+        for i in range(len(result)):
+            assigns = result[i]
+            for g_idx in assigns:
+                judge_count[judges[i].username] += 1
+                group_count[submitted_gstages[g_idx].id] += 1
                 if serious:
-                    review_meta = ReviewMeta(reviewer=judge, stage=gstage)
+                    review_meta = ReviewMeta(reviewer=judges[i], stage=submitted_gstages[g_idx])
                     review_meta.save()
+
         if serious:
             cstage.is_assigned = True
             cstage.save()
@@ -315,7 +357,7 @@ class ContestEnrollView(View):
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['name', 'leaderName', 'members', 'form'])
         leader = User.objects.get(username=request.data.get('leaderName'))
-        if leader.joint_groups.all():
+        if leader.joint_groups.filter(competition_id=int(contest_id)):
             raise Exception(f"you are already in group {leader.joint_groups.first().name}")
         group = Group(
             name=request.data.get('name'),
@@ -628,7 +670,7 @@ class NoticeDetailView(View):
         notice.save()
         return
 
-        
+
 class UserProfileView(View):
     def get(self, request, username) -> Any:
         user = User.objects.get(username=username)

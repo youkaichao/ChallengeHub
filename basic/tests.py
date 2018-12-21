@@ -6,6 +6,7 @@ from ChallengeHub.utils import MyClient
 from basic.models import Competition, Group
 from basic.views import ContestSubmissionView
 from useraction.models import User
+from ChallengeHub.settings import MONGO_CLIENT
 
 
 class BasicTest(TestCase):
@@ -279,7 +280,7 @@ class SubmittedTimeTest(SubmissionTimeTest):
                                                  data={
                                                      'submissionName': submission_name,
                                                      'file': file
-        }), contest_id=str(contest_id))
+                                                 }), contest_id=str(contest_id))
 
     def add_judge(self, publisher_username, judge_username, contest_name):
         contest = Competition.objects.get(name=contest_name)
@@ -298,6 +299,41 @@ class SubmitListTest(SubmittedTimeTest):
             'stage': 1
         })
         self.assertEqual(len(resp['data']), 2)
+
+    def testAutoAssign(self):
+        self.proceed_contest('a', 'a_c')
+        self.add_judge('a', 'g', 'a_c')
+        self.add_judge('a', 'h', 'a_c')
+        a_c = Competition.objects.get(name='a_c')
+        collection = MONGO_CLIENT.group.enrollForm
+        collection.remove()
+        MONGO_CLIENT.group.enrollForm.insert_one(
+            {'user_id': self.individuals['c']['user'].id, 'contest_id': a_c.id, 'enrollForm': '{"a":"1"}'})
+        MONGO_CLIENT.group.enrollForm.insert_one(
+            {'user_id': self.individuals['e']['user'].id, 'contest_id': a_c.id, 'enrollForm': '{"a":"2"}'})
+        MONGO_CLIENT.group.enrollForm.insert_one(
+            {'user_id': self.judges['g']['user'].id, 'contest_id': a_c.id, 'enrollForm': '{"a":"1"}'})
+        MONGO_CLIENT.group.enrollForm.insert_one(
+            {'user_id': self.judges['h']['user'].id, 'contest_id': a_c.id, 'enrollForm': '{"a":"2"}'})
+        resp = self.publishers['a']['client'].post(f'/api/contests/{a_c.id}/auto_assign', data={
+            'stage': a_c.current_stage,
+            'maxconn': 2,
+            'serious': True,
+            'judges': [
+                {
+                    'username': 'g',
+                    'assign': 2
+                },
+                {
+                    'username': 'h',
+                    'assign': 2
+                }
+            ],
+            'avoidField': 'a'
+        })
+        self.assertEqual(resp['data']['groupNotFull'], 2)
+        self.assertEqual(resp['data']['groupZero'], 0)
+        collection.remove()
 
 
 class ReviewTimeTest(SubmittedTimeTest):

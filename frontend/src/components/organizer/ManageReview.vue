@@ -56,14 +56,32 @@
       </el-table-column>
     </el-table>
     <el-row align="middle">
-      <el-col :span="6">每个作品最多评委数</el-col>
-      <el-col :span="8">
-        <el-input-number
-          v-model="maxconn"
-          :min="0"
-          controls-position="right"
-        ></el-input-number>
-      </el-col>
+      <span class="margin-item">
+        每个作品最多评委数
+      </span>
+      <el-input-number
+        v-model="maxconn"
+        :min="0"
+        controls-position="right"
+        class="margin-item"
+      ></el-input-number>
+      <span class="margin-item">
+        用于同校回避的字段
+      </span>
+      <el-select
+        v-model="selectedLabel"
+        clearable
+        placeholder="请选择"
+        class="margin-item"
+      >
+        <el-option
+          v-for="(item,index) in enrolledLabels"
+          :key="index"
+          :label="item"
+          :value="item"
+        >
+        </el-option>
+      </el-select>
     </el-row>
     <el-row>
       <el-col :span="5">
@@ -109,7 +127,9 @@ export default {
       criterion: '',
       reviewers: [],
       groupNotFull: 0, // 没有评满的队伍数
-      groupZero: 0
+      groupZero: 0,
+      rawEnrollForm: '[]',
+      selectedLabel: ''
     }
   },
   computed: {
@@ -124,11 +144,28 @@ export default {
     },
     isNull() {
       return isNullStage(this.contest.stage)
+    },
+    enrolledLabels() {
+      let form = JSON.parse(this.rawEnrollForm)
+      return form.map(x => x.label)
     }
   },
   methods: {
     getPercentage,
     isJudgeStage,
+    refreshEnrollForm() {
+      this.$http
+        .get(`/api/contests/${this.contestId}/enroll`)
+        .then(resp => {
+          if (resp.body.code !== 0) {
+            throw new Error(resp.body.error)
+          }
+          this.rawEnrollForm = resp.body.data.enrollForm
+        })
+        .catch(err => {
+          this.$alert(err.toString())
+        })
+    },
     evenlyDistribute() {
       if (this.reviewers.length === 0) {
         this.$alert('没有评委')
@@ -164,6 +201,7 @@ export default {
           stage: this.contest.stage,
           serious, // 是否需要应用到数据库
           maxconn: this.maxconn, // 每个作品最多几个选手评
+          avoidField: this.selectedLabel,
           judges
         })
         .then(resp => {
@@ -272,6 +310,7 @@ export default {
       this.refreshReview()
       this.refreshStat()
       this.refreshCriterion()
+      this.refreshEnrollForm()
     }
   },
   created() {
@@ -289,5 +328,8 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.margin-item {
+  margin-right: 15px;
+}
 </style>

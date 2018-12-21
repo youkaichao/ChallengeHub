@@ -418,6 +418,13 @@ export default {
         return
       }
 
+      for (let item of this.extraFields) {
+        if (this.fieldLabel === item.label) {
+          this.$message.error('字段名称重复')
+          return
+        }
+      }
+
       let fieldItem = null
       if (this.isTextForm) {
         fieldItem = {
