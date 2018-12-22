@@ -13,6 +13,26 @@ export default {
       statusText: 'OK'
     }
   },
+  ['GET */apiv2/contests/1/groups']() {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: [
+          {
+            teamId: 1,
+            teamName: 'ahfei',
+            leader: 'fjaseilgj',
+            members: ['haefhi', 'asehlugiaegiase'],
+            invitees: ['fzzzz', 'asaaaa'],
+            locked: false
+          }
+        ]
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
   ['DELETE */apiv2/messages']() {
     return {
       body: {

@@ -71,6 +71,7 @@ export default {
         return
       }
       this.$message({ type: 'success', message: `消息发送成功` })
+      this.$router.push(`/message`)
     }
   }
 }

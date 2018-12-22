@@ -93,7 +93,7 @@ export default {
       }
       let index = null
       for (let i = 0; i < this.unreadMessages.length; i++) {
-        if (this.unreadMessages[i].id === id) {
+        if (this.unreadMessages[i].id === id && this.unreadMessages[i].type === type) {
           index = i
         }
       }
@@ -153,7 +153,7 @@ export default {
       }
       let index = null
       for (let i = 0; i < this.readMessages.length; i++) {
-        if (this.readMessages[i].id === id) {
+        if (this.readMessages[i].id === id && this.readMessages[i].type === type) {
           index = i
         }
       }

@@ -1,90 +1,50 @@
 <template>
   <div>
-    <el-card class="box-card">
-      <div
-        slot="header"
-        class="clearfix"
-      >
-        <span>
-          {{teamInfo.teamName}}</span>
+    <el-card class="box-card" style="width: 800px; margin: auto;">
+      <div slot="header" class="clearfix">
+        <span>{{teamInfo.teamName}}</span>
       </div>
 
-      <el-form
-        :model="teamInfo"
-        label-width="100px"
-      >
-        <el-form-item label="队名">
-          <div>
-            {{teamInfo.teamName}}
-          </div>
+      <el-form :model="teamInfo" label-width="100px" style="width: 500px; margin: auto;">
+        <h2>队伍信息</h2>
+        <el-form-item
+          label="队名"
+          style="border-bottom: 1px solid #ebeef5; margin-bottom: 0; margin-top: 0;"
+        >
+          <div>{{teamInfo.teamName}}</div>
         </el-form-item>
-        <el-form-item label="队长">
-          <div>
-            {{teamInfo.leader}}
-          </div>
+        <el-form-item
+          label="队长"
+          style="border-bottom: 1px solid #ebeef5; margin-bottom: 0; margin-top: 0;"
+        >
+          <div>{{teamInfo.leader}}</div>
         </el-form-item>
-        <el-form-item label="队员">
-          <div
-            v-for="(member,index) in teamInfo.members"
-            :key="index"
-          >
-            {{member}}
-          </div>
+        <el-form-item label="队员" style="margin-bottom: 0; margin-top: 0;">
+          <div v-for="(member,index) in teamInfo.members" :key="index">{{member}}</div>
         </el-form-item>
-        <el-form-item label="等待邀请">
-          <div
-            v-for="(invitee,index) in teamInfo.invitees"
-            :key="index"
-          >
-            <el-row>
-              <el-col :span="4">
-                <span>
-                  {{invitee}}
-                </span>
-              </el-col>
-              <el-col :span="4">
-                <el-button
-                  type="text"
-                  icon="el-icon-remove"
-                  @click="removeInvitation(invitee)"
-                  :disabled="!canOperate"
-                >取消邀请</el-button>
-              </el-col>
-            </el-row>
-          </div>
-        </el-form-item>
+        <h2>邀请管理</h2>
+        <div v-for="(invitee,index) in teamInfo.invitees" :key="index" style="margin: auto;">
+          <span style="margin-right: 20px;">{{invitee}}</span>
+          <el-button
+            type="text"
+            icon="el-icon-remove"
+            @click="removeInvitation(invitee)"
+            :disabled="!canOperate"
+          >取消邀请</el-button>
+        </div>
       </el-form>
     </el-card>
     <el-row>
-      <el-col :span="4">
-        <el-autocomplete
-          v-model="userInput"
-          :fetch-suggestions="querySearchAsync"
-          placeholder="输入用户名来搜索"
-        ></el-autocomplete>
-      </el-col>
-      <el-col :span="4">
-        <el-button
-          type="primary"
-          @click="addNewMember"
-          :disabled="!canOperate"
-        >邀请用户加入队伍</el-button>
-      </el-col>
+      <el-autocomplete
+        v-model="userInput"
+        :fetch-suggestions="querySearchAsync"
+        placeholder="输入用户名来搜索"
+      ></el-autocomplete>
+      <el-button type="primary" @click="addNewMember" style="margin-left: 20px;" :disabled="!canOperate">邀请用户加入队伍</el-button>
     </el-row>
-    <el-row
-      type="flex"
-      justify="start"
-    >
-      <el-button
-        type="warning"
-        @click="lockGroup"
-        :disabled="!canOperate"
-      >锁定队伍</el-button>
-      <el-button
-        type="danger"
-        @click="quitGroup"
-        :disabled="!canOperate"
-      >退出队伍</el-button>
+    <el-row>
+      <el-button type="warning" @click="lockGroup" :disabled="!canOperate">锁定队伍</el-button>
+      <el-button type="danger" @click="quitGroup" :disabled="!canOperate">退出队伍</el-button>
     </el-row>
   </div>
 </template>
