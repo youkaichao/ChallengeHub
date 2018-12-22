@@ -1,5 +1,13 @@
 <template>
   <div>
+    <el-alert
+      v-if="groups.length === 0"
+      title="然而并没有数据"
+      type="warning"
+      center
+      style="width: 600px; margin: auto;"
+      show-icon
+    ></el-alert>
     <el-row>
       <el-col :span="12">
         <group-card

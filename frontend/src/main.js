@@ -16,6 +16,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faThumbsUp as stu, faThumbsDown as std, faLock, faLockOpen, faUser } from '@fortawesome/free-solid-svg-icons'
 import { faThumbsUp as rtu, faThumbsDown as rtd } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import Raven from 'raven-js'
+import RavenVue from 'raven-js/plugins/vue'
 
 Vue.use(ElementUI)
 Vue.use(VueCookies)
@@ -30,6 +32,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 Vue.config.productionTip = false
+
+Raven.config('https://1b42a80d1f924d6bb761d7f878c5157a@sentry.io/1358389')
+  .addPlugin(RavenVue, Vue)
+  .install()
 
 new Vue({
   store,
