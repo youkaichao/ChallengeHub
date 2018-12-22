@@ -10,6 +10,11 @@
         </router-link>
         <el-button
           style="margin-left: auto; margin-top: auto; margin-bottom: auto;"
+          type="success"
+          @click="handleRoute('/contest/list')"
+        >所有比赛</el-button>
+        <el-button
+          style="margin-top: auto; margin-bottom: auto;"
           v-if="!login"
           type="primary"
           @click="handleRoute('/login')"
@@ -51,6 +56,7 @@
       <router-view></router-view>
     </transition>
     <el-row align="middle">
+      <el-button type="text" @click="handleRoute('/contest/list')">所有比赛</el-button>
       <el-button type="text" @click="handleRoute('/about')">关于我们</el-button>
       <el-button type="text" @click="handleRoute('/help')">帮助中心</el-button>
     </el-row>
@@ -121,8 +127,9 @@ export default {
   padding: 0;
 }
 
-.component-fade-enter-active, .component-fade-leave-active {
-  transition: opacity .3s ease;
+.component-fade-enter-active,
+.component-fade-leave-active {
+  transition: opacity 0.3s ease;
 }
 .component-fade-enter, .component-fade-leave-to
 /* .component-fade-leave-active below version 2.1.8 */ {
