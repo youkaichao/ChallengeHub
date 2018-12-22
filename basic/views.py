@@ -412,7 +412,7 @@ class ContestSubmissionView(View):
             for chunk in submit.chunks():
                 f.write(chunk)
         group_stage = group.stage_list.get(stage=stage)
-        group_stage.commit_path = os.path.join('/static', commit_path)
+        group_stage.commit_path = os.path.join('/submit', commit_path)
         group_stage.submission = request.data.get('submissionName')
         group_stage.has_commit = True
         group_stage.save()
