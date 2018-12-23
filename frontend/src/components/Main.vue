@@ -14,20 +14,20 @@
           @click="handleRoute('/contest/list')"
         >所有比赛</el-button>
         <el-button
-          style="margin-top: auto; margin-bottom: auto;"
+          style="margin-top: auto; margin-bottom: auto; margin-left: 10px;"
           v-if="!login"
           type="primary"
           @click="handleRoute('/login')"
         >登录</el-button>
         <el-button
-          style="margin-top: auto; margin-bottom: auto;"
+          style="margin-top: auto; margin-bottom: auto; margin-left: 10px;"
           v-if="!login"
           type="primary"
           @click="handleRoute('/register')"
         >注册</el-button>
         <el-badge
           :value="unreadCount"
-          style="margin-left: auto; margin-top: auto; margin-bottom: auto;"
+          style="margin-top: auto; margin-bottom: auto; margin-left: 10px;"
           v-if="login && unreadCount !== 0"
         >
           <el-button type="primary" @click="handleRoute('/message')">消息中心</el-button>
@@ -35,7 +35,7 @@
         <el-button
           type="primary"
           v-if="login && unreadCount === 0"
-          style="margin-left: auto; margin-top: auto; margin-bottom: auto;"
+          style="margin-top: auto; margin-bottom: auto; margin-left: 10px;"
           @click="handleRoute('/message')"
         >消息中心</el-button>
         <el-button

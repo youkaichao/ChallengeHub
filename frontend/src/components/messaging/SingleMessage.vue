@@ -1,5 +1,8 @@
 <template>
-  <el-card style="text-align: left;" body-style="padding: 10px;">
+  <el-card
+    style="text-align: left; margin-left: 10px; margin-right: 10px;"
+    body-style="padding: 10px;"
+  >
     <div v-if="message.type === 'letter'">
       <div class="title">
         <div>
@@ -63,8 +66,10 @@
       <div class="content" style="text-align: center;">
         <el-card shadow="never" style="width: 600px; margin-left: auto; margin-right: auto;">
           <div>
-            <span class="theme bold">{{message.content.leaderName}}</span>邀请你加入
-            <span class="theme bold">{{message.content.groupName}}</span>参加比赛
+            <span class="theme bold">{{message.content.leaderName}}</span>
+            <span style="margin-left: 5px; margin-right: 5px;">邀请你加入</span>
+            <span class="theme bold">{{message.content.groupName}}</span>
+            <span style="margin-left: 5px; margin-right: 5px;">参加比赛</span>
             <span class="theme bold">{{message.content.contestName}}</span>
           </div>
           <div style="margin-top: 20px; color: gray; font-size: 12px; margin-bottom: 10px;">
@@ -119,7 +124,10 @@
       <div class="content" style="text-align: center;">
         <el-card shadow="never" style="width: 600px; margin-left: auto; margin-right: auto;">
           <div>
-            <span class="theme bold">{{message.content.contestName}}</span>的主办方<span class="theme bold">{{message.sender}}</span>邀请你进行评审
+            <span class="theme bold">{{message.content.contestName}}</span>
+            <span style="margin-left: 5px; margin-right: 5px;">的主办方</span>
+            <span class="theme bold">{{message.sender}}</span>
+            <span style="margin-left: 5px; margin-right: 5px;">邀请你进行评审</span>
           </div>
           <div style="margin-top: 20px; color: gray; font-size: 12px; margin-bottom: 10px;">
             <span v-if="message.content.status === 0">请及时做出选择</span>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-table :data="groups" stripe style="width: 100%" @selection-change="handleSelectionChange">
-      <el-table-column type="selection"></el-table-column> -->
+      <el-table-column type="selection"></el-table-column>
       <el-table-column prop="id" label="序号">
       </el-table-column>
       <el-table-column prop="name" label="队名">

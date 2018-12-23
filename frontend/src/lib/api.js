@@ -289,9 +289,9 @@ export default {
         data: {
           username: request.body.username,
           email: `${request.body.username}@ts.com`,
-          selfDescription: `I am a ${request.body.username}`,
-          sourceSchool: `${request.body.username} school`,
-          isIndividual: request.body.username === 'organizer'
+          introduction: `I am a ${request.body.username}`,
+          school: `${request.body.username} school`,
+          individual: request.body.username !== 'organizer'
         }
       },
       status: 200,

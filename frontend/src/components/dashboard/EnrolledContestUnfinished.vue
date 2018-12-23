@@ -71,6 +71,7 @@
             >无过往作品</el-button>
             <el-button
               type="text"
+              style="padding: 0;"
               @click="gotoMyTeam"
             >查看我的队伍</el-button>
           </div>
@@ -265,6 +266,8 @@ export default {
 <style scoped>
 .single-card {
   height: 150px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .enrolled-contest-card {

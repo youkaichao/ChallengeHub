@@ -1,9 +1,6 @@
 <template>
   <div id="app">
-    <transition
-      name="component-fade"
-      mode="out-in"
-    >
+    <transition name="component-fade" mode="out-in">
       <router-view></router-view>
     </transition>
   </div>
@@ -20,7 +17,6 @@ html,
 body {
   margin: 0;
   height: 100%;
-  overflow: scroll;
 }
 
 body::-webkit-scrollbar {

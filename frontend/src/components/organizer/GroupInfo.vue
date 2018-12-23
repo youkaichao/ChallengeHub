@@ -39,6 +39,7 @@
     <div style="text-align: center; margin-top: 30px;">
       <hot-table
         ref="hot"
+        id="group-info-table"
         :settings="settings"
         style="display: inline-block;"
       ></hot-table>

@@ -53,6 +53,8 @@ export default {
 <style scoped>
 .single-card {
   height: 150px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .judged-contest-card {

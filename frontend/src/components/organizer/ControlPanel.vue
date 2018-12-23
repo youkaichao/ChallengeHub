@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-aside>
-      <el-card class="box-card">
+      <el-card class="box-card" style="margin: 10px;">
         <div slot="header">
           <span>{{contest.name}}</span>
         </div>
@@ -15,9 +15,11 @@
           <el-tag>{{'举办方: '+contest.publisher}}</el-tag>
         </el-row>
       </el-card>
+      <el-card style="margin: 10px;">
       <el-menu
         :default-active="activeIndex"
         class="el-menu-vertical-demo"
+        style="border: none;"
       >
         <el-menu-item
           v-for="(item,index) in sidebarList"
@@ -26,6 +28,7 @@
           @click="pushRoute(item.name)"
         >{{ item.label }}</el-menu-item>
       </el-menu>
+      </el-card>
     </el-aside>
     <el-main style="height:auto;">
       <transition
