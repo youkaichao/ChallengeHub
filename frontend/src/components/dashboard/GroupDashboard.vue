@@ -132,7 +132,7 @@ export default {
     quitGroup() {
       let message = '你确定要退出队伍吗？'
       if (this.isLeader) {
-        if (this.teamInfo.members.length === 0) {
+        if (this.teamInfo.members.length <= 1) {
           message += '这个队伍会被解散'
         } else {
           message += '其中一位组员会成为组长'
