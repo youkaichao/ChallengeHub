@@ -67,7 +67,7 @@ class GroupAPITest(TestCase):
             "enrollForm": '12',
             "enrollStart": "2018-11-29T16:00:00.000Z",
             "enrollUrl": "",
-            "groupSize": 1,
+            "groupSize": 10,
             "imgUrl": "url????",
             "name": "pwf",
             "procedure": [{"name": "1st", "startTime": "2018-12-1", "endTime": "2018-12-3"},

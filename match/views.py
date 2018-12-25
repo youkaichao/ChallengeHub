@@ -46,6 +46,11 @@ class MatchInviteView(View):
             raise Exception('no authority to invite')
         if group.locked:
             raise Exception('group already locked')
+        messages = Invitation.objects.filter(group=group, status=InvitationStatus.DEFAULT)
+        num_members = len(group.members.all())
+        contest = Competition.objects.get(id=int(contest_id))
+        if num_members + len(messages) >= contest.group_size:
+            raise Exception(f"You already have {num_members} members and are inviting {len(messages)} members, but the max group size is {contest.group_size} for this contest.You can't invite more members!")
         self.check_input(['username'])
         user = User.objects.get(username=request.data.get('username'))
         message = Invitation.objects.filter(group=group, invitee=user, status=InvitationStatus.DEFAULT)
