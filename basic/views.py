@@ -293,9 +293,12 @@ class ContestReviewerView(View):
                 tmp['accepted'] = 0
                 data.append(tmp)
         for x in data:
-            x['enrollForm'] = \
-                MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(x['id']), 'contest_id': int(contest_id)})[
-                    'enrollForm']
+            d = MONGO_CLIENT.db.groupEnrollForm.find_one({'user_id': int(x['id']), 'contest_id': int(contest_id)})
+            if d:
+                x['enrollForm'] = d['enrollForm']
+            else:
+                # not accepted invitation yet
+                x['enrollForm'] = '{}'
         return data
 
 
