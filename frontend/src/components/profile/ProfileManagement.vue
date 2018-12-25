@@ -1,47 +1,21 @@
 <template>
   <div style="width: 600px; margin: auto;">
     <h2>修改密码</h2>
-    <el-form
-      ref="form"
-      :rules="rules"
-      label-width="120px"
-    >
-      <el-form-item
-        label="原密码"
-        prop="oldPassword"
-      >
-        <el-input
-          type="password"
-          v-model="oldPassword"
-        ></el-input>
+    <el-form ref="form" :rules="rules" label-width="120px">
+      <el-form-item label="原密码" prop="oldPassword">
+        <el-input type="password" v-model="oldPassword"></el-input>
       </el-form-item>
-      <el-form-item
-        label="新密码"
-        prop="newPassword"
-      >
-        <el-input
-          type="password"
-          v-model="newPassword"
-        ></el-input>
+      <el-form-item label="新密码" prop="newPassword">
+        <el-input type="password" v-model="newPassword"></el-input>
       </el-form-item>
-      <el-form-item
-        label="重新输入新密码"
-        prop="repeatNewPassword"
-      >
-        <el-input
-          type="password"
-          v-model="newPasswordRetyped"
-        ></el-input>
+      <el-form-item label="重新输入新密码" prop="repeatNewPassword">
+        <el-input type="password" v-model="newPasswordRetyped"></el-input>
       </el-form-item>
     </el-form>
-    <el-button
-      type="primary"
-      @click="repasswordConfirm()"
-      style="margin-bottom: 60px;"
-    >确认修改密码</el-button>
+    <el-button type="primary" @click="repasswordConfirm()" style="margin-bottom: 60px;">确认修改密码</el-button>
 
     <h2>修改学校信息</h2>
-    <el-input v-model="profile.school" />
+    <el-input v-model="profile.school"/>
     <el-button
       style="margin-top: 20px; margin-bottom: 60px;"
       type="primary"
@@ -49,15 +23,8 @@
     >确认修改学校</el-button>
 
     <h2>修改自我简介</h2>
-    <el-input
-      type="textarea"
-      v-model="profile.introduction"
-    />
-    <el-button
-      style="margin-top: 20px;"
-      type="primary"
-      @click="modIntroductionConfim()"
-    >确认修改简介</el-button>
+    <el-input type="textarea" v-model="profile.introduction"/>
+    <el-button style="margin-top: 20px;" type="primary" @click="modIntroductionConfim()">确认修改简介</el-button>
   </div>
 </template>
 

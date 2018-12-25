@@ -1,9 +1,6 @@
 <template>
   <div>
-    <el-alert
-      title="你可以选择不同的选项对选手进行筛选，只有满足条件的选手会在表格中出现。"
-      type="success"
-    ></el-alert>
+    <el-alert title="你可以选择不同的选项对选手进行筛选，只有满足条件的选手会在表格中出现。" type="success"></el-alert>
     <div style="text-align: left">
       <div
         v-for="(filterOptionsItem, index) of filterOptions"
@@ -21,16 +18,8 @@
         </el-checkbox-group>
       </div>
     </div>
-    <el-alert
-      title="你可以在表格中搜索文本，匹配的单元格会高亮。"
-      style="margin-top: 30px;"
-      type="success"
-    ></el-alert>
-    <el-input
-      v-model="searchText"
-      placeholder="请输入内容以搜索"
-      style="width: 400px; margin-top: 30px;"
-    ></el-input>
+    <el-alert title="你可以在表格中搜索文本，匹配的单元格会高亮。" style="margin-top: 30px;" type="success"></el-alert>
+    <el-input v-model="searchText" placeholder="请输入内容以搜索" style="width: 400px; margin-top: 30px;"></el-input>
     <el-alert
       title="你可以点击每列的标题对这些数据进行排序（可在顺序、逆序和不排序中切换）。你也可以选择部分单元格并单击右键选择复制。"
       style="margin-top: 30px;"

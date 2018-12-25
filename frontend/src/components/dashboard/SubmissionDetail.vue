@@ -17,9 +17,7 @@
       <el-button type="primary" @click="handleDownload()">下载作品</el-button>
     </div>
 
-    <h2 style="text-align: center;">
-      评审详情
-    </h2>
+    <h2 style="text-align: center;">评审详情</h2>
     <el-card v-for="(review, index) of detail.reviews" :key="index" style="margin-top: 10px;">
       <div>
         <span class="tag">评审分数</span>
@@ -32,7 +30,6 @@
         </span>
       </div>
     </el-card>
-
   </div>
 </template>
 

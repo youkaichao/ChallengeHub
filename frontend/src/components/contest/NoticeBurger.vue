@@ -5,13 +5,20 @@
       <div class="flex-box">
         <el-button type="text" style="padding: 0px;" @click="handleDetailClick">查看详情</el-button>
         <span>
-          <span style="color: #409eff; margin-right: 5px;">最后更新时间</span>{{readableModifiedTime}}
+          <span style="color: #409eff; margin-right: 5px;">最后更新时间</span>
+          {{readableModifiedTime}}
         </span>
       </div>
     </el-card>
 
     <el-dialog :title="notice.title" :visible.sync="detailVisible">
-      <mavon-editor v-model="noticeContent" :editable="false" :defaultOpen="'preview'" :subfield="false" :toolbarsFlag="false" />
+      <mavon-editor
+        v-model="noticeContent"
+        :editable="false"
+        :defaultOpen="'preview'"
+        :subfield="false"
+        :toolbarsFlag="false"
+      />
       <el-button type="primary" style="margin-top: 20px;" @click="detailVisible = false">关闭</el-button>
     </el-dialog>
   </div>

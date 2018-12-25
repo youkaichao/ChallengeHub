@@ -1,51 +1,25 @@
 <template>
   <div>
     <el-tabs v-model="currentTabIndex">
-      <el-tab-pane
-        v-for="(stage,index) in this.contest.procedure"
-        :key="index"
-        :label="stage.name"
-      >
-      </el-tab-pane>
+      <el-tab-pane v-for="(stage,index) in this.contest.procedure" :key="index" :label="stage.name"></el-tab-pane>
     </el-tabs>
     <el-table :data="submissions">
-      <el-table-column
-        label="队伍名称"
-        prop="teamName"
-      ></el-table-column>
-      <el-table-column
-        label="作品名称"
-        prop="name"
-      ></el-table-column>
+      <el-table-column label="队伍名称" prop="teamName"></el-table-column>
+      <el-table-column label="作品名称" prop="name"></el-table-column>
       <el-table-column label="下载地址">
         <template slot-scope="scope">
-          <el-button
-            type="text"
-            @click="downloadWithUrl(scope.row.downloadUrl)"
-          >
-            下载
-          </el-button>
+          <el-button type="text" @click="downloadWithUrl(scope.row.downloadUrl)">下载</el-button>
         </template>
       </el-table-column>
       <el-table-column label="平均分(点击查看详情)">
-        <template
-          slot-scope="scope"
-          prop="score"
-          sortable
-        >
-          <el-popover
-            placement="left"
-            trigger="click"
-          >
+        <template slot-scope="scope" prop="score" sortable>
+          <el-popover placement="left" trigger="click">
             <el-table :data="scope.row.judges">
-              <el-table-column
-                prop="username"
-                label="评委"
-              ></el-table-column>
+              <el-table-column prop="username" label="评委"></el-table-column>
               <el-table-column label="评分">
-                <template slot-scope="in_scope">
-                  {{in_scope.row.hasReviewed?in_scope.row.score:'未评分'}}
-                </template>
+                <template
+                  slot-scope="in_scope"
+                >{{in_scope.row.hasReviewed?in_scope.row.score:'未评分'}}</template>
               </el-table-column>
             </el-table>
             <el-button slot="reference">{{scope.row.score}}</el-button>
@@ -53,16 +27,8 @@
         </template>
       </el-table-column>
       <el-table-column label="附加分">
-        <template
-          slot-scope="scope"
-          prop="deltaScore"
-          sortable
-        >
-          <el-input-number
-            v-model="scope.row.deltaScore"
-            :controls="false"
-            style="width:80px"
-          ></el-input-number>
+        <template slot-scope="scope" prop="deltaScore" sortable>
+          <el-input-number v-model="scope.row.deltaScore" :controls="false" style="width:80px"></el-input-number>
         </template>
       </el-table-column>
       <el-table-column label="附加分备注">

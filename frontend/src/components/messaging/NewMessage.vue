@@ -15,14 +15,9 @@
       :autosize="{ minRows: 20, maxRows: 80}"
       placeholder="请输入内容"
       v-model="content"
-    >
-    </el-input>
+    ></el-input>
     <div>
-      <el-button
-        type="primary"
-        style="margin-top: 20px;"
-        @click="sendMessage"
-      >发送私信</el-button>
+      <el-button type="primary" style="margin-top: 20px;" @click="sendMessage">发送私信</el-button>
     </div>
   </div>
 </template>

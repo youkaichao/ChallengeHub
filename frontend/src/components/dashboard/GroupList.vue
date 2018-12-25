@@ -10,18 +10,10 @@
     ></el-alert>
     <el-row>
       <el-col :span="12">
-        <group-card
-          v-for="(group,index) in evenGroups"
-          :group="group"
-          :key="index"
-        />
+        <group-card v-for="(group,index) in evenGroups" :group="group" :key="index"/>
       </el-col>
       <el-col :span="12">
-        <group-card
-          v-for="(group,index) in oddGroups"
-          :group="group"
-          :key="index"
-        />
+        <group-card v-for="(group,index) in oddGroups" :group="group" :key="index"/>
       </el-col>
     </el-row>
   </div>

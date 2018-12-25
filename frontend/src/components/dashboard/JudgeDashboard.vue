@@ -1,51 +1,29 @@
 <template>
   <div>
     <div style="text-align: left;">
-      <el-row
-        type='flex'
-        align-items="center"
-      >
-        <el-col
-          :span="6"
-          style="text-align: left; margin: auto;"
-        > <span class="info-tag">姓名</span> {{ this.$store.state.username }} </el-col>
-        <el-col
-          :span="6"
-          style="text-align: left; margin: auto;"
-        > <span class="info-tag">学校</span> {{ this.$store.state.school }} </el-col>
-        <el-col
-          :span="6"
-          style="text-align: left; margin: auto;"
-        > <span class="info-tag">邮箱</span> {{ this.$store.state.email }} </el-col>
-        <el-col
-          :span="6"
-          style="text-align: right;"
-        >
-          <el-button
-            type="text"
-            @click="$router.push('/profile_management')"
-          >修改个人信息</el-button>
+      <el-row type="flex" align-items="center">
+        <el-col :span="6" style="text-align: left; margin: auto;">
+          <span class="info-tag">姓名</span>
+          {{ this.$store.state.username }}
+        </el-col>
+        <el-col :span="6" style="text-align: left; margin: auto;">
+          <span class="info-tag">学校</span>
+          {{ this.$store.state.school }}
+        </el-col>
+        <el-col :span="6" style="text-align: left; margin: auto;">
+          <span class="info-tag">邮箱</span>
+          {{ this.$store.state.email }}
+        </el-col>
+        <el-col :span="6" style="text-align: right;">
+          <el-button type="text" @click="$router.push('/profile_management')">修改个人信息</el-button>
         </el-col>
       </el-row>
-      <el-row
-        type="flex"
-        align-items="center"
-      >
-        <el-col
-          :span="18"
-          style="text-align: left; margin: auto;"
-        >
+      <el-row type="flex" align-items="center">
+        <el-col :span="18" style="text-align: left; margin: auto;">
           <h1 style="font-size: 48px; margin: 0">我评审的比赛</h1>
         </el-col>
-        <el-col
-          :span="6"
-          style="text-align: right; margin: auto;"
-        >
-          <el-button
-            type="primary"
-            plain
-            @click="$emit('switch-competitor')"
-          >切换到选手视图</el-button>
+        <el-col :span="6" style="text-align: right; margin: auto;">
+          <el-button type="primary" plain @click="$emit('switch-competitor')">切换到选手视图</el-button>
         </el-col>
       </el-row>
     </div>

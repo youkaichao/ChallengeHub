@@ -103,7 +103,8 @@ export default {
     currentDeadline: function() {
       let stageIndex = this.contest.stage
       let procedure = this.contest.procedure
-      if (stageIndex % 2 === 0 && stageIndex !== procedure.length * 2) return isoToHumanReadable(procedure[stageIndex / 2].startTime)
+      if (stageIndex % 2 === 0 && stageIndex !== procedure.length * 2)
+        return isoToHumanReadable(procedure[stageIndex / 2].startTime)
       else if (stageIndex % 2 === 0) return '主办方规定的时间'
       else return isoToHumanReadable(this.contest.procedure[(stageIndex - 1) / 2].endTime)
     },

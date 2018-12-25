@@ -1,8 +1,14 @@
 <template>
   <div>
-    <competition-dashboard v-if="isIndividual && isCompetitor" v-on:switch-judge="isCompetitor = false" />
-    <judge-dashboard v-else-if="isIndividual && !isCompetitor" v-on:switch-competitor="isCompetitor = true" />
-    <my-organize-contests v-else-if="isLogin" />
+    <competition-dashboard
+      v-if="isIndividual && isCompetitor"
+      v-on:switch-judge="isCompetitor = false"
+    />
+    <judge-dashboard
+      v-else-if="isIndividual && !isCompetitor"
+      v-on:switch-competitor="isCompetitor = true"
+    />
+    <my-organize-contests v-else-if="isLogin"/>
     <div v-else>
       <h1>你还没有登录！</h1>
     </div>

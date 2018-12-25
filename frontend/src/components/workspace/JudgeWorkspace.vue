@@ -4,25 +4,12 @@
     <el-row :gutter="20">
       <el-col :span="12">
         <!-- 比赛信息 -->
-        <el-row
-          style="height: 150px;"
-          :gutter="0"
-        >
+        <el-row style="height: 150px;" :gutter="0">
           <el-col :span="8">
-            <img
-              :src="contest.imgUrl"
-              class="fix-img"
-              :onerror="defaultImg"
-            >
+            <img :src="contest.imgUrl" class="fix-img" :onerror="defaultImg">
           </el-col>
-          <el-col
-            :span="16"
-            style="text-align: left;"
-          >
-            <div
-              class="flex-box"
-              style="height: 140px; margin-left: 20px;"
-            >
+          <el-col :span="16" style="text-align: left;">
+            <div class="flex-box" style="height: 140px; margin-left: 20px;">
               <h1 class="no-margin">{{contest.name}}</h1>
               <span style="color: gray;">{{contest.publisher}}</span>
             </div>
@@ -32,10 +19,7 @@
       <el-col :span="12">
         <!-- 切换阶段与下载 -->
         <el-row style="text-align: right; margin-bottom: 50px;">
-          <el-select
-            v-model="currentSelected"
-            placeholder="请选择一个阶段"
-          >
+          <el-select v-model="currentSelected" placeholder="请选择一个阶段">
             <el-option
               v-for="(stage, index) of reviewableStages"
               :key="index"
@@ -50,31 +34,20 @@
             @click="switchStage(currentSelected)"
           >查看其它阶段评审</el-button>
         </el-row>
-        <el-row
-          type="flex"
-          style="flex-direction: row-reverse;"
-        >
+        <el-row type="flex" style="flex-direction: row-reverse;">
           <el-button
             :disabled="readonly"
             type="success"
             @click="downloadUnreviewed()"
             style="margin-left: 10px;"
           >下载未评审作品</el-button>
-          <el-button
-            :disabled="readonly"
-            type="success"
-            @click="downloadAll()"
-            plain
-          >下载所有作品</el-button>
+          <el-button :disabled="readonly" type="success" @click="downloadAll()" plain>下载所有作品</el-button>
         </el-row>
       </el-col>
     </el-row>
     <!-- 顶部信息结束 -->
     <!-- 进度条信息 -->
-    <div
-      class="section-header"
-      style="color: "
-    >
+    <div class="section-header" style="color: ">
       阶段
       <span style="color: #409eff;">{{currentStage}}</span> 评审进度
     </div>
@@ -86,51 +59,25 @@
     />
     <!-- 进度条信息结束 -->
     <!-- 选手提交 -->
-    <div
-      class="section-header"
-      style="color: "
-    >选手提交</div>
+    <div class="section-header" style="color: ">选手提交</div>
     <el-table
       :data="submissions"
       stripe
       style="width: 100%"
       :default-sort="{prop: 'tag', order: 'ascending'}"
     >
-      <el-table-column
-        prop="tag"
-        label="序号"
-        width="100"
-      ></el-table-column>
+      <el-table-column prop="tag" label="序号" width="100"></el-table-column>
       <!-- // ! 该接口目前尚未提供 -->
-      <el-table-column
-        prop="groupName"
-        label="小组名称"
-        width="200"
-      ></el-table-column>
-      <el-table-column
-        prop="submissionName"
-        label="作品名称"
-        min-width="400"
-      ></el-table-column>
-      <el-table-column
-        label="评分"
-        width="150"
-      >
+      <el-table-column prop="groupName" label="小组名称" width="200"></el-table-column>
+      <el-table-column prop="submissionName" label="作品名称" min-width="400"></el-table-column>
+      <el-table-column label="评分" width="150">
         <template slot-scope="scope">
           <span>{{scope.row.reviewed ? scope.row.rating : "未评审"}}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="操作"
-        width="100"
-      >
+      <el-table-column label="操作" width="100">
         <template slot-scope="scope">
-          <el-button
-            v-if="readonly"
-            plain
-            type="primary"
-            @click="handleDetail(scope.row)"
-          >查看</el-button>
+          <el-button v-if="readonly" plain type="primary" @click="handleDetail(scope.row)">查看</el-button>
           <el-button
             v-if="!readonly"
             :plain="scope.row.reviewed"
@@ -142,11 +89,7 @@
     </el-table>
     <!-- 选手提交结束 -->
     <!-- 评审弹出窗口 -->
-    <el-dialog
-      title="评审作品"
-      :visible.sync="remarkDialogVisible"
-      :width="'60%'"
-    >
+    <el-dialog title="评审作品" :visible.sync="remarkDialogVisible" :width="'60%'">
       <h2 style="margin-top: 0px; margin-bottom: 0px;">
         作品
         <span style="color: #409eff; margin-left; 20px;">{{currentSubmission.submissionName}}</span>
@@ -164,7 +107,9 @@
 
       <div style="font-size: 20px; margin-top: 20px;">
         <span>当前状态</span>
-        <span style="margin-left: 20px; color: #409eff;">{{currentSubmission.reviewed ? "已评审":"未评审"}}</span>
+        <span
+          style="margin-left: 20px; color: #409eff;"
+        >{{currentSubmission.reviewed ? "已评审":"未评审"}}</span>
       </div>
 
       <div style="margin-top: 20px;">
@@ -203,11 +148,7 @@
     </el-dialog>
 
     <!-- 评分细则窗口 -->
-    <el-dialog
-      title="评分细则"
-      :visible.sync="standardDialogVisible"
-      :width="'60%'"
-    >
+    <el-dialog title="评分细则" :visible.sync="standardDialogVisible" :width="'60%'">
       <mavon-editor
         v-model="contest.standard"
         :editable="false"

@@ -1,42 +1,18 @@
 <template>
   <div>
-    <el-table
-      :data="groups"
-      stripe
-      style="width: 100%"
-      @selection-change="handleSelectionChange"
-    >
+    <el-table :data="groups" stripe style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection"></el-table-column>
-      <el-table-column
-        prop="id"
-        label="序号"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="name"
-        label="队名"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="leaderName"
-        label="队长"
-      >
-      </el-table-column>
+      <el-table-column prop="id" label="序号"></el-table-column>
+      <el-table-column prop="name" label="队名"></el-table-column>
+      <el-table-column prop="leaderName" label="队长"></el-table-column>
       <el-table-column label="队员列表">
-        <template slot-scope="scope">
-          {{ scope.row.membersName.join(', ') }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.membersName.join(', ') }}</template>
       </el-table-column>
       <el-table-column label="是否提交">
-        <template slot-scope="scope">
-          {{ scope.row.hasCommit?'已经提交':'未提交' }}
-        </template>
+        <template slot-scope="scope">{{ scope.row.hasCommit?'已经提交':'未提交' }}</template>
       </el-table-column>
-      <el-table-column
-        prop="rank"
-        label="奖项"
-      >
-      </el-table-column>
+      <el-table-column prop="rank" label="奖项"></el-table-column>
+      <el-table-column prop="rank" label="奖项"></el-table-column>
       <el-table-column label="阶段">
         <template slot-scope="scope">{{ groupStageName(scope.row.stage) }}</template>
       </el-table-column>
@@ -46,44 +22,20 @@
         type="primary"
         @click="changeStage"
         :disabled="targetStage.stage===-1"
-      >
-        {{targetStage.stage === -1 ? targetStage.name : '将选中的队伍晋级至 '+targetStage.name}}
-      </el-button>
-      <el-button
-        type="success"
-        @click="bestowRank"
-      >
-        给选中队伍发奖
-      </el-button>
+      >{{targetStage.stage === -1 ? targetStage.name : '将选中的队伍晋级至 '+targetStage.name}}</el-button>
+      <el-button type="success" @click="bestowRank">给选中队伍发奖</el-button>
     </el-row>
-    <el-dialog
-      title="给选中队伍发奖"
-      :visible.sync="centerDialogVisible"
-      width="30%"
-      center
-    >
+    <el-dialog title="给选中队伍发奖" :visible.sync="centerDialogVisible" width="30%" center>
       <span>奖项的名称</span>
-      <el-input
-        v-model="rankName"
-        placeholder="请输入奖项"
-        style="margin: 10px"
-      ></el-input>
-      <span>奖项将被颁发给以下队伍: </span>
-      <span
-        v-for="(group,index) in this.selected"
-        :key="index"
-      >
-        <span v-if="index !== 0">, </span>{{group.name}}
+      <el-input v-model="rankName" placeholder="请输入奖项" style="margin: 10px"></el-input>
+      <span>奖项将被颁发给以下队伍:</span>
+      <span v-for="(group,index) in this.selected" :key="index">
+        <span v-if="index !== 0">,</span>
+        {{group.name}}
       </span>
-      <span
-        slot="footer"
-        class="dialog-footer"
-      >
+      <span slot="footer" class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="sendChangeRank"
-        >确 定</el-button>
+        <el-button type="primary" @click="sendChangeRank">确 定</el-button>
       </span>
     </el-dialog>
   </div>

@@ -1,22 +1,9 @@
 <template>
   <div>
-    <el-table
-      :data="judges"
-      stripe
-      style="width: 100%"
-    >
-      <el-table-column
-        prop="username"
-        label="用户名"
-      ></el-table-column>
-      <el-table-column
-        prop="email"
-        label="邮箱"
-      ></el-table-column>
-      <el-table-column
-        prop="school"
-        label="学校"
-      ></el-table-column>
+    <el-table :data="judges" stripe style="width: 100%">
+      <el-table-column prop="username" label="用户名"></el-table-column>
+      <el-table-column prop="email" label="邮箱"></el-table-column>
+      <el-table-column prop="school" label="学校"></el-table-column>
       <el-table-column label="状态">
         <template slot-scope="scope">{{scope.row.accepted === 1 ? "已接受": "未接受"}}</template>
       </el-table-column>
@@ -45,14 +32,8 @@
           placeholder="请输入评委用户名"
         ></el-autocomplete>
       </el-col>
-      <el-col
-        :span="4"
-        :offset="1"
-      >
-        <el-button
-          type="primary"
-          @click="addJudge"
-        >添加新评委</el-button>
+      <el-col :span="4" :offset="1">
+        <el-button type="primary" @click="addJudge">添加新评委</el-button>
       </el-col>
     </el-row>
   </div>

@@ -1,10 +1,20 @@
 <template>
   <el-row>
     <el-alert v-if="status==0" title="正在认证您的邮箱" type="info" description="请稍候......" show-icon></el-alert>
-    <el-alert v-if="status==1" title="邮箱认证成功" type="success" description="您的邮箱验证完毕, 5秒后将前往登陆界面" show-icon>
-    </el-alert>
-    <el-alert v-if="status==-1" title="邮箱认证失败" type="error" description="邮箱验证失败, 请联系管理员寻求帮助, 5秒后将返回主页" show-icon>
-    </el-alert>
+    <el-alert
+      v-if="status==1"
+      title="邮箱认证成功"
+      type="success"
+      description="您的邮箱验证完毕, 5秒后将前往登陆界面"
+      show-icon
+    ></el-alert>
+    <el-alert
+      v-if="status==-1"
+      title="邮箱认证失败"
+      type="error"
+      description="邮箱验证失败, 请联系管理员寻求帮助, 5秒后将返回主页"
+      show-icon
+    ></el-alert>
   </el-row>
 </template>
 

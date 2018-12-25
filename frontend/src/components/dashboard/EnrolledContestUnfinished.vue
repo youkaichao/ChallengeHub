@@ -1,64 +1,48 @@
 <template>
   <div>
-    <el-card
-      :body-style="{ padding: '0px' }"
-      class="single-card"
-    >
+    <el-card :body-style="{ padding: '0px' }" class="single-card">
       <el-row style="margin: 0px;">
         <el-col :span="4">
-          <img
-            :src="contest.imgUrl"
-            class="enrolled-contest-card"
-            :onerror="defaultImg"
-          />
+          <img :src="contest.imgUrl" class="enrolled-contest-card" :onerror="defaultImg">
         </el-col>
-        <el-col
-          :span="12"
-          style="text-align: left; padding-left: 20px;"
-        >
-          <div class="contest-name"> {{ contest.name }} </div>
+        <el-col :span="12" style="text-align: left; padding-left: 20px;">
+          <div class="contest-name">{{ contest.name }}</div>
           <div class="contest-info">
-            <el-button type="text" @click="$router.push(`/profile/${contest.publisher}`)" style="padding: 0; font-size: 16px;">
-              {{ contest.publisher }}
-            </el-button>
+            <el-button
+              type="text"
+              @click="$router.push(`/profile/${contest.publisher}`)"
+              style="padding: 0; font-size: 16px;"
+            >{{ contest.publisher }}</el-button>
           </div>
-          <div
-            v-if="contest.stage === 0"
-            class="contest-info"
-          >已报名，比赛尚未开始</div>
-          <div
-            v-else-if="contest.stage !== 0 && contest.stage % 2 === 1"
-            class="contest-info"
-          >提交中，当前阶段 <b>{{ currentStage }}</b> 结束于 <b>{{ currentDeadline }}</b></div>
+          <div v-if="contest.stage === 0" class="contest-info">已报名，比赛尚未开始</div>
+          <div v-else-if="contest.stage !== 0 && contest.stage % 2 === 1" class="contest-info">
+            提交中，当前阶段
+            <b>{{ currentStage }}</b> 结束于
+            <b>{{ currentDeadline }}</b>
+          </div>
           <div
             v-else-if="contest.stage !== 0 && contest.stage % 2 === 0 && !isLastStage"
             class="contest-info"
-          >审核中，下一阶段 <b>{{ currentStage }}</b> 开始于 <b>{{ currentDeadline }}</b></div>
-          <div
-            v-else-if="isLastStage"
-            class="contest-info"
-          >审核中，请等待比赛结果</div>
-          <el-button
-            type="text"
-            @click="$router.push(`/contest/detail/${contest.id}`)"
-          >比赛详情</el-button>
-          <el-button
-            type="text"
-            @click="$router.push(`/contest/notice/${contest.id}`)"
-          >比赛公告</el-button>
+          >
+            审核中，下一阶段
+            <b>{{ currentStage }}</b> 开始于
+            <b>{{ currentDeadline }}</b>
+          </div>
+          <div v-else-if="isLastStage" class="contest-info">审核中，请等待比赛结果</div>
+          <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">比赛详情</el-button>
+          <el-button type="text" @click="$router.push(`/contest/notice/${contest.id}`)">比赛公告</el-button>
         </el-col>
 
         <!--选手查看的信息-->
-        <el-col
-          :span="8"
-          style="text-align: right; padding-right: 20px;"
-        >
+        <el-col :span="8" style="text-align: right; padding-right: 20px;">
           <div class="group-name">
-            <span> {{ group.name }}{{ group.identity }} </span>
+            <span>{{ group.name }}{{ group.identity }}</span>
           </div>
           <div class="commit-status">
             <span v-if="isCommitStage && group.hasCommit">作品已提交</span>
-            <span v-if="isCommitStage && (!group.hasCommit)"><span style="color: #E6A23C; font-weight: bold;">作品未提交</span></span>
+            <span v-if="isCommitStage && (!group.hasCommit)">
+              <span style="color: #E6A23C; font-weight: bold;">作品未提交</span>
+            </span>
             <span v-if="!isCommitStage">当前无法提交作品</span>
           </div>
           <div style="margin-top: 5px;">
@@ -68,42 +52,26 @@
               style="padding: 0;"
               @click="downloadDialogVisible = true"
             >查看过往作品</el-button>
-            <el-button
-              v-else
-              type="text"
-              style="padding: 0;"
-              disabled
-            >无过往作品</el-button>
-            <el-button
-              type="text"
-              style="padding: 0;"
-              @click="gotoMyTeam"
-            >查看我的队伍</el-button>
+            <el-button v-else type="text" style="padding: 0;" disabled>无过往作品</el-button>
+            <el-button type="text" style="padding: 0;" @click="gotoMyTeam">查看我的队伍</el-button>
           </div>
           <el-upload
             v-show="isCommitStage && (!group.hasCommit)"
             :limit="1"
             :http-request="handleUpload"
-            action=""
+            action
             style="display: inline-block"
           >
-            <el-button
-              type="primary"
-              class="commit-button"
-            >提交作品</el-button>
+            <el-button type="primary" class="commit-button">提交作品</el-button>
           </el-upload>
           <el-upload
             v-show="isCommitStage && group.hasCommit"
             :limit="1"
             :http-request="handleUpload"
-            action=""
+            action
             style="display: inline-block"
           >
-            <el-button
-              type="primary"
-              class="commit-button"
-              plain
-            >修改作品</el-button>
+            <el-button type="primary" class="commit-button" plain>修改作品</el-button>
           </el-upload>
           <el-button
             v-show="isCommitStage && group.hasCommit"
@@ -116,29 +84,17 @@
       </el-row>
     </el-card>
 
-    <el-dialog
-      title="查看过往作品"
-      :visible.sync="downloadDialogVisible"
-      :width="'30%'"
-    >
-      <div
-        v-for="(name, index) of downloadableStageNames"
-        :key="index"
-        style="margin-top: 10px;"
-      >
-        <el-button
-          type="primary"
-          plain
-          @click="checkDetail(index)"
-        >查看<span style="font-weight: bold;"> {{name}} </span>阶段作品</el-button>
+    <el-dialog title="查看过往作品" :visible.sync="downloadDialogVisible" :width="'30%'">
+      <div v-for="(name, index) of downloadableStageNames" :key="index" style="margin-top: 10px;">
+        <el-button type="primary" plain @click="checkDetail(index)">
+          查看
+          <span style="font-weight: bold;">{{name}}</span>阶段作品
+        </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog
-      title="过往作品详情"
-      :visible.sync="submissionDetailVisible"
-    >
-      <submission-detail :detail="selectedDetail" />
+    <el-dialog title="过往作品详情" :visible.sync="submissionDetailVisible">
+      <submission-detail :detail="selectedDetail"/>
     </el-dialog>
   </div>
 </template>

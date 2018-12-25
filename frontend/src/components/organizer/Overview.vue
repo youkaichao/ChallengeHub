@@ -2,17 +2,13 @@
   <div>
     <el-row>
       <el-col :span="12">
-        <el-row>
-          任务批阅进度: {{ stat.reviewedTasks }}/{{ stat.totalTasks }}
-        </el-row>
+        <el-row>任务批阅进度: {{ stat.reviewedTasks }}/{{ stat.totalTasks }}</el-row>
         <el-row>
           <el-progress type="circle" :percentage="reviewPercentage"></el-progress>
         </el-row>
       </el-col>
       <el-col :span="12">
-        <el-row>
-          选手提交进度: {{ stat.submittedGroups }}/{{ stat.qualifiedGroups }}
-        </el-row>
+        <el-row>选手提交进度: {{ stat.submittedGroups }}/{{ stat.qualifiedGroups }}</el-row>
         <el-row>
           <el-progress type="circle" :percentage="submitPercentage"></el-progress>
         </el-row>
@@ -21,7 +17,12 @@
     <el-row>
       <el-col :span="24">
         <el-steps :active="displayStage" align-center>
-          <el-step v-for="(step,index) in displaySteps" :title="step.name" :description="step.desc" :key="index"></el-step>
+          <el-step
+            v-for="(step,index) in displaySteps"
+            :title="step.name"
+            :description="step.desc"
+            :key="index"
+          ></el-step>
         </el-steps>
       </el-col>
     </el-row>

@@ -1,16 +1,8 @@
 <template>
   <el-row>
     <el-row>
-      <el-input
-        placeholder="请输入比赛名"
-        v-model="searchInput"
-        style="width: 500px;"
-      >
-        <el-button
-          slot="append"
-          icon="el-icon-search"
-          @click="handleSearch"
-        ></el-button>
+      <el-input placeholder="请输入比赛名" v-model="searchInput" style="width: 500px;">
+        <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
       </el-input>
     </el-row>
     <el-row>
@@ -21,8 +13,7 @@
         style="width: 600px; margin: auto; margin-top: 30px;"
         show-icon
         v-if="contestListEmpty"
-      >
-      </el-alert>
+      ></el-alert>
       <contest-burge
         style="margin-top: 20px;"
         v-on:detail-on-click="routeToDetail"

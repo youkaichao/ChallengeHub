@@ -1,46 +1,20 @@
 <template>
   <div>
-    <el-row>
-      当前阶段: {{ stageName }}
-    </el-row>
+    <el-row>当前阶段: {{ stageName }}</el-row>
     <div v-show="!isNull">
-      <mavon-editor
-        v-model="criterion"
-        placeholder="在这里输入评分标准"
-         @imgAdd="addImgHint" ref="md"
-      />
+      <mavon-editor v-model="criterion" placeholder="在这里输入评分标准" @imgAdd="addImgHint" ref="md"/>
       <el-row>
         <el-col :span="4">
-          <el-button
-            type="infor"
-            @click="modifyCriterion"
-          >
-            修改评分标准
-          </el-button>
+          <el-button type="infor" @click="modifyCriterion">修改评分标准</el-button>
         </el-col>
       </el-row>
     </div>
     <p v-show="tried">有{{groupNotFull}}个作品没有达到{{maxconn}}个评委评，有{{groupZero}}个作品没有人评</p>
     <el-table :data="reviewers">todo
-      <el-table-column
-        width="160"
-        label="评委用户名"
-        prop="username"
-      ></el-table-column>
-      <el-table-column
-        label="邮箱"
-        prop="email"
-      ></el-table-column>
-      <el-table-column
-        width="60"
-        label="被分配数"
-        prop="assigned"
-      ></el-table-column>
-      <el-table-column
-        width="60"
-        label="已完成数"
-        prop="completed"
-      ></el-table-column>
+      <el-table-column width="160" label="评委用户名" prop="username"></el-table-column>
+      <el-table-column label="邮箱" prop="email"></el-table-column>
+      <el-table-column width="60" label="被分配数" prop="assigned"></el-table-column>
+      <el-table-column width="60" label="已完成数" prop="completed"></el-table-column>
       <el-table-column label="评审进度">
         <template slot-scope="scope">
           <el-progress :percentage="getPercentage(scope.row.completed,scope.row.assigned)"></el-progress>
@@ -48,48 +22,21 @@
       </el-table-column>
       <el-table-column label="目标被分配数">
         <template slot-scope="scope">
-          <el-input-number
-            controls-position="right"
-            :min="0"
-            v-model="scope.row.targetAssigned"
-          ></el-input-number>
+          <el-input-number controls-position="right" :min="0" v-model="scope.row.targetAssigned"></el-input-number>
         </template>
       </el-table-column>
     </el-table>
     <el-row align="middle">
-      <span class="margin-item">
-        每个作品最多评委数
-      </span>
-      <el-input-number
-        v-model="maxconn"
-        :min="0"
-        controls-position="right"
-        class="margin-item"
-      ></el-input-number>
-      <span class="margin-item">
-        用于同校回避的字段
-      </span>
-      <el-select
-        v-model="selectedLabel"
-        clearable
-        placeholder="请选择"
-        class="margin-item"
-      >
-        <el-option
-          v-for="(item,index) in enrolledLabels"
-          :key="index"
-          :label="item"
-          :value="item"
-        >
-        </el-option>
+      <span class="margin-item">每个作品最多评委数</span>
+      <el-input-number v-model="maxconn" :min="0" controls-position="right" class="margin-item"></el-input-number>
+      <span class="margin-item">用于同校回避的字段</span>
+      <el-select v-model="selectedLabel" clearable placeholder="请选择" class="margin-item">
+        <el-option v-for="(item,index) in enrolledLabels" :key="index" :label="item" :value="item"></el-option>
       </el-select>
     </el-row>
     <el-row>
       <el-col :span="5">
-        <el-button
-          type="infor"
-          @click="evenlyDistribute"
-        >一键平均分配提交</el-button>
+        <el-button type="infor" @click="evenlyDistribute">一键平均分配提交</el-button>
       </el-col>
       <el-col :span="6">
         <el-button
@@ -314,7 +261,7 @@ export default {
       this.refreshEnrollForm()
     },
     addImgHint(pos, file) {
-            this.$refs.md.$img2Url(pos, file.miniurl)
+      this.$refs.md.$img2Url(pos, file.miniurl)
       this.$alert('目前我们使用 Base64 上传图片，请在后续使用图片中尽量填写 URL。')
     }
   },

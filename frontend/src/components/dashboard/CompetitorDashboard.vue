@@ -1,10 +1,19 @@
 <template>
   <div>
     <div style="text-align: left;">
-      <el-row type='flex' align-items="center">
-        <el-col :span="6" style="text-align: left; margin: auto;"> <span class="info-tag">姓名</span> {{ this.$store.state.username }} </el-col>
-        <el-col :span="6" style="text-align: left; margin: auto;"> <span class="info-tag">学校</span> {{ this.$store.state.school }} </el-col>
-        <el-col :span="6" style="text-align: left; margin: auto;"> <span class="info-tag">邮箱</span> {{ this.$store.state.email }} </el-col>
+      <el-row type="flex" align-items="center">
+        <el-col :span="6" style="text-align: left; margin: auto;">
+          <span class="info-tag">姓名</span>
+          {{ this.$store.state.username }}
+        </el-col>
+        <el-col :span="6" style="text-align: left; margin: auto;">
+          <span class="info-tag">学校</span>
+          {{ this.$store.state.school }}
+        </el-col>
+        <el-col :span="6" style="text-align: left; margin: auto;">
+          <span class="info-tag">邮箱</span>
+          {{ this.$store.state.email }}
+        </el-col>
         <el-col :span="6" style="text-align: right;">
           <el-button type="text" @click="$router.push('/profile_management')">修改个人信息</el-button>
         </el-col>
@@ -28,7 +37,13 @@
           style="width: 600px; margin: auto;"
           show-icon
         ></el-alert>
-        <enrolled-contest-unfinished style="margin-top: 10px;" v-for="info of enrolledUnfinished" :contest="info.contest" :group="info.group" :key="info.contest.id" />
+        <enrolled-contest-unfinished
+          style="margin-top: 10px;"
+          v-for="info of enrolledUnfinished"
+          :contest="info.contest"
+          :group="info.group"
+          :key="info.contest.id"
+        />
       </el-tab-pane>
       <el-tab-pane label="已结束的比赛">
         <el-alert
@@ -39,7 +54,13 @@
           style="width: 600px; margin: auto;"
           show-icon
         ></el-alert>
-        <enrolled-contest-finished style="margin-top: 10px;" v-for="info of enrolledFinished" :contest="info.contest" :group="info.group" :key="info.contest.id" />
+        <enrolled-contest-finished
+          style="margin-top: 10px;"
+          v-for="info of enrolledFinished"
+          :contest="info.contest"
+          :group="info.group"
+          :key="info.contest.id"
+        />
       </el-tab-pane>
     </el-tabs>
   </div>

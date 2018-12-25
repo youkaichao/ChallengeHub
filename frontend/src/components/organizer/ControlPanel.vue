@@ -16,30 +16,19 @@
         </el-row>
       </el-card>
       <el-card style="margin: 10px;">
-      <el-menu
-        :default-active="activeIndex"
-        class="el-menu-vertical-demo"
-        style="border: none;"
-      >
-        <el-menu-item
-          v-for="(item,index) in sidebarList"
-          :key="index"
-          :index="index.toString()"
-          @click="pushRoute(item.name)"
-        >{{ item.label }}</el-menu-item>
-      </el-menu>
+        <el-menu :default-active="activeIndex" class="el-menu-vertical-demo" style="border: none;">
+          <el-menu-item
+            v-for="(item,index) in sidebarList"
+            :key="index"
+            :index="index.toString()"
+            @click="pushRoute(item.name)"
+          >{{ item.label }}</el-menu-item>
+        </el-menu>
       </el-card>
     </el-aside>
     <el-main style="height:auto;">
-      <transition
-        name="component-fade"
-        mode="out-in"
-      >
-        <router-view
-          :contest="contest"
-          :contestId="contestId"
-          @refreshContest="refreshContest"
-        ></router-view>
+      <transition name="component-fade" mode="out-in">
+        <router-view :contest="contest" :contestId="contestId" @refreshContest="refreshContest"></router-view>
       </transition>
     </el-main>
   </el-container>

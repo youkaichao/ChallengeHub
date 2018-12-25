@@ -50,7 +50,7 @@ export default {
       })
     },
     addImgHint(pos, file) {
-            this.$refs.md.$img2Url(pos, file.miniurl)
+      this.$refs.md.$img2Url(pos, file.miniurl)
       this.$alert('目前我们使用 Base64 上传图片，请在后续使用图片中尽量填写 URL。')
     }
   }
