@@ -464,6 +464,17 @@ class DeltaScoreView(View):
         compute_average_score(stage)
 
 
+class BestowRankView(View):
+    @require_logged_in
+    @require_to_be_organization
+    @require_to_be_publisher
+    def post(self, request, contest_id):
+        self.check_input(['rankName', 'ids'])
+        rank_name = request.data.get('rankName')
+        ids = request.data.get('ids')
+        Group.objects.filter(id__in=ids).update(rank=rank_name)
+
+
 class UserCollectionView(View):
     @require_logged_in
     def get(self, request) -> Any:

@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     async repasswordConfirm() {
-      if (this.newPassword !== this.repeatNewPassword) {
+      if (this.newPassword !== this.newPasswordRetyped) {
         this.$message({ type: 'error', message: '两次输入的密码不一致' })
         return
       }

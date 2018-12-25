@@ -46,4 +46,6 @@ urlpatterns = [
         views.JudgeReviewView.as_view()),
     url(r'contests/(?P<contest_id>[0-9]+)/delta_score/(?P<gstage_id>[0-9]+)$',
         views.DeltaScoreView.as_view()),
+    url(r'contests/(?P<contest_id>[0-9]+)/bestow$',
+        views.BestowRankView.as_view()),
 ]
