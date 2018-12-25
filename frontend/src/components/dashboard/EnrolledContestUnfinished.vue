@@ -9,6 +9,7 @@
           <img
             :src="contest.imgUrl"
             class="enrolled-contest-card"
+            :onerror="defaultImg"
           />
         </el-col>
         <el-col
@@ -148,7 +149,8 @@ export default {
     return {
       downloadDialogVisible: false,
       submissionDetailVisible: false,
-      selectedDetail: null
+      selectedDetail: null,
+      defaultImg: 'this.src="' + require('@/assets/placeholder.png') + '"'
     }
   },
   methods: {

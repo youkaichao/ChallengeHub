@@ -8,6 +8,7 @@
         <img
           :src="contestInfo.imgUrl"
           class="fix-img"
+          :onerror="defaultImg"
         />
       </el-col>
       <el-col
@@ -59,16 +60,18 @@ export default {
   name: 'ContestBanner',
   props: ['contestInfo'],
   data() {
-    return {}
+    return {
+      defaultImg: 'this.src="' + require('@/assets/placeholder.png') + '"'
+    }
   },
   methods: {
     async handleUpvote() {
-      if(this.loginCheck() === false) return;
+      if (this.loginCheck() === false) return
       let response = await this.$http.post(`/api/contests/${this.contestInfo.id}/vote`, { upvote: 1 })
       this.refreshVotes(response)
     },
     async handleDownvote() {
-      if(this.loginCheck() === false) return;
+      if (this.loginCheck() === false) return
       let response = await this.$http.post(`/api/contests/${this.contestInfo.id}/vote`, { upvote: -1 })
       this.refreshVotes(response)
     },

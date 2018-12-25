@@ -1,20 +1,38 @@
 <template>
   <el-card :body-style="{ padding: '0px' }">
-    <img :src="contestInfo.imgUrl"  class="img-in-card"/>
+    <img
+      :src="contestInfo.imgUrl"
+      class="img-in-card"
+      :onerror="defaultImg"
+    />
     <div style="padding 14px">
-      <div class="left-align" style="padding-top: 5px;">
+      <div
+        class="left-align"
+        style="padding-top: 5px;"
+      >
         {{ contestInfo.name }}
       </div>
       <div class="deadline left-align">报名截止于 {{ enrollEndHumanReadable }}</div>
       <hr style="margin-top: 5px; margin-bottom: 0px;" />
       <div class="clearfix">
-        <span class="green-text lastline" style="float: left">
+        <span
+          class="green-text lastline"
+          style="float: left"
+        >
           <i class="el-icon-arrow-up"></i> {{ contestInfo.upvote }}
         </span>
-        <span class="red-text lastline" style="float: left">
+        <span
+          class="red-text lastline"
+          style="float: left"
+        >
           <i class="el-icon-arrow-down"></i> {{ contestInfo.downvote }}
         </span>
-        <el-button type="text" class="lastline" style="float: right;" @click="detailOnClick">查看详情</el-button>
+        <el-button
+          type="text"
+          class="lastline"
+          style="float: right;"
+          @click="detailOnClick"
+        >查看详情</el-button>
       </div>
     </div>
   </el-card>
@@ -25,6 +43,11 @@ import { isoToHumanReadable } from '@/lib/util.js'
 
 export default {
   name: 'ContestCard',
+  data() {
+    return {
+      defaultImg: 'this.src="' + require('@/assets/placeholder.png') + '"'
+    }
+  },
   methods: {
     detailOnClick: function() {
       this.$emit('detail-on-click', this.contestInfo.id)
