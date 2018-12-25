@@ -305,7 +305,8 @@ export default {
       if (this.procedureList.length > 0) {
         const prevEnd = this.procedureList[this.procedureList.length - 1].endTime
         const prevEndDate = new Date(prevEnd)
-        if (prevEndDate > start) {
+        const currStartDate = new Date(formatDate(start))
+        if (prevEndDate > currStartDate) {
           this.$message.error('开始时间应不小于上一个阶段的结束时间')
           return
         }

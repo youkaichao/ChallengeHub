@@ -56,7 +56,7 @@
     </el-row>
     <el-row>
       <el-button type="warning" @click="lockGroup" :disabled="!canOperate">锁定队伍</el-button>
-      <el-button type="danger" @click="quitGroup" :disabled="!canOperate">退出队伍</el-button>
+      <el-button type="danger" @click="quitGroup" :disabled="this.teamInfo.locked">退出队伍</el-button>
     </el-row>
   </div>
 </template>
