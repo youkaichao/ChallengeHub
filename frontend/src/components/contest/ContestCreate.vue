@@ -281,6 +281,14 @@ export default {
         this.$message.error('开始时间应小于结束时间')
         return
       }
+      if (this.procedureList.length > 0) {
+        const prevEnd = this.procedureList[this.procedureList.length - 1].endTime
+        const prevEndDate = new Date(prevEnd)
+        if (prevEndDate > start) {
+          this.$message.error('开始时间应不小于上一个阶段的结束时间')
+          return
+        }
+      }
       let procedureItem = {
         name: this.procedureName,
         startTime: formatDate(this.procedureStart),
