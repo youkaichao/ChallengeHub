@@ -47,13 +47,13 @@ class UserRegisterView(View):
             raise Exception('username already exists')
         if User.objects.filter(email=request.data.get('email')):
             raise Exception('email is already registered')
+        individual=True if (request.data.get('individual') == 'individual') else False
         user = User.objects.create_user(
             username=request.data.get('username'),
             password=request.data.get('password'),
             email=request.data.get('email'),
-            individual=True if (request.data.get('individual')
-                                == 'individual') else False,
-            is_active=not USE_MAIL_VALIDATE
+            individual=individual,
+            is_active=individual and not USE_MAIL_VALIDATE
         )
         m = hashlib.md5()
         m.update((user.email + VALIDATE_SALT).encode('utf-8'))
