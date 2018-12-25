@@ -232,7 +232,13 @@ export default {
       }
 
       if (stage === null || stage === undefined) {
-        this.currentStage = this.contest.procedure[this.contest.stage / 2 - 1].name
+        if(this.contest.stage === 0) {
+          this.currentStage = '比赛尚未开始'
+        } else if(this.contest.stage === -1) {
+          this.currentStage = '比赛已经结束'
+        } else {
+          this.currentStage = this.contest.procedure[this.contest.stage / 2 - 1].name
+        }
       } else {
         this.currentStage = this.contest.procedure[stage / 2 - 1].name
       }
