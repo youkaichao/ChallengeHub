@@ -85,7 +85,7 @@ class MatchQuitView(View):
                 member = group.members.first()
                 group.leader = member
                 group.save()
-        elif request.user in group.members:
+        elif group.members.filter(id=request.user.id):
             group.members.remove(request.user)
             group.save()
         else:
