@@ -766,6 +766,6 @@ class ContestUploadView(View):
         _, extension = os.path.splitext(submit.name)
         filename = md5 + extension
         print(settings.BASE_DIR)
-        with open(os.path.join(settings.BASE_DIR, os.path.sep.join(['frontend', 'dist', 'static', 'img']), filename), 'wb') as f:
+        with open(os.path.join(settings.BASE_DIR, os.path.sep.join(['static', 'img']), filename), 'wb') as f:
             f.write(content)
         return {"url":urllib.parse.urljoin(settings.SITE_URL, 'static/img/' + filename)}
