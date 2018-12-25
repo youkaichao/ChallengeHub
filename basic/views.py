@@ -80,7 +80,7 @@ class ContestDetailView(View):
         competition = Competition.objects.get(id=int(contest_id))
         stage = int(request.data.get('stage'))
 
-        if stage!= -1 && stage < competition.current_stage:
+        if stage!= -1 and stage < competition.current_stage:
             raise Exception('Cannot proceed to previous stage')
 
         if stage > 0 and stage % 2 == 0:  # when enter judge stage, update all qualified group to that stage

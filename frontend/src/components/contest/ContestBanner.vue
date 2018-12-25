@@ -20,7 +20,10 @@
           <span style="color: gray; margin-right: 5px;">比赛学科</span><span style="font-weight: bold; color: #409eff;">{{contestInfo.subject}}</span>
         </div>
         <div style="margin-left: 10px;">
-          <span style="color: gray; margin-right: 5px;">主办单位</span><span style="font-weight: bold; color: #409eff;">{{contestInfo.publisher}}</span>
+          <span style="color: gray; margin-right: 5px;">主办单位</span>
+          <el-button type="text" style="margin: 0; padding: 0; font-size: 15px;" @click="$router.push(`/profile/${contestInfo.publisher}`)">
+          <span style="font-weight: bold; color: #409eff;">{{contestInfo.publisher}}</span>
+          </el-button>
         </div>
         <div style="margin-left: 10px;">
           <span style="color: gray; margin-right: 5px;">队伍人数</span><span style="font-weight: bold; color: #409eff;">{{contestInfo.groupSize}}</span>

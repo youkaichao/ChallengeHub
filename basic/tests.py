@@ -112,7 +112,10 @@ class ContestCollectionTest(BasicTest):
         contest = Competition.objects.get(name='a_c')
         client = self.publishers['a']['client']
         resp = client.post(f'/api/contests/{contest.id}', {
-            'stage': contest.current_stage - 1
+            'stage': contest.current_stage + 1
+        })
+        resp = client.post(f'/api/contests/{contest.id}', {
+            'stage': contest.current_stage
         })
         self.assertEqual(resp['error'], 'Cannot proceed to previous stage')
 

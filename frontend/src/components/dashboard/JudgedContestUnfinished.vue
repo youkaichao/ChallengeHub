@@ -1,52 +1,35 @@
 <template>
-  <el-card
-    :body-style="{ padding: '0px' }"
-    class="single-card"
-  >
+  <el-card :body-style="{ padding: '0px' }" class="single-card">
     <el-row style="margin: 0px;">
       <el-col :span="4">
-        <img
-          :src="contest.imgUrl"
-          class="judged-contest-card"
-          :onerror="defaultImg"
-        />
+        <img :src="contest.imgUrl" class="judged-contest-card" :onerror="defaultImg">
       </el-col>
-      <el-col
-        :span="16"
-        style="text-align: left; padding-left: 20px;"
-      >
-        <div class="contest-name"> {{ contest.name }} </div>
-        <div class="contest-info"> {{ contest.publisher }} </div>
-        <div
-          class="contest-info"
-          v-if="contest.stage === 0"
-        >比赛尚未开始</div>
-        <div
-          class="contest-info"
-          v-if="isJudgeStage"
-        >阶段 <b>{{ currentStage }}</b> 评审结束于 <b>{{ currentDeadline }}</b></div>
-        <div
-          class="contest-info"
-          v-if="contest.stage !== 0 && !isJudgeStage"
-        >阶段 <b> {{ currentStage }} </b>评审开始于 <b>{{ currentDeadline }}</b></div>
-        <el-button
-          type="text"
-          @click="$router.push(`/contest/detail/${contest.id}`)"
-        >比赛详情</el-button>
-        <el-button
-          type="text"
-          @click="$router.push(`/contest/notice/${contest.id}`)"
-        >比赛公告</el-button>
+      <el-col :span="16" style="text-align: left; padding-left: 20px;">
+        <div class="contest-name">{{ contest.name }}</div>
+        <div class="contest-info">
+          <el-button
+            type="text"
+            @click="$router.push(`/profile/${contest.publisher}`)"
+            style="padding: 0; font-size: 16px;"
+          >{{ contest.publisher }}</el-button>
+        </div>
+        <div class="contest-info" v-if="contest.stage === 0">比赛尚未开始</div>
+        <div class="contest-info" v-if="isJudgeStage">
+          阶段
+          <b>{{ currentStage }}</b> 评审结束于
+          <b>{{ currentDeadline }}</b>
+        </div>
+        <div class="contest-info" v-if="contest.stage !== 0 && !isJudgeStage">
+          阶段
+          <b>{{ currentStage }}</b>评审开始于
+          <b>{{ currentDeadline }}</b>
+        </div>
+        <el-button type="text" @click="$router.push(`/contest/detail/${contest.id}`)">比赛详情</el-button>
+        <el-button type="text" @click="$router.push(`/contest/notice/${contest.id}`)">比赛公告</el-button>
       </el-col>
 
-      <el-col
-        :span="4"
-        style="text-align: right; padding-right: 20px; "
-      >
-        <div
-          class="judging-status"
-          v-html="judgingStatus"
-        ></div>
+      <el-col :span="4" style="text-align: right; padding-right: 20px; ">
+        <div class="judging-status" v-html="judgingStatus"></div>
         <el-progress
           v-if="isJudgeStage"
           style="margin-top: 15px;"

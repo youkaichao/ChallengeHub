@@ -17,14 +17,21 @@
           label="队长"
           style="border-bottom: 1px solid #ebeef5; margin-bottom: 0; margin-top: 0;"
         >
-          <div>{{teamInfo.leader}}</div>
+          <el-button
+            type="text"
+            @click="$router.push(`/profile/${teamInfo.leader}`)"
+          >{{teamInfo.leader}}</el-button>
         </el-form-item>
         <el-form-item label="队员" style="margin-bottom: 0; margin-top: 0;">
-          <div v-for="(member,index) in teamInfo.members" :key="index">{{member}}</div>
+          <div v-for="(member,index) in teamInfo.members" :key="index">
+            <el-button type="text" @click="$router.push(`/profile/${member}`)">{{member}}</el-button>
+          </div>
         </el-form-item>
         <h2>邀请管理</h2>
         <div v-for="(invitee,index) in teamInfo.invitees" :key="index" style="margin: auto;">
-          <span style="margin-right: 20px;">{{invitee}}</span>
+          <span style="margin-right: 20px;">
+            <el-button type="text" @click="$router.push(`/profile/${invitee}`)">{{invitee}}</el-button>
+          </span>
           <el-button
             type="text"
             icon="el-icon-remove"
@@ -40,7 +47,12 @@
         :fetch-suggestions="querySearchAsync"
         placeholder="输入用户名来搜索"
       ></el-autocomplete>
-      <el-button type="primary" @click="addNewMember" style="margin-left: 20px;" :disabled="!canOperate">邀请用户加入队伍</el-button>
+      <el-button
+        type="primary"
+        @click="addNewMember"
+        style="margin-left: 20px;"
+        :disabled="!canOperate"
+      >邀请用户加入队伍</el-button>
     </el-row>
     <el-row>
       <el-button type="warning" @click="lockGroup" :disabled="!canOperate">锁定队伍</el-button>

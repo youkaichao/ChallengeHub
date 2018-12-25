@@ -53,6 +53,8 @@ class MatchInviteView(View):
             raise Exception(f"You already have {num_members} members and are inviting {len(messages)} members, but the max group size is {contest.group_size} for this contest.You can't invite more members!")
         self.check_input(['username'])
         user = User.objects.get(username=request.data.get('username'))
+        if user == group.leader:
+            raise Exception("You can't invite yourself!")
         message = Invitation.objects.filter(group=group, invitee=user, status=InvitationStatus.DEFAULT)
         if message:
             raise Exception(f'{user.username} is already invited')

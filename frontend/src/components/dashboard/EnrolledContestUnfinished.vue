@@ -17,7 +17,11 @@
           style="text-align: left; padding-left: 20px;"
         >
           <div class="contest-name"> {{ contest.name }} </div>
-          <div class="contest-info"> {{ contest.publisher }} </div>
+          <div class="contest-info">
+            <el-button type="text" @click="$router.push(`/profile/${contest.publisher}`)" style="padding: 0; font-size: 16px;">
+              {{ contest.publisher }}
+            </el-button>
+          </div>
           <div
             v-if="contest.stage === 0"
             class="contest-info"

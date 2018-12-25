@@ -17,7 +17,11 @@
           style="text-align: left; padding-left: 20px;"
         >
           <div class="contest-name">{{ contest.name }}</div>
-          <div class="contest-info">{{ contest.publisher }}</div>
+          <div class="contest-info">
+            <el-button type="text" @click="$router.push(`/profile/${contest.publisher}`)" style="padding: 0; font-size: 16px;">
+            {{ contest.publisher }}
+            </el-button>
+          </div>
           <div class="contest-info">比赛已结束于 {{ endingDeadline }}</div>
           <el-button
             type="text"

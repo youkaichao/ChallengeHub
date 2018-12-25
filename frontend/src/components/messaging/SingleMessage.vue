@@ -7,7 +7,13 @@
       <div class="title">
         <div>
           <span>来自</span>
-          <span class="theme">{{message.sender}}</span>
+          <span class="theme">
+            <el-button
+              type="text"
+              @click="$router.push(`/profile/${message.sender}`)"
+              style="padding: 0; font-size: 16px;"
+            >{{message.sender}}</el-button>
+          </span>
           <span>的消息</span>
         </div>
         <div class="send-date">
@@ -66,11 +72,23 @@
       <div class="content" style="text-align: center;">
         <el-card shadow="never" style="width: 600px; margin-left: auto; margin-right: auto;">
           <div>
-            <span class="theme bold">{{message.content.leaderName}}</span>
+            <span class="theme bold">
+              <el-button
+                type="text"
+                @click="$router.push(`/profile/${message.content.leaderName}`)"
+                style="padding: 0; font-size: 16px;"
+              >{{message.content.leaderName}}</el-button>
+            </span>
             <span style="margin-left: 5px; margin-right: 5px;">邀请你加入</span>
             <span class="theme bold">{{message.content.groupName}}</span>
             <span style="margin-left: 5px; margin-right: 5px;">参加比赛</span>
-            <span class="theme bold">{{message.content.contestName}}</span>
+            <span class="theme bold">
+              <el-button
+                type="text"
+                @click="$router.push(`/contest/detail/${message.content.contestId}`)"
+                style="padding: 0; font-size: 16px;"
+              >{{message.content.contestName}}</el-button>
+            </span>
           </div>
           <div style="margin-top: 20px; color: gray; font-size: 12px; margin-bottom: 10px;">
             <span v-if="message.content.status === 0">在接收邀请后，组长确认组队前，你依然可以退出</span>
@@ -124,9 +142,21 @@
       <div class="content" style="text-align: center;">
         <el-card shadow="never" style="width: 600px; margin-left: auto; margin-right: auto;">
           <div>
-            <span class="theme bold">{{message.content.contestName}}</span>
+            <span class="theme bold">
+              <el-button
+                type="text"
+                @click="$router.push(`/contest/detail/${message.content.contestId}`)"
+                style="padding: 0; font-size: 16px;"
+              >{{message.content.contestName}}</el-button>
+            </span>
             <span style="margin-left: 5px; margin-right: 5px;">的主办方</span>
-            <span class="theme bold">{{message.sender}}</span>
+            <span class="theme bold">
+              <el-button
+                type="text"
+                @click="$router.push(`/profile/${message.sender}`)"
+                style="padding: 0; font-size: 16px;"
+              >{{message.sender}}</el-button>
+            </span>
             <span style="margin-left: 5px; margin-right: 5px;">邀请你进行评审</span>
           </div>
           <div style="margin-top: 20px; color: gray; font-size: 12px; margin-bottom: 10px;">

@@ -19,9 +19,18 @@
         <div
           class="small-gray-burge"
           style="margin-top: 15px;"
-        > <b>比赛学科</b> {{contestInfo.subject}} </div>
-        <div class="small-gray-burge"> <b>主办单位</b> {{contestInfo.publisher}} </div>
-        <div class="small-gray-burge"> <b>报名截止</b> {{enrollEndHumanReadable}} </div>
+        > <b>比赛学科</b>
+        <span style="margin-left: 5px;">{{contestInfo.subject}}</span>
+        </div>
+        <div class="small-gray-burge">
+        <b>主办单位</b>
+          <el-button type="text" style="margin-left: 5px; padding: 0; font-size: 16px;" @click="$router.push(`/profile/${contestInfo.publisher}`)">
+          {{contestInfo.publisher}}
+          </el-button>
+         </div>
+        <div class="small-gray-burge"><b>报名截止</b>
+        <span style="margin-left: 5px;">{{enrollEndHumanReadable}}</span>
+        </div>
       </el-col>
       <el-col :span="4">
         <div style="margin-top: 35px; font-size: 20px;">
