@@ -296,7 +296,7 @@ export default {
       }
     }
     return {
-      useDefaultEnrollLink: false,
+      useDefaultEnrollLink: true,
       procedureList: [],
       procedureName: '',
       procedureStart: '',
@@ -415,6 +415,10 @@ export default {
       }
       if (this.isTextForm === false && this.fieldOptions.length === 0) {
         this.$message({ type: 'error', message: `至少要有一个选项` })
+        return
+      }
+      if (this.isTextForm === false && this.fieldOptions.length !== new Set(this.fieldOptions).size) {
+        this.$message({ type: 'error', message: `选项重复` })
         return
       }
 
