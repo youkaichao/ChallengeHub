@@ -714,7 +714,7 @@ class NoticeCollectionView(View):
         )
         notice.save()
         for group in competition.enrolled_groups.all():
-            for each in group.members:
+            for each in group.members.all():
                 message = SystemMessage(receiver=each, content=f'{competition.publisher} published a notice ({notice.title}) in competition {competition.name}. Check it now!')
                 message.save()
         return
@@ -746,7 +746,7 @@ class NoticeDetailView(View):
         notice.save()
         competition = Competition.objects.get(id=int(contest_id))
         for group in competition.enrolled_groups.all():
-            for each in group.members:
+            for each in group.members.all():
                 message = SystemMessage(receiver=each, content=f'{competition.publisher} modified the notice ({notice.title}) in competition {competition.name}. Check it now!')
                 message.save()
         return
