@@ -63,7 +63,8 @@ class BackendAPITest(TestCase):
             "imgUrl": "url????",
             "name": "pwf",
             "procedure": [{"name": "1st", "startTime": "2018-12-1", "endTime": "2018-12-3"},
-                          {"name": "2nd", "startTime": "2018-12-4", "endTime": "2018-12-6"}],
+                          {"name": "2nd", "startTime": "2018-12-4", "endTime": "2018-12-6"},
+                          {"name": "3rd", "startTime": "2018-12-7", "endTime": "2018-12-9"}],
             "publisher": "organizer",
             "subject": "pwf"
         }

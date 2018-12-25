@@ -85,7 +85,7 @@ class MatchQuitView(View):
                 member = group.members.first()
                 group.leader = member
                 group.save()
-                for each in group.members:
+                for each in group.members.all():
                     message = SystemMessage(receiver=each, content=f'{request.user.username} quits the group {group.name}. {group.leader.username} now becomes the new leader!')
                     message.save()
         elif group.members.filter(id=request.user.id):
@@ -107,7 +107,7 @@ class MatchLockView(View):
             raise Exception('no authority to lock group')
         group.locked = True
         group.save()
-        for each in group.members:
+        for each in group.members.all():
             message = SystemMessage(receiver=each, content=f'The group {group.name} is locked now. You cannot quit the group.')
             message.save()
 
