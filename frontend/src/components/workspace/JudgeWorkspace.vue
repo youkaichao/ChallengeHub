@@ -48,8 +48,10 @@
     <!-- 顶部信息结束 -->
     <!-- 进度条信息 -->
     <div class="section-header" style="color: ">
-      阶段
-      <span style="color: #409eff;">{{currentStage}}</span> 评审进度
+      <span v-if="typeof(currentState) === 'string'">阶段<span style="color: #409eff;">{{currentStage}}</span> 评审进度</span>
+      <span v-else-if="currentState.special === 'beforeStart'">比赛尚未开始</span>
+      <span v-else-if="currentState.special === 'afterEnd'">比赛已经结束</span>
+      <span v-else>未知的比赛阶段</span>
     </div>
     <el-progress
       style="margin-top: 15px; margin-bottom: 50px; width: 800px; margin-left: auto; margin-right: auto;"
@@ -233,9 +235,9 @@ export default {
 
       if (stage === null || stage === undefined) {
         if(this.contest.stage === 0) {
-          this.currentStage = '比赛尚未开始'
+          this.currentStage = {special: 'beforeStart'}
         } else if(this.contest.stage === -1) {
-          this.currentStage = '比赛已经结束'
+          this.currentStage = {special: 'afterEnd'}
         } else {
           this.currentStage = this.contest.procedure[this.contest.stage / 2 - 1].name
         }

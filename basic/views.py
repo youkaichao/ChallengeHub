@@ -576,7 +576,7 @@ class JudgeReviewView(View):
         competition = Competition.objects.get(id=int(contest_id))
         stage = request.data.get('stage', competition.current_stage)
         stage = int(stage)
-        if stage == -1:
+        if stage == -1 or stage == 0:
             # contest ended
             return {'contest': competition.to_dict(), 'task': None, 'submissions': []}
         stage = stage if stage % 2 == 1 else stage - 1

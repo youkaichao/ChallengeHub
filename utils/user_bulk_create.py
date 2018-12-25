@@ -9,17 +9,19 @@ async def download(session, i):
         'password': '123',
         'individual': 'individual'
     }
-    await session.post('127.0.0.1/auth/register', json=payload)
+    await session.post('729222.iterator-traits.com/auth/register', json=payload)
     if i % 10 == 0:
         print(i)
 
 
 async def main():
-    futures = []
     async with aiohttp.ClientSession() as session:
-        for i in range(20000):
-            futures.append(download(session, i))
-        await asyncio.gather(*futures)
+        futures = []
+        for j in range(200):
+            print(j)
+            for i in range(100):
+                futures.append(download(session, j * 100 + i))
+            await asyncio.gather(*futures)
 
 
 if __name__ == "__main__":
