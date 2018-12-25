@@ -12,7 +12,6 @@
         <template slot-scope="scope">{{ scope.row.hasCommit?'已经提交':'未提交' }}</template>
       </el-table-column>
       <el-table-column prop="rank" label="奖项"></el-table-column>
-      <el-table-column prop="rank" label="奖项"></el-table-column>
       <el-table-column label="阶段">
         <template slot-scope="scope">{{ groupStageName(scope.row.stage) }}</template>
       </el-table-column>
