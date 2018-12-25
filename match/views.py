@@ -50,7 +50,8 @@ class MatchInviteView(View):
         num_members = len(group.members.all())
         contest = Competition.objects.get(id=int(contest_id))
         if num_members + len(messages) >= contest.group_size:
-            raise Exception(f"You already have {num_members} members and are inviting {len(messages)} members, but the max group size is {contest.group_size} for this contest.You can't invite more members!")
+            raise Exception(
+                f"You already have {num_members} members and are inviting {len(messages)} members, but the max group size is {contest.group_size} for this contest.You can't invite more members!")
         self.check_input(['username'])
         user = User.objects.get(username=request.data.get('username'))
         if user == group.leader:
@@ -74,7 +75,7 @@ class MatchQuitView(View):
         if request.user == group.leader:
             group.members.remove(request.user)
             collection = MONGO_CLIENT.db.groupEnrollForm
-            collection.delete_one({'user_id': request.user.id, 'contest_id':int(contest_id)})
+            collection.delete_one({'user_id': request.user.id, 'contest_id': int(contest_id)})
             if len(group.members.all()) == 0:
                 # delete foreign key first
                 for stage in group.stage_list.all():
@@ -112,10 +113,12 @@ class MatchResponseView(View):
         invitation = group.sent_invitations.get(invitee=user, status=InvitationStatus.DEFAULT)
         accepted = request.data.get('accept')
         if accepted:
+            if user.joint_groups.filter(competition_id=group.competition.id):
+                raise Exception('you have already joint this competition')
             group.members.add(user)
             collection = MONGO_CLIENT.db.groupEnrollForm
             collection.insert_one(
-                {'user_id': int(user.id), 'contest_id':int(contest_id), 'enrollForm': request.data['form']})
+                {'user_id': int(user.id), 'contest_id': int(contest_id), 'enrollForm': request.data['form']})
             group.save()
         invitation.status = InvitationStatus.ACCEPTED if accepted else InvitationStatus.REJECTED
         invitation.save()
@@ -123,7 +126,7 @@ class MatchResponseView(View):
         message = SystemMessage(receiver=group.leader, content=content)
         message.save()
 
-        
+
 class ReviewersResponseView(View):
     @require_logged_in
     def post(self, request, contest_id: str) -> Any:
@@ -135,14 +138,15 @@ class ReviewersResponseView(View):
         if accepted:
             c.judges.add(user)
             collection = MONGO_CLIENT.db.groupEnrollForm
-            collection.insert_one({'user_id': int(user.id), 'contest_id':int(contest_id), 'enrollForm': request.data['form']})
+            collection.insert_one(
+                {'user_id': int(user.id), 'contest_id': int(contest_id), 'enrollForm': request.data['form']})
             c.save()
         invitation.status = InvitationStatus.ACCEPTED if accepted else InvitationStatus.REJECTED
         invitation.save()
         content = user.username + ('接受' if accepted else '拒绝') + '了你的邀请'
         message = SystemMessage(receiver=c.publisher, content=content)
         message.save()
-        
+
 
 class MatchCancelView(View):
     @require_logged_in
@@ -156,7 +160,7 @@ class MatchCancelView(View):
         invitation.status = InvitationStatus.CANCELLED
         invitation.save()
 
-        
+
 class ReviewersCancelView(View):
     @require_logged_in
     def post(self, request, contest_id: str) -> Any:
@@ -168,7 +172,7 @@ class ReviewersCancelView(View):
         invitation = c.sent_invitations.get(invitee=user, status=InvitationStatus.DEFAULT)
         invitation.status = InvitationStatus.CANCELLED
         invitation.save()
-        
+
 
 class MessageCollectionView(View):
     @require_logged_in
