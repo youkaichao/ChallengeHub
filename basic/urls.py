@@ -48,4 +48,6 @@ urlpatterns = [
         views.DeltaScoreView.as_view()),
     url(r'contests/(?P<contest_id>[0-9]+)/bestow$',
         views.BestowRankView.as_view()),
+    url(r'contests/uploadImage$',
+        views.ContestUploadView.as_view()),
 ]

@@ -14,6 +14,10 @@ from match.models import Message, Invitation, InvitationStatus, ReviewerInvitati
 import os
 import json
 import libflow
+import hashlib
+import ChallengeHub.settings as settings
+import urllib
+
 
 
 class ContestCollectionView(View):
@@ -719,3 +723,18 @@ class UserProfileView(View):
     def get(self, request, username) -> Any:
         user = User.objects.get(username=username)
         return user.to_dict()
+
+        
+class ContestUploadView(View):
+    @require_logged_in
+    @require_to_be_organization
+    def post(self, request) -> Any:
+        submit = request.data.get('file')
+        content = b''.join(submit.chunks())
+        md5 = hashlib.md5(content).hexdigest()
+        _, extension = os.path.splitext(submit.name)
+        filename = md5 + extension
+        print(settings.BASE_DIR)
+        with open(os.path.join(settings.BASE_DIR, os.path.sep.join(['frontend', 'dist', 'static', 'img']), filename), 'wb') as f:
+            f.write(content)
+        return {"url":urllib.parse.urljoin(settings.SITE_URL, 'static/img/' + filename)}

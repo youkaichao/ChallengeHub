@@ -45,8 +45,29 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-form-item label="比赛图片" prop="imgUrl">
-        <el-input v-model="contest.imgUrl" placeholder="请填写高宽比为 3:4 的图片 url"></el-input>
+      <el-form-item
+        label="比赛图片"
+        prop="imgUrl"
+      >
+      <el-col :span="12">
+        <el-input
+          v-model="contest.imgUrl"
+          placeholder="请填写高宽比为 3:4 的图片 url"
+        ></el-input>
+      </el-col>
+      <el-col :span="12">
+          <el-upload
+            :limit="1"
+            :http-request="handleUpload"
+            action=""
+            style="display: inline-block"
+          >
+            <el-button
+              type="primary"
+              class="commit-button"
+            >上传图片</el-button>
+          </el-upload>
+      </el-col>
       </el-form-item>
       <el-form-item label="报名网站">
         <el-col :span="6">
@@ -345,6 +366,24 @@ export default {
     },
     handleClose(tag) {
       this.fieldOptions.splice(this.fieldOptions.indexOf(tag), 1)
+    },
+    async handleUpload(param) {
+      try {
+        let file = param.file
+        var form = new FormData()
+        form.append('file', file)
+
+        let response = await this.$http.post(`/api/contests/uploadImage`, form)
+        if (response.body.code !== 0) {
+          this.$message({ type: 'error', message: '上传失败' })
+        } else {
+          this.$message({ type: 'info', message: '上传成功' })
+          this.contest.imgUrl = response.body.data.url
+        }
+      } catch (error) {
+        this.$message({ type: 'error', message: `上传取消或失败` })
+        return
+      }
     },
     showInput() {
       this.fieldOptionInputVisible = true
