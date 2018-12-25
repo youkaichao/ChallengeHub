@@ -113,6 +113,10 @@ export default {
   },
   methods: {
     async repasswordConfirm() {
+      if (this.newPassword !== this.repeatNewPassword) {
+        this.$message({ type: 'error', message: '两次输入的密码不一致' })
+        return
+      }
       let response = await this.$http.post(`/auth/reset_password`, {
         old: this.oldPassword,
         new: this.newPassword
@@ -153,8 +157,8 @@ export default {
     async refreshInfo() {
       let response = await this.$http.get(`/auth/info`)
       if (response.body.code !== 0) {
-          this.$message({ type: 'error', message: response.body.error })
-          return
+        this.$message({ type: 'error', message: response.body.error })
+        return
       } else {
         this.$store.commit('login', response.body.data)
       }
