@@ -9,6 +9,7 @@
         <el-button
           slot="append"
           icon="el-icon-search"
+          @click="handleSearch"
         ></el-button>
       </el-input>
     </el-row>

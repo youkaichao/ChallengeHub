@@ -7,7 +7,7 @@
         @tab-click="handleClick"
       >
         <el-tab-pane
-          label="注册学生账号"
+          label="注册个人账号"
           name="student"
         >
           <el-row>
