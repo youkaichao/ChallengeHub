@@ -577,8 +577,10 @@ class JudgeReviewView(View):
         stage = request.data.get('stage', competition.current_stage)
         stage = int(stage)
         if stage == -1 or stage == 0:
-            # contest ended
-            return {'contest': competition.to_dict(), 'task': None, 'submissions': []}
+            # contest ended or not started yet
+            data = {'contest': competition.to_dict(), 'task': {"count":0, "done":0}, 'submissions': []}
+            data['contest']['standard'] = ""
+            return data
         stage = stage if stage % 2 == 1 else stage - 1
         data = {}
         data['contest'] = competition.to_dict()
