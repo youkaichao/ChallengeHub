@@ -10,7 +10,7 @@ from typing import Dict, Any, Callable, List
 from ChallengeHub.utils import BaseView as View, require_logged_in, make_errors, require_to_be_organization, \
     require_to_be_individual, require_to_be_publisher
 from ChallengeHub.settings import MONGO_CLIENT, BASE_DIR
-from match.models import Message, Invitation, InvitationStatus, ReviewerInvitation
+from match.models import Message, Invitation, InvitationStatus, ReviewerInvitation, SystemMessage
 import os
 import json
 import libflow
@@ -240,6 +240,12 @@ class ContestAutoAssignView(View):
             [key for key, value in group_count.items() if value < maxconn])
         groupZero = len(
             [key for key, value in group_count.items() if value == 0])
+        if serious:
+            judge_map = {x.username: x for x in judges}
+            for name in judge_map:
+                user = judge_map[name]
+                message = SystemMessage(receiver=user, content=f'You are assigned {judge_count[name]} tasks in competition {c.name}')
+                message.save()
         return {
             "judges": [
                 {"username": judge.username, "assign": judge_count[judge.username]} for judge in judges
@@ -312,6 +318,8 @@ class GroupStageView(View):
     def post(self, request, contest_id: str) -> Any:
         self.check_input(['group_ids', 'stage'])
         stage = int(request.data['stage'])
+        c = Competition.objects.get(id=int(contest_id))
+        cstage = c.stage_list.all().get(stage=stage)
         with transaction.atomic():
             for id in request.data['group_ids']:
                 group = Group.objects.get(id=id)
@@ -320,6 +328,8 @@ class GroupStageView(View):
                 if group.stage_list.filter(stage=stage):
                     raise Exception(
                         f"stage {stage} already exists for group {group.name}")
+                message = SystemMessage(receiver=group.leader, content=f'Your group {group.name} evolved into a new stage ({cstage.name})!')
+                message.save()
                 gstage = GStage(stage=stage, group=group, score=0.0)
                 gstage.save()
         return
@@ -462,9 +472,12 @@ class DeltaScoreView(View):
     @require_to_be_publisher
     def post(self, request, contest_id, gstage_id):
         self.check_input(['deltaScore', 'deltaMsg'])
+        c = Competition.objects.get(id=int(contest_id))
         stage = GStage.objects.get(id=gstage_id)
         stage.deltaScore = float(request.data.get('deltaScore'))
         stage.deltaMsg = request.data.get('deltaMsg')
+        message = SystemMessage(receiver=stage.group.leader, content=f'Your group {stage.group.name} has gained {stage.deltaScore} because of {stage.deltaMsg} in  competition {c.name}')
+        message.save()
         compute_average_score(stage)
 
 
@@ -476,7 +489,13 @@ class BestowRankView(View):
         self.check_input(['rankName', 'ids'])
         rank_name = request.data.get('rankName')
         ids = request.data.get('ids')
-        Group.objects.filter(id__in=ids).update(rank=rank_name)
+        groups = Group.objects.filter(id__in=ids)
+        c = Competition.objects.get(id=int(contest_id))
+        for group in groups:
+            group.rank = rank_name
+            group.save()
+            message = SystemMessage(receiver=group.leader, content=f'Your group {group.name} is awarded {rank_name} in competition {c.name}')
+            message.save()
 
 
 class UserCollectionView(View):
@@ -689,6 +708,10 @@ class NoticeCollectionView(View):
             content=request.data.get('content'),
         )
         notice.save()
+        for group in competition.enrolled_groups.all():
+            for each in group.members:
+                message = SystemMessage(receiver=each, content=f'{competition.publisher} published a notice ({notice.title}) in competition {competition.name}. Check it now!')
+                message.save()
         return
 
 
@@ -716,6 +739,11 @@ class NoticeDetailView(View):
         notice.content = request.data.get('content')
         notice.modified_time = timezone.now()
         notice.save()
+        competition = Competition.objects.get(id=int(contest_id))
+        for group in competition.enrolled_groups.all():
+            for each in group.members:
+                message = SystemMessage(receiver=each, content=f'{competition.publisher} modified the notice ({notice.title}) in competition {competition.name}. Check it now!')
+                message.save()
         return
 
 
