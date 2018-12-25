@@ -6,7 +6,7 @@
         <el-input v-model="noticeTitle" placeholder="公告标题" width="100"></el-input>
       </el-form-item>
     </el-form>
-    <mavon-editor v-model="noticeDetail" style="height: 800px;" />
+    <mavon-editor v-model="noticeDetail" style="height: 800px;" @imgAdd="addImgHint" ref="md"/>
     <el-row>
       <el-button type="primary" @click="submitNotice">保存并提交</el-button>
       <el-button type="warning" @click="cancelEdit">放弃更改</el-button>
@@ -48,6 +48,10 @@ export default {
           id: this.contestId
         }
       })
+    },
+    addImgHint(pos, file) {
+            this.$refs.md.$img2Url(pos, file.miniurl)
+      this.$alert('目前我们使用 Base64 上传图片，请在后续使用图片中尽量填写 URL。')
     }
   }
 }

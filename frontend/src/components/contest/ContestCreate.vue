@@ -1,32 +1,18 @@
 <template>
-  <el-form
-    ref="form"
-    :rules="rules"
-    :model="contest"
-    label-width="100px"
-  >
+  <el-form ref="form" :rules="rules" :model="contest" label-width="100px">
     <h2>基础信息</h2>
     <el-row>
-      <el-form-item
-        label="比赛名称"
-        prop="contestName"
-      >
+      <el-form-item label="比赛名称" prop="contestName">
         <el-input v-model="contest.name"></el-input>
       </el-form-item>
     </el-row>
     <el-row>
-      <el-form-item
-        label="比赛学科"
-        prop="contestSubject"
-      >
+      <el-form-item label="比赛学科" prop="contestSubject">
         <el-input v-model="contest.subject"></el-input>
       </el-form-item>
     </el-row>
     <el-row>
-      <el-form-item
-        label="报名时间"
-        prop="enrollStart"
-      >
+      <el-form-item label="报名时间" prop="enrollStart">
         <el-col :span="11">
           <el-date-picker
             type="date"
@@ -35,10 +21,7 @@
             style="width: 100%;"
           ></el-date-picker>
         </el-col>
-        <el-col
-          class="line"
-          :span="2"
-        >-</el-col>
+        <el-col class="line" :span="2">-</el-col>
         <el-col :span="11">
           <el-date-picker
             type="date"
@@ -52,11 +35,7 @@
     <el-row>
       <el-col :span="12">
         <el-form-item label="队伍人数">
-          <el-input-number
-            v-model="contest.groupSize"
-            :min="1"
-            :max="10"
-          ></el-input-number>
+          <el-input-number v-model="contest.groupSize" :min="1" :max="10"></el-input-number>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -66,19 +45,12 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-form-item
-        label="比赛图片"
-        prop="imgUrl"
-      >
-        <el-input
-          v-model="contest.imgUrl"
-          placeholder="请填写高宽比为 3:4 的图片 url"
-        ></el-input>
+      <el-form-item label="比赛图片" prop="imgUrl">
+        <el-input v-model="contest.imgUrl" placeholder="请填写高宽比为 3:4 的图片 url"></el-input>
       </el-form-item>
       <el-form-item label="报名网站">
         <el-col :span="6">
-          <el-checkbox v-model="useDefaultEnrollLink"></el-checkbox>
-          使用本站提供的报名网站
+          <el-checkbox v-model="useDefaultEnrollLink"></el-checkbox>使用本站提供的报名网站
         </el-col>
         <el-col :span="6">若否，请输入报名网站链接</el-col>
         <el-col :span="6">
@@ -93,100 +65,45 @@
 
     <el-row>
       <h2>比赛描述</h2>
-      <mavon-editor
-        v-model="contest.detail"
-        style="height: 800px;"
-      />
+      <mavon-editor v-model="contest.detail" style="height: 800px;" @imgAdd="addImgHint" ref="md"/>
     </el-row>
 
     <el-row>
       <h2>比赛流程</h2>
-      <el-table
-        :data="procedureList"
-        style="width: 100%"
-      >
-        <el-table-column
-          prop="name"
-          label="流程名称"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="startTime"
-          label="开始时间"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="endTime"
-          label="结束时间"
-          align="center"
-        >
-        </el-table-column>
+      <el-table :data="procedureList" style="width: 100%">
+        <el-table-column prop="name" label="流程名称" align="center"></el-table-column>
+        <el-table-column prop="startTime" label="开始时间" align="center"></el-table-column>
+        <el-table-column prop="endTime" label="结束时间" align="center"></el-table-column>
       </el-table>
       <el-row :gutter="20">
         <el-col :span="6">
           <el-form-item>
-            <el-input
-              v-model="procedureName"
-              placeholder="请输入流程名称"
-            ></el-input>
+            <el-input v-model="procedureName" placeholder="请输入流程名称"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item>
-            <el-date-picker
-              v-model="procedureStart"
-              type="date"
-              placeholder="开始日期"
-            ></el-date-picker>
+            <el-date-picker v-model="procedureStart" type="date" placeholder="开始日期"></el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="6">
           <el-form-item>
-            <el-date-picker
-              v-model="procedureEnd"
-              type="date"
-              placeholder="结束日期"
-            ></el-date-picker>
+            <el-date-picker v-model="procedureEnd" type="date" placeholder="结束日期"></el-date-picker>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-button
-            icon="el-icon-plus"
-            round
-            @click="addProcedure"
-          >添加流程</el-button>
+          <el-button icon="el-icon-plus" round @click="addProcedure">添加流程</el-button>
         </el-col>
       </el-row>
 
       <h2>自定义字段</h2>
 
-      <el-table
-        :data="extraFields"
-        style="width: 100%"
-      >
-        <el-table-column
-          prop="formType"
-          label="题型"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="label"
-          label="字段名称"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="description"
-          label="提示信息"
-          align="center"
-        ></el-table-column>
+      <el-table :data="extraFields" style="width: 100%">
+        <el-table-column prop="formType" label="题型" align="center"></el-table-column>
+        <el-table-column prop="label" label="字段名称" align="center"></el-table-column>
+        <el-table-column prop="description" label="提示信息" align="center"></el-table-column>
       </el-table>
-      <el-row
-        :gutter="20"
-        type="flex"
-        align="middle"
-      >
+      <el-row :gutter="20" type="flex" align="middle">
         <el-col :span="4">
           <el-switch
             v-model="isTextForm"
@@ -195,40 +112,21 @@
             active-color="#13ce66"
             inactive-color="#409eff"
             style="vertical-align: center;"
-          >
-          </el-switch>
+          ></el-switch>
         </el-col>
 
         <el-col :span="16">
-          <el-row
-            :gutter="20"
-            type="flex"
-            align="middle"
-          >
+          <el-row :gutter="20" type="flex" align="middle">
             <el-col :span="6">
-              <el-input
-                v-model="fieldLabel"
-                placeholder="请输入字段名称"
-              ></el-input>
+              <el-input v-model="fieldLabel" placeholder="请输入字段名称"></el-input>
             </el-col>
             <el-col :span="18">
-              <el-input
-                v-if="isTextForm"
-                v-model="fieldDescription"
-                placeholder="请输入提示信息"
-              ></el-input>
-              <div v-if="!isTextForm">
-                请在下面输入可选选项，使用回车键完成一个选项的添加
-              </div>
+              <el-input v-if="isTextForm" v-model="fieldDescription" placeholder="请输入提示信息"></el-input>
+              <div v-if="!isTextForm">请在下面输入可选选项，使用回车键完成一个选项的添加</div>
             </el-col>
           </el-row>
 
-          <el-row
-            :gutter="20"
-            type="flex"
-            align="middle"
-            v-if="!isTextForm"
-          >
+          <el-row :gutter="20" type="flex" align="middle" v-if="!isTextForm">
             <el-col :span="24">
               <el-tag
                 :key="answer"
@@ -236,9 +134,7 @@
                 closable
                 :disable-transitions="false"
                 @close="handleClose(answer)"
-              >
-                {{answer}}
-              </el-tag>
+              >{{answer}}</el-tag>
               <el-input
                 class="input-new-tag"
                 v-if="fieldOptionInputVisible"
@@ -247,33 +143,20 @@
                 size="small"
                 @keyup.enter.native="handleInputConfirm"
                 @blur="handleInputConfirm"
-              >
-              </el-input>
-              <el-button
-                v-else
-                class="button-new-tag"
-                size="small"
-                @click="showInput"
-              >+ 添加新选项</el-button>
+              ></el-input>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 添加新选项</el-button>
             </el-col>
           </el-row>
         </el-col>
 
         <el-col :span="4">
-          <el-button
-            icon="el-icon-plus"
-            round
-            @click="addField"
-          >添加字段</el-button>
+          <el-button icon="el-icon-plus" round @click="addField">添加字段</el-button>
         </el-col>
       </el-row>
     </el-row>
     <el-row>
       <h2>确认创建</h2>
-      <el-button
-        type="primary"
-        @click="handleCreateContest"
-      >立即创建</el-button>
+      <el-button type="primary" @click="handleCreateContest">立即创建</el-button>
     </el-row>
   </el-form>
 </template>
@@ -468,6 +351,10 @@ export default {
       }
       this.fieldOptionInputVisible = false
       this.newOption = ''
+    },
+    addImgHint(pos, file) {
+      this.$refs.md.$img2Url(pos, file.miniurl)
+      this.$alert('目前我们使用 Base64 上传图片，请在后续使用图片中尽量填写 URL。')
     }
   }
 }
