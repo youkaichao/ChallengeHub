@@ -49,7 +49,7 @@
       </p>
       <p v-else>
         你坚持到了比赛的
-        <span class="blue-bold">{{contest.procedure[(group.stage / 2) - 1].name}}</span> 阶段，下次加油！
+        <span class="blue-bold">{{contest.procedure[Math.floor(group.stage / 2) - 1].name}}</span> 阶段，下次加油！
       </p>
       <div v-for="(name, index) of downloadableStageNames" :key="index">
         <el-button type="primary" style="margin-top: 10px;" @click="handelCheckDetail(index)">
@@ -84,7 +84,7 @@ export default {
         stage = this.contest.procedure.length * 2
       }
 
-      for (let i = 0; i < stage / 2; i++) {
+      for (let i = 0; i < Math.floor(stage / 2); i++) {
         ret.push(this.contest.procedure[i].name)
       }
 

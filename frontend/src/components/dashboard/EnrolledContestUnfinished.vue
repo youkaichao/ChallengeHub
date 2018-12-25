@@ -178,9 +178,9 @@ export default {
       let procedure = this.contest.procedure
       if (stageIndex === 0 || stageIndex === 2 * procedure.length) return ''
       if (stageIndex % 2 !== 0) {
-        return procedure[(stageIndex - 1) / 2].name
+        return procedure[Math.floor((stageIndex - 1) / 2)].name
       } else {
-        return procedure[stageIndex / 2].name
+        return procedure[Math.floor(stageIndex / 2)].name
       }
     },
     currentDeadline: function() {
@@ -189,9 +189,9 @@ export default {
       let returnDate = null
       if (stageIndex === 0 || stageIndex === 2 * procedure.length) return ''
       if (stageIndex % 2 !== 0) {
-        returnDate = procedure[(stageIndex - 1) / 2].endTime
+        returnDate = procedure[Math.floor((stageIndex - 1) / 2)].endTime
       } else {
-        returnDate = procedure[stageIndex / 2].startTime
+        returnDate = procedure[Math.floor(stageIndex / 2)].startTime
       }
 
       return isoToHumanReadable(returnDate)
@@ -212,7 +212,7 @@ export default {
         stage -= 1
       }
 
-      for (let i = 0; i < stage / 2; i++) {
+      for (let i = 0; i < Math.floor(stage / 2); i++) {
         ret.push(this.contest.procedure[i].name)
       }
 

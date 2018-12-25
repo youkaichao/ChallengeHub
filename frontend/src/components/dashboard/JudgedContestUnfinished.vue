@@ -97,16 +97,16 @@ export default {
     },
     currentStage: function() {
       let stageIndex = this.contest.stage
-      if (stageIndex % 2 === 0) return this.contest.procedure[stageIndex / 2 - 1].name
-      else return this.contest.procedure[(stageIndex - 1) / 2].name
+      if (stageIndex % 2 === 0) return this.contest.procedure[Math.floor(stageIndex / 2) - 1].name
+      else return this.contest.procedure[Math.floor((stageIndex - 1) / 2)].name
     },
     currentDeadline: function() {
       let stageIndex = this.contest.stage
       let procedure = this.contest.procedure
       if (stageIndex % 2 === 0 && stageIndex !== procedure.length * 2)
-        return isoToHumanReadable(procedure[stageIndex / 2].startTime)
+        return isoToHumanReadable(procedure[Math.floor(stageIndex / 2)].startTime)
       else if (stageIndex % 2 === 0) return '主办方规定的时间'
-      else return isoToHumanReadable(this.contest.procedure[(stageIndex - 1) / 2].endTime)
+      else return isoToHumanReadable(this.contest.procedure[Math.floor((stageIndex - 1) / 2)].endTime)
     },
     judgeCompelete: function() {
       return this.task.count === this.task.done
