@@ -1,4 +1,5 @@
 from django.db import models
+from django.db import transaction
 import django.utils.timezone as timezone
 from useraction.models import User
 from typing import Type, TypeVar, Dict, Any
@@ -191,32 +192,30 @@ class Vote(models.Model):
     @classmethod
     def vote(cls: Type[V], competition: Competition, user: User, upvote: int) -> V:
         if not user.is_authenticated():
-            raise Exception("not logged in")
-        vote = Vote.objects.filter(competition=competition, user=user).first()
-        if not vote or vote.status == 0:
-            if not vote:
-                vote = Vote(competition=competition, user=user, status=upvote)
-            else:
-                vote.status = upvote
-            if upvote > 0:
-                competition.upvote += 1
-            elif upvote < 0:
-                competition.downvote += 1
-        else:
-            if vote.status == upvote:
-                vote.status = 0
-                if upvote > 0:
-                    competition.upvote -= 1
-                elif upvote < 0:
-                    competition.downvote -= 1
-            else:
+            raise Exception("用户未登录！")
+        with transaction.atomic():
+            vote, created = Vote.objects.select_for_update().get_or_create(competition=competition, user=user)
+            if vote.status == 0:
                 vote.status = upvote
                 if upvote > 0:
                     competition.upvote += 1
-                    competition.downvote -= 1
                 elif upvote < 0:
-                    competition.upvote -= 1
                     competition.downvote += 1
-        vote.save()
-        competition.save()
+            else:
+                if vote.status == upvote:
+                    vote.status = 0
+                    if upvote > 0:
+                        competition.upvote -= 1
+                    elif upvote < 0:
+                        competition.downvote -= 1
+                else:
+                    vote.status = upvote
+                    if upvote > 0:
+                        competition.upvote += 1
+                        competition.downvote -= 1
+                    elif upvote < 0:
+                        competition.upvote -= 1
+                        competition.downvote += 1
+            vote.save()
+            competition.save()
         return vote
