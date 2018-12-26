@@ -11,8 +11,8 @@
           <el-button type="text" @click="downloadWithUrl(scope.row.downloadUrl)">下载</el-button>
         </template>
       </el-table-column>
-      <el-table-column label="平均分(点击查看详情)">
-        <template slot-scope="scope" prop="score" sortable>
+      <el-table-column label="平均分(点击查看详情)" prop="score" sortable>
+        <template slot-scope="scope">
           <el-popover placement="left" trigger="click">
             <el-table :data="scope.row.judges">
               <el-table-column prop="username" label="评委"></el-table-column>
@@ -26,8 +26,8 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="附加分">
-        <template slot-scope="scope" prop="deltaScore" sortable>
+      <el-table-column label="附加分" prop="deltaScore" sortable>
+        <template slot-scope="scope">
           <el-input-number v-model="scope.row.deltaScore" :controls="false" style="width:80px"></el-input-number>
         </template>
       </el-table-column>
