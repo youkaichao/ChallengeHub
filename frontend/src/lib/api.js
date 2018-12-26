@@ -2,6 +2,17 @@
 let stage = 2
 
 export default {
+  [`POST */api/contests/uploadImage`](pathMatch, query, request, passThrough) {
+    return {
+      body: {
+        code: 0,
+        error: '',
+        data: {}
+      },
+      status: 200,
+      statusText: 'OK'
+    }
+  },
   ['PUT */apiv2/messages']() {
     return {
       body: {
@@ -806,7 +817,8 @@ export default {
             },
             contest: {
               id: 1,
-              name: '垃圾划水大赛',
+              name:
+                '垃圾划水大赛垃圾划水大赛垃圾划水大赛垃圾划水大赛垃圾划水大赛垃圾划水大赛垃圾划水大赛垃圾划水大赛垃圾划水大赛垃圾划水大赛',
               imgUrl: 'https://picsum.photos/400/300/?random&amp;k=2',
               publisher: '华清大学',
               procedure: [

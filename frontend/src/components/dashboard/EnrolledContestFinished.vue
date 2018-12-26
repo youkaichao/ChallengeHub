@@ -154,6 +154,12 @@ export default {
   margin-top: 10px;
   font-weight: bold;
   font-size: 32px;
+  white-space: nowrap;
+  overflow: auto;
+}
+
+.contest-name::-webkit-scrollbar {
+  display: none;
 }
 
 .contest-info {

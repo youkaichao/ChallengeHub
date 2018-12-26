@@ -61,6 +61,7 @@
             :http-request="handleUpload"
             action
             style="display: inline-block"
+            :show-file-list="false"
           >
             <el-button type="primary" class="commit-button">提交作品</el-button>
           </el-upload>
@@ -70,6 +71,7 @@
             :http-request="handleUpload"
             action
             style="display: inline-block"
+            :show-file-list="false"
           >
             <el-button type="primary" class="commit-button" plain>修改作品</el-button>
           </el-upload>
@@ -243,6 +245,12 @@ export default {
   margin-top: 10px;
   font-weight: bold;
   font-size: 32px;
+  white-space: nowrap;
+  overflow: auto;
+}
+
+.contest-name::-webkit-scrollbar {
+  display: none;
 }
 
 .contest-info {

@@ -45,29 +45,21 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-form-item
-        label="比赛图片"
-        prop="imgUrl"
-      >
-      <el-col :span="12">
-        <el-input
-          v-model="contest.imgUrl"
-          placeholder="请填写高宽比为 3:4 的图片 url"
-        ></el-input>
-      </el-col>
-      <el-col :span="12">
+      <el-form-item label="比赛图片" prop="imgUrl">
+        <el-col :span="12">
+          <el-input v-model="contest.imgUrl" placeholder="请填写高宽比为 3:4 的图片 url"></el-input>
+        </el-col>
+        <el-col :span="12">
           <el-upload
             :limit="1"
             :http-request="handleUpload"
-            action=""
+            action
             style="display: inline-block"
+            :show-file-list="false"
           >
-            <el-button
-              type="primary"
-              class="commit-button"
-            >上传图片</el-button>
+            <el-button type="primary" class="commit-button">上传图片</el-button>
           </el-upload>
-      </el-col>
+        </el-col>
       </el-form-item>
       <el-form-item label="报名网站">
         <el-col :span="6">
