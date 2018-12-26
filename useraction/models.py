@@ -5,8 +5,8 @@ from typing import Dict, Any
 
 class User(AbstractUser):
     email = models.EmailField(blank=False)
-    introduction = models.TextField(default='')
-    school = models.CharField(default='', max_length=64)
+    introduction = models.TextField(default='',blank=True)
+    school = models.CharField(default='',blank=True, max_length=64)
 
     # need to set this or cannot create super user
     individual = models.BooleanField(default=True)
