@@ -20,10 +20,11 @@
         </el-col>
         <el-col :span="8" style="text-align: right; padding-right: 20px;">
           <div class="group-name">{{ group.name }}{{ group.identity }}</div>
-          <div class="contest-result">
+          <div v-if="group.rank !== ''" class="contest-result">
             你的成绩：
             <b>{{ group.rank }}</b>
           </div>
+          <div v-else class="contest-result">请查看比赛结果</div>
           <div style="margin-top: 20px;">
             <el-button type="text" @click="gotoMyTeam" style="display:inline-block">查看我的队伍</el-button>
             <el-button type="primary" plain @click="downloadDialogVisible = true">下载作品</el-button>
@@ -112,7 +113,7 @@ export default {
     },
     async handelCheckDetail(index) {
       let stage = (index + 1) * 2
-      let response = await this.$http.get(`/api/contests/${this.contest.id}/submissions&stage=${stage}`)
+      let response = await this.$http.get(`/api/contests/${this.contest.id}/submissions`, { params: { stage: stage } })
       if (response.body.code !== 0) {
         this.$message({ type: 'error', message: response.body.error })
         return
