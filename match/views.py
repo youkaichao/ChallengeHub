@@ -108,7 +108,7 @@ class MatchLockView(View):
         group.locked = True
         group.save()
         for each in group.members.all():
-            message = SystemMessage(receiver=each, content=f'队伍 {group.name} 已经锁定了，你无法退出退伍了。')
+            message = SystemMessage(receiver=each, content=f'队伍 {group.name} 已经锁定了，你无法退出队伍了。')
             message.save()
 
 
