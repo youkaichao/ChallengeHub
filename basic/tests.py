@@ -279,6 +279,12 @@ class SubmittedTimeTest(SubmissionTimeTest):
                          MockFile('123', [b'1', b'2']))
 
     def submit_file(self, username, contest_id, submission_name, file):
+        for name in self.individuals:
+            user = self.individuals[name]['user']
+            client = self.individuals[name]['client']
+            g = Group.objects.filter(leader=user)
+            if g:
+                resp = client.post(f'/apiv2/contests/{contest_id}/groups/{g.first().id}/lock')
         ContestSubmissionView().post(MockRequest(user=User.objects.get(username=username),
                                                  data={
                                                      'submissionName': submission_name,

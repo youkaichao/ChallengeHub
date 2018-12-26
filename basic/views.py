@@ -412,6 +412,8 @@ class ContestSubmissionView(View):
     def post(self, request, contest_id: str) -> Any:
         user = request.user
         group = user.joint_groups.get(competition__id=int(contest_id))
+        if not group.locked:
+            raise Exception('队伍未锁定，还不能提交！')
         submit = request.data.get('file')
         stage = group.current_stage
         if stage != group.competition.current_stage or stage % 2 != 1:
