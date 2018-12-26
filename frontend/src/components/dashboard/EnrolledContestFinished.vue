@@ -43,7 +43,7 @@
     </el-dialog>
 
     <el-dialog title="比赛结果详情" :visible.sync="resultDetailVisible">
-      <p v-if="group.stage === -1">
+      <p v-if="group.rank">
         祝贺！你通过了比赛的所有阶段，最终获得
         <span class="blue-bold">{{group.rank}}</span> 的成绩！
       </p>
