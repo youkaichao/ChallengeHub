@@ -767,7 +767,9 @@ class ContestUploadView(View):
         md5 = hashlib.md5(content).hexdigest()
         _, extension = os.path.splitext(submit.name)
         filename = md5 + extension
-        print(settings.BASE_DIR)
-        with open(os.path.join(settings.BASE_DIR, os.path.sep.join(['static', 'img']), filename), 'wb') as f:
+        dirname = os.path.join(settings.BASE_DIR, os.path.sep.join(['submit', 'img']))
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        with open(os.path.join(dirname, filename), 'wb') as f:
             f.write(content)
-        return {"url":urllib.parse.urljoin(settings.SITE_URL, 'static/img/' + filename)}
+        return {"url":urllib.parse.urljoin(settings.SITE_URL, 'submit/img/' + filename)}
