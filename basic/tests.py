@@ -117,7 +117,7 @@ class ContestCollectionTest(BasicTest):
         resp = client.post(f'/api/contests/{contest.id}', {
             'stage': contest.current_stage
         })
-        self.assertEqual(resp['error'], 'Cannot proceed to previous stage')
+        self.assertNotEqual(resp['code'], 0)
 
 
 class VoteAndDetailTest(BasicTest):
@@ -132,7 +132,7 @@ class VoteAndDetailTest(BasicTest):
 
     def testOtherPublisherCannotChangeStage(self):
         resp = self.proceed_contest('b', 'a_c', ignore_error=True)
-        self.assertEqual(resp['error'], 'no authority to change stage')
+        self.assertNotEqual(resp['code'], 0)
 
     def testCanVoteButOnlyOnce(self):
         client = self.individuals['c']['client']
@@ -222,7 +222,7 @@ class EnrollTest(SubmissionTimeTest):
             'members': [],
             'form': '{}'
         })
-        self.assertTrue(resp['error'].startswith('you are already in group '))
+        self.assertNotEqual(resp['code'], 0)
 
     def testUserCreated(self):
         resp = self.publishers['b']['client'].get('/api/users/created')
@@ -385,7 +385,7 @@ class ReviewerListTest(ReviewTimeTest):
             ]
         })
         self.assertNotEqual(resp['code'], 0)
-        self.assertEqual(resp['error'], 'already auto-assigned!')
+        self.assertNotEqual(resp['code'], 0)
 
     def testSeeReviewer(self):
         a_c = Competition.objects.get(name='a_c')

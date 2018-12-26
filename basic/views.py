@@ -85,7 +85,7 @@ class ContestDetailView(View):
         stage = int(request.data.get('stage'))
 
         if stage!= -1 and stage < competition.current_stage:
-            raise Exception('Cannot proceed to previous stage')
+            raise Exception('不能前往之前的阶段！')
 
         if stage > 0 and stage % 2 == 0:  # when enter judge stage, update all qualified group to that stage
             qualified_groups = Group.objects.filter(
@@ -187,7 +187,7 @@ class ContestAutoAssignView(View):
 
         cstage = c.stage_list.get(stage=stage if stage % 2 == 1 else stage - 1)
         if cstage.is_assigned:
-            raise Exception("already auto-assigned!")
+            raise Exception("已经分配过任务了！")
 
         qualified_groups = c.enrolled_groups.filter(current_stage=stage)
         submitted_gstages = []
@@ -244,7 +244,7 @@ class ContestAutoAssignView(View):
             judge_map = {x.username: x for x in judges}
             for name in judge_map:
                 user = judge_map[name]
-                message = SystemMessage(receiver=user, content=f'You are assigned {judge_count[name]} tasks in competition {c.name}')
+                message = SystemMessage(receiver=user, content=f'在 {c.name} 比赛中，你被分配了 {judge_count[name]} 个任务。')
                 message.save()
         return {
             "judges": [
@@ -265,14 +265,14 @@ class ContestReviewerView(View):
         invitations = c.sent_invitations.all()
         judges = c.judges.all()
         if len(set(request.data['username'])) != len(request.data['username']):
-            raise Exception("duplicate username!")
+            raise Exception("输入的用户名有重复！")
         with transaction.atomic():
             for username in request.data['username']:
                 user = User.objects.get(username=username)
                 if user in judges:
-                    raise Exception(f"{user.username} is already a judge of this competition!")
+                    raise Exception(f"{user.username} 已经是本比赛的评委了！")
                 if invitations.filter(status=InvitationStatus.DEFAULT, invitee=user):
-                    raise Exception(f"{user.username} is already invited!")
+                    raise Exception(f"{user.username} 已经被邀请了，请耐心等待回复。")
                 invitation = ReviewerInvitation(competition=c, invitee=user)
                 invitation.save()
         return
@@ -330,8 +330,8 @@ class GroupStageView(View):
                 group.save()
                 if group.stage_list.filter(stage=stage):
                     raise Exception(
-                        f"stage {stage} already exists for group {group.name}")
-                message = SystemMessage(receiver=group.leader, content=f'Your group {group.name} evolved into a new stage ({cstage.name})!')
+                        f"{group.name} 队伍 已经进入了 {stage} 阶段！")
+                message = SystemMessage(receiver=group.leader, content=f'你的队伍 {group.name} 晋级到了新的阶段 ({cstage.name})！')
                 message.save()
                 gstage = GStage(stage=stage, group=group, score=0.0)
                 gstage.save()
@@ -380,7 +380,7 @@ class ContestEnrollView(View):
         c = Competition.objects.get(id=int(contest_id))
         joint_groups = leader.joint_groups.all().filter(competition=c)
         if joint_groups:
-            raise Exception(f"you are already in group {joint_groups.first().name}")
+            raise Exception(f"你已经加入了队伍 {joint_groups.first().name}")
         group = Group(
             name=request.data.get('name'),
             competition=c,
@@ -415,7 +415,7 @@ class ContestSubmissionView(View):
         submit = request.data.get('file')
         stage = group.current_stage
         if stage != group.competition.current_stage or stage % 2 != 1:
-            raise Exception('no authority to submit now')
+            raise Exception('现在还不能提交！')
         _, extension = os.path.splitext(submit.name)
 
         commit_dir = os.path.join('contest',
@@ -442,13 +442,13 @@ class ContestSubmissionView(View):
         group = user.joint_groups.get(competition__id=int(contest_id))
         stage = request.data.get('stage', group.current_stage)
         stage = int(stage)
-        if stage < 1:
-            raise Exception('invalid stage')
+        if stage != -1 and stage < 1:
+            raise Exception('无效的阶段')
         if stage % 2 == 0:
             stage = stage - 1
         group_stage = group.stage_list.get(stage=stage)
         if not group_stage.has_commit:
-            raise Exception('not committed yet')
+            raise Exception('队伍还没有提交！')
         return {
             'score': group_stage.score,
             'reviews': [{'rating': x.score, 'msg': x.msg} for x in group_stage.review_meta_list.all()],
@@ -479,7 +479,7 @@ class DeltaScoreView(View):
         stage = GStage.objects.get(id=gstage_id)
         stage.deltaScore = float(request.data.get('deltaScore'))
         stage.deltaMsg = request.data.get('deltaMsg')
-        message = SystemMessage(receiver=stage.group.leader, content=f'Your group {stage.group.name} has gained {stage.deltaScore} because of {stage.deltaMsg} in  competition {c.name}')
+        message = SystemMessage(receiver=stage.group.leader, content=f'在 {c.name} 中，你的队伍的分数 {stage.group.name} 因为 {stage.deltaMsg} 变化了 {stage.deltaScore}')
         message.save()
         compute_average_score(stage)
 
@@ -497,7 +497,7 @@ class BestowRankView(View):
         for group in groups:
             group.rank = rank_name
             group.save()
-            message = SystemMessage(receiver=group.leader, content=f'Your group {group.name} is awarded {rank_name} in competition {c.name}')
+            message = SystemMessage(receiver=group.leader, content=f'你的队伍 {group.name} 在 {c.name} 中获得了 {rank_name}！')
             message.save()
 
 
@@ -715,7 +715,7 @@ class NoticeCollectionView(View):
         notice.save()
         for group in competition.enrolled_groups.all():
             for each in group.members.all():
-                message = SystemMessage(receiver=each, content=f'{competition.publisher} published a notice ({notice.title}) in competition {competition.name}. Check it now!')
+                message = SystemMessage(receiver=each, content=f'{competition.publisher} 在比赛 {competition.name} 中发布了公告 ({notice.title})。快去看看吧！')
                 message.save()
         return
 
@@ -747,7 +747,7 @@ class NoticeDetailView(View):
         competition = Competition.objects.get(id=int(contest_id))
         for group in competition.enrolled_groups.all():
             for each in group.members.all():
-                message = SystemMessage(receiver=each, content=f'{competition.publisher} modified the notice ({notice.title}) in competition {competition.name}. Check it now!')
+                message = SystemMessage(receiver=each, content=f'{competition.publisher} 修改了 {competition.name} 的公告 ({notice.title}) 。快去看看吧！')
                 message.save()
         return
 

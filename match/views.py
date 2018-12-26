@@ -43,24 +43,24 @@ class MatchInviteView(View):
     def post(self, request, contest_id: str, group_id: str) -> Any:
         group = Group.objects.get(id=int(group_id))
         if request.user != group.leader:
-            raise Exception('no authority to invite')
+            raise Exception('没有权限邀请队员!')
         if group.locked:
-            raise Exception('group already locked')
+            raise Exception('队伍已经锁定！')
         messages = Invitation.objects.filter(group=group, status=InvitationStatus.DEFAULT)
         num_members = len(group.members.all())
         contest = Competition.objects.get(id=int(contest_id))
         if num_members + len(messages) >= contest.group_size:
             raise Exception(
-                f"You already have {num_members} members and are inviting {len(messages)} members, but the max group size is {contest.group_size} for this contest.You can't invite more members!")
+                f"当前队伍已经拥有 {num_members} 名成员，正在邀请 {len(messages)} 名成员, 然而比赛要求每个队伍的人数最多为 {contest.group_size} 。你不能再邀请队员了！")
         self.check_input(['username'])
         user = User.objects.get(username=request.data.get('username'))
         if user == group.leader:
-            raise Exception("You can't invite yourself!")
+            raise Exception("你不能邀请你自己！")
         message = Invitation.objects.filter(group=group, invitee=user, status=InvitationStatus.DEFAULT)
         if message:
-            raise Exception(f'{user.username} is already invited')
+            raise Exception(f'{user.username} 已经被邀请了！')
         elif user in group.members.all():
-            raise Exception(f'{user.username} is already in your group')
+            raise Exception(f'{user.username} 已经是队员了！')
         else:
             message = Invitation(group=group, invitee=user)
             message.save()
@@ -71,7 +71,7 @@ class MatchQuitView(View):
     def post(self, request, contest_id: str, group_id: str) -> Any:
         group = Group.objects.get(id=int(group_id))
         if group.locked:
-            raise Exception('group already locked')
+            raise Exception('队伍已经锁定了！')
         if request.user == group.leader:
             group.members.remove(request.user)
             collection = MONGO_CLIENT.db.groupEnrollForm
@@ -86,15 +86,15 @@ class MatchQuitView(View):
                 group.leader = member
                 group.save()
                 for each in group.members.all():
-                    message = SystemMessage(receiver=each, content=f'{request.user.username} quits the group {group.name}. {group.leader.username} now becomes the new leader!')
+                    message = SystemMessage(receiver=each, content=f'{request.user.username} 退出了队伍 {group.name}。 {group.leader.username} 现在是新的队长了！')
                     message.save()
         elif group.members.filter(id=request.user.id):
             group.members.remove(request.user)
             group.save()
-            message = SystemMessage(receiver=group.leader, content=f'{request.user.username} quits the group {group.name}.')
+            message = SystemMessage(receiver=group.leader, content=f'{request.user.username} 退出了队伍 {group.name}.')
             message.save()
         else:
-            raise Exception('not a group member')
+            raise Exception('不是队伍的成员！')
 
 
 class MatchLockView(View):
@@ -102,13 +102,13 @@ class MatchLockView(View):
     def post(self, request, contest_id: str, group_id: str) -> Any:
         group = Group.objects.get(id=int(group_id))
         if group.locked:
-            raise Exception('group already locked')
+            raise Exception('队伍已经锁定了！')
         if request.user != group.leader:
-            raise Exception('no authority to lock group')
+            raise Exception('没有权限锁定队伍！')
         group.locked = True
         group.save()
         for each in group.members.all():
-            message = SystemMessage(receiver=each, content=f'The group {group.name} is locked now. You cannot quit the group.')
+            message = SystemMessage(receiver=each, content=f'队伍 {group.name} 已经锁定了，你无法退出退伍了。')
             message.save()
 
 
@@ -122,7 +122,7 @@ class MatchResponseView(View):
         accepted = request.data.get('accept')
         if accepted:
             if user.joint_groups.filter(competition_id=group.competition.id):
-                raise Exception('you have already joint this competition')
+                raise Exception('你已经参加了这场比赛了！')
             group.members.add(user)
             collection = MONGO_CLIENT.db.groupEnrollForm
             collection.insert_one(
@@ -162,7 +162,7 @@ class MatchCancelView(View):
         self.check_input(['username'])
         group = Group.objects.get(id=int(group_id))
         if group.leader != request.user:
-            raise Exception('no authority to cancel invitation')
+            raise Exception('没有权限取消邀请！')
         user = User.objects.get(username=request.data.get('username'))
         invitation = group.sent_invitations.get(invitee=user, status=InvitationStatus.DEFAULT)
         invitation.status = InvitationStatus.CANCELLED
@@ -175,7 +175,7 @@ class ReviewersCancelView(View):
         self.check_input(['username'])
         c = Competition.objects.get(id=int(contest_id))
         if c.publisher != request.user:
-            raise Exception('no authority to cancel invitation')
+            raise Exception('没有权限取消邀请！')
         user = User.objects.get(username=request.data.get('username'))
         invitation = c.sent_invitations.get(invitee=user, status=InvitationStatus.DEFAULT)
         invitation.status = InvitationStatus.CANCELLED
@@ -237,21 +237,21 @@ class MessageCollectionView(View):
         if category == MessageType.letter:
             message = Message.objects.get(id=request.data.get('id'))
             if request.user != message.receiver:
-                raise Exception('no authority')
+                raise Exception('没有权限！')
         elif category == MessageType.system:
             message = SystemMessage.objects.get(id=request.data.get('id'))
             if request.user != message.receiver:
-                raise Exception('no authority')
+                raise Exception('没有权限！')
         elif category == MessageType.invitation:
             message = Invitation.objects.get(id=request.data.get('id'))
             if request.user != message.invitee:
-                raise Exception('no authority')
+                raise Exception('没有权限！')
         elif category == MessageType.reviewer_invitation:
             message = ReviewerInvitation.objects.get(id=request.data.get('id'))
             if request.user != message.invitee:
-                raise Exception('no authority')
+                raise Exception('没有权限！')
         if message.is_read:
-            raise Exception('message already read')
+            raise Exception('消息已经是已读状态！')
         message.is_read = True
         message.save()
 
@@ -275,19 +275,19 @@ class MessageDeleteView(View):
         if category == MessageType.letter:
             message = Message.objects.get(id=request.data.get('id'))
             if request.user != message.receiver:
-                raise Exception('no authority')
+                raise Exception('没有权限！')
         elif category == MessageType.system:
             message = SystemMessage.objects.get(id=request.data.get('id'))
             if request.user != message.receiver:
-                raise Exception('no authority')
+                raise Exception('没有权限！')
         elif category == MessageType.invitation:
             message = Invitation.objects.get(id=request.data.get('id'))
             if request.user != message.invitee:
-                raise Exception('no authority')
+                raise Exception('没有权限！')
         elif category == MessageType.reviewer_invitation:
             message = ReviewerInvitation.objects.get(id=request.data.get('id'))
             if request.user != message.invitee:
-                raise Exception('no authority')
+                raise Exception('没有权限！')
         message.delete()
 
 

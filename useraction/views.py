@@ -20,9 +20,9 @@ class UserLoginView(View):
             login(request, user)
             return user.to_dict()
         elif not user:
-            raise Exception('wrong username or password')
+            raise Exception('用户名或密码错误！')
         else:
-            raise Exception('user will stay inactive until validated')
+            raise Exception('用户还未激活，请检查邮箱或联系管理员。')
 
 
 class UserInfoView(View):
@@ -44,9 +44,9 @@ class UserRegisterView(View):
         self.check_input(['username', 'password', 'email', 'individual'])
         user = User.objects.filter(username=request.data.get('username'))
         if user:
-            raise Exception('username already exists')
+            raise Exception('用户名已经存在！')
         if User.objects.filter(email=request.data.get('email')):
-            raise Exception('email is already registered')
+            raise Exception('邮箱已经被注册！')
         individual=True if (request.data.get('individual') == 'individual') else False
         user = User.objects.create_user(
             username=request.data.get('username'),
@@ -62,8 +62,8 @@ class UserRegisterView(View):
         link = f'http://{SITE_URL}/#/validate/{encoded.decode()}'
         if USE_MAIL_VALIDATE:
             send_mail(
-                subject='Validate your email account on ChanllengeHub',
-                message=f'{user.username}, please validate your email account by visiting the link below\n{link}',
+                subject='验证你在 ChanllengeHub 上的账号',
+                message=f'{user.username}， 请点击以下链接验证你的账户：\n{link}',
                 from_email=EMAIL_FROM,
                 recipient_list=[user.email],
                 fail_silently=False
@@ -92,7 +92,7 @@ class UserValidateView(View):
             user.is_active = True
             user.save()
             return
-        raise Exception('email validation failed')
+        raise Exception('邮箱验证失败！')
 
         
 class UserResetPasswdView(View):
@@ -103,7 +103,7 @@ class UserResetPasswdView(View):
         new = request.data.get('new')
         user = authenticate(username=request.user.username, password=old)
         if not user:
-            raise Exception('wrong password!')
+            raise Exception('密码错误！')
         user.set_password(new)
         user.save()
         login(request, user)
